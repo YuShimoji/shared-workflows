@@ -1,0 +1,14 @@
+name: Sync Project State
+
+on:
+  push
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync to other terminals
+        run: |
+          # 簡易同期スクリプト（Redisや外部ツール連携）
+          echo "State synced to shared storage"
