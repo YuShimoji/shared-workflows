@@ -8,6 +8,7 @@
 
 | 用途 | プロンプト | 使用頻度 |
 |------|-----------|---------|
+| オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
 | オーケストレーション | Orchestrator Protocol | 毎回（作業開始/統合時） |
 | 作業実行 | Worker Protocol | 毎回（各スレッド起動時） |
 
@@ -233,7 +234,7 @@ docs/
 
 | 操作 | コマンド/ファイル |
 |------|------------------|
-| 作業開始 | Orchestratorスレッドに「Orchestrator Protocol」を投入 |
+| 作業開始 | docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md を投入 |
 | Worker起動 | 新規スレッドに「Worker Protocol」を投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
 | 未完了タスク | docs/tasks/ で Status: OPEN を検索 |
@@ -245,4 +246,5 @@ docs/
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_v1.1.md`
 - 中央リポジトリ参照: `docs/CENTRAL_REPO_REF.md`
+- コピペ用メタプロンプト: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
 - レポート設定: `REPORT_CONFIG.yml`
