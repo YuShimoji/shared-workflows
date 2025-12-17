@@ -37,44 +37,146 @@ function normalizeConfig(raw) {
 
 function parseFallback(text) {
   const config = { banned_phrases: [], style_presets: {} };
-  const defaultMatch = text.match(/^default_style:\s*([^\s#]+)/m);
-  if (defaultMatch) {
-    config.default_style = defaultMatch[1].trim();
-  }
-  const bannedSection = text.match(/banned_phrases:\s*([\s\S]*?)(?:^\S|\s*$)/m);
-  if (bannedSection) {
-    const bannedMatches = bannedSection[1].match(/-\s*(.+)/g);
-    if (bannedMatches) {
-      config.banned_phrases = bannedMatches.map((line) => line.replace(/-\s*/, '').trim());
+  const lines = text.split(/\r?\n/);
+
+  let section = null;
+  let currentPreset = null;
+  let presetSubsection = null;
+  let notesIndent = null;
+  let notesBuffer = [];
+
+  function ensurePreset(name) {
+    if (!config.style_presets[name]) {
+      config.style_presets[name] = { headers: [], notes: '' };
     }
   }
-  const presetsSection = text.match(/style_presets:\s*([\s\S]*)/m);
-  if (presetsSection) {
-    const block = presetsSection[1];
-    const presetRegex = /^\s{2}([A-Za-z0-9_]+):\s*([\s\S]*?)(?=^\s{2}[A-Za-z0-9_]+:\s*|\s*$)/gm;
-    let match;
-    while ((match = presetRegex.exec(block)) !== null) {
-      const name = match[1];
-      const body = match[2];
-      const headers = [];
-      const headerMatches = body.match(/^\s{6}-\s*(.+)$/gm);
-      if (headerMatches) {
-        headerMatches.forEach((h) => {
-          headers.push(h.replace(/^\s{6}-\s*/, '').trim());
-        });
+
+  function flushNotes() {
+    if (!currentPreset) return;
+    if (notesBuffer.length === 0) return;
+    const value = notesBuffer.join('\n').replace(/\s+$/g, '').trim();
+    if (!value) return;
+    ensurePreset(currentPreset);
+    config.style_presets[currentPreset].notes = value;
+    notesBuffer = [];
+    notesIndent = null;
+  }
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const raw = lines[i];
+    if (!raw) continue;
+
+    const trimmedEnd = raw.trimEnd();
+    const noIndent = trimmedEnd.trimStart();
+    if (!noIndent || noIndent.startsWith('#')) continue;
+
+    const indent = raw.match(/^\s*/)[0].length;
+
+    if (indent === 0) {
+      if (presetSubsection === 'notes') flushNotes();
+      presetSubsection = null;
+      currentPreset = null;
+
+      const defaultStyleMatch = noIndent.match(/^default_style:\s*([^\s#]+)\s*$/);
+      if (defaultStyleMatch) {
+        config.default_style = defaultStyleMatch[1].trim();
+        section = null;
+        continue;
       }
-      let notes = '';
-      const notesMatch = body.match(/^\s{4}notes:\s*>-\s*([\s\S]*)/m);
-      if (notesMatch) {
-        notes = notesMatch[1]
-          .split(/\r?\n/)
-          .map((line) => line.replace(/^\s{6}/, '').trimEnd())
-          .join('\n')
-          .trim();
+      if (/^banned_phrases:\s*$/.test(noIndent)) {
+        section = 'banned_phrases';
+        continue;
       }
-      config.style_presets[name] = { headers, notes };
+      if (/^style_presets:\s*$/.test(noIndent)) {
+        section = 'style_presets';
+        continue;
+      }
+      section = null;
+      continue;
+    }
+
+    if (section === 'banned_phrases') {
+      const match = noIndent.match(/^-\s+(.+)$/);
+      if (match) {
+        config.banned_phrases.push(match[1].trim());
+      }
+      continue;
+    }
+
+    if (section !== 'style_presets') {
+      continue;
+    }
+
+    if (presetSubsection === 'notes') {
+      if (notesIndent === null) {
+        notesIndent = indent;
+      }
+      if (indent >= notesIndent) {
+        notesBuffer.push(raw.slice(notesIndent).trimEnd());
+        continue;
+      }
+      flushNotes();
+      presetSubsection = null;
+      notesIndent = null;
+      notesBuffer = [];
+      i -= 1;
+      continue;
+    }
+
+    if (indent === 2) {
+      const presetMatch = noIndent.match(/^([A-Za-z0-9_]+):\s*$/);
+      if (presetMatch) {
+        currentPreset = presetMatch[1];
+        ensurePreset(currentPreset);
+        presetSubsection = null;
+      }
+      continue;
+    }
+
+    if (!currentPreset) {
+      continue;
+    }
+
+    if (indent === 4) {
+      const keyMatch = noIndent.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+      if (!keyMatch) {
+        presetSubsection = null;
+        continue;
+      }
+      const key = keyMatch[1];
+      const rest = (keyMatch[2] || '').trim();
+
+      if (key === 'headers') {
+        presetSubsection = 'headers';
+        continue;
+      }
+      if (key === 'notes') {
+        if (rest && rest !== '>-' && rest !== '>' && rest !== '|' && rest !== '|-') {
+          ensurePreset(currentPreset);
+          config.style_presets[currentPreset].notes = rest;
+          presetSubsection = null;
+          continue;
+        }
+        presetSubsection = 'notes';
+        notesIndent = null;
+        notesBuffer = [];
+        continue;
+      }
+      presetSubsection = null;
+      continue;
+    }
+
+    if (presetSubsection === 'headers') {
+      const headerMatch = noIndent.match(/^-\s+(.+)$/);
+      if (headerMatch) {
+        ensurePreset(currentPreset);
+        config.style_presets[currentPreset].headers.push(headerMatch[1].trim());
+      }
     }
   }
+
+  if (presetSubsection === 'notes') flushNotes();
+
   return config;
 }
 

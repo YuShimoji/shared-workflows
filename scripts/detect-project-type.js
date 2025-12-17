@@ -2,10 +2,14 @@
 const fs = require('fs');
 const path = require('path');
 
-function detectType() {
-  if (fs.existsSync('package.json')) return 'web';
-  if (fs.existsSync('Assets/')) return 'unity';
+function detectType(cwd = process.cwd()) {
+  if (fs.existsSync(path.join(cwd, 'package.json'))) return 'web';
+  if (fs.existsSync(path.join(cwd, 'Assets'))) return 'unity';
   return 'standard';
 }
 
-console.log(detectType());
+module.exports = detectType;
+
+if (require.main === module) {
+  console.log(detectType());
+}
