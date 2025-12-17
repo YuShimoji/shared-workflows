@@ -244,4 +244,5 @@ docs/
 ## 5. 参照
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_v1.1.md`
+- 中央リポジトリ参照: `docs/CENTRAL_REPO_REF.md`
 - レポート設定: `REPORT_CONFIG.yml`
