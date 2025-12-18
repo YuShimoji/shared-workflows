@@ -715,6 +715,10 @@ git push
 
 運用の目的は「迷わず、止まらず、同じ品質で回す」ことです。
 
+参照先が散らばって迷いやすい場合は、**参照ナビ（いつ・何を見るか）** を README に集約しているので、まずそこを見る:
+
+- [README: 参照ナビ（いつ・何を見るか）](../README.md#reference-navigation)
+
 - オーケストレーション（全体進行）: `templates/ORCHESTRATION_PROMPT.md`
 - 実装者（Implementer）: `templates/ROLE_PROMPT_IMPLEMENTER.md`
 - レビュア（Reviewer）: `templates/ROLE_PROMPT_REVIEWER.md`

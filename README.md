@@ -57,8 +57,72 @@
 
 役割が明確な場合は、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト（コピペ用）」を使うと、返信フォーマットとエッジケース対応まで一貫します。
 
+## 参照ナビ（いつ・何を見るか）
+
+<a id="reference-navigation" name="reference-navigation"></a>
+
+このリポジトリの参照先は多いので、**「今の状況」→「見るべきファイル/見出し」** をここに集約します。
+
+### 0) 迷ったらまずここ（毎回の基本）
+
+- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`
+  - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
+- **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`
+  - 見る箇所: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期（Next）`
+- **全体進行（任意）**: プロジェクトルート `ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `毎回のプロンプト（オーケストレーター用）` / `エッジケース早見表` / `デモ`
+
+### 1) 作業開始（新規/再開）
+
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `0. 起動シーケンス`
+- **AI_CONTEXT.md**
+  - 見る箇所: `進捗` / `次の中断可能点`
+
+### 2) Issue化・計画（Goal/DoDの明文化）
+
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `3. 必須フロー（Tier 2の標準）` の `Step 1: Issue作成`
+- **テンプレ**: `templates/ISSUE_TEMPLATE.md`
+
+### 3) 実装（Tier 2の標準）
+
+- **役割別プロンプト（実装者）**: `templates/ROLE_PROMPT_IMPLEMENTER.md`
+  - 見る箇所: `毎回のプロンプト（コピペ用）` / `デモ`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `Step 3: 実装` → `Step 4: クリーンアップチェック` → `Step 5: Pre-flight Check` → `Step 6: コミット`
+- **クリーンアップ**: `templates/cleanup.sh`（各プロジェクトで `scripts/cleanup.sh` に配置）
+
+### 4) PR作成・レビュー
+
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `Step 7: PR自動作成` / `Step 8: CI実行（AIは待機）` / `Step 9: 自動マージ`
+- **役割別プロンプト（レビュア）**: `templates/ROLE_PROMPT_REVIEWER.md`
+- **テンプレ**: `templates/PR_TEMPLATE.md`
+
+### 5) CIが失敗した（最優先で復旧）
+
+- **役割別プロンプト（CI対応）**: `templates/ROLE_PROMPT_CI_HANDLER.md`
+  - 見る箇所: `毎回のプロンプト（コピペ用）` / `判断基準` / `デモ`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `Step 5: Pre-flight Check` / `Step 8: CI実行（AIは待機）`
+- **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `デモ3: CIが失敗する` / `デモ5: 権限不足` / `デモ7: Secrets/環境変数が足りない`
+
+### 6) リリース（本番系はTier 3になりやすい）
+
+- **役割別プロンプト（リリース担当）**: `templates/ROLE_PROMPT_RELEASE_MANAGER.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 見る箇所: `2. 簡素化されたTier分類` の `Tier 3（人間承認必須）`
+
+### 7) よくある詰まり（まとめ）
+
+- **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `エッジケース早見表` / `デモ2: pushが拒否される` / `デモ6: PR自動マージが働かない`
+
 ## 関連リンク
 
 - [Windsurf AI 協調開発ルール（最新版 / SSOT）](./docs/Windsurf_AI_Collab_Rules_latest.md)
 - [変更履歴（v2.0）](./docs/Windsurf_AI_Collab_Rules_v2.0.md#変更履歴)
 - [Issue同期用バックログ（docs/ISSUES.md）](./docs/ISSUES.md)
+- [参照ナビ（いつ・何を見るか）](#reference-navigation)
