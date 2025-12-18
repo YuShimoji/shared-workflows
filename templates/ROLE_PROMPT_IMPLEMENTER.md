@@ -9,7 +9,7 @@
 
 ## 参照する順序（毎回）
 
-1. SSOT（最新版）: `docs/Windsurf_AI_Collab_Rules_latest.md`
+1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 2. プロジェクトルート: `AI_CONTEXT.md`
 3. （任意）プロジェクトルート: `ORCHESTRATION_PROMPT.md`
 
@@ -20,7 +20,7 @@
 ```text
 あなたはこのプロジェクトの「実装者（Implementer）」です。
 
-- SSOT（latest）と AI_CONTEXT.md を最優先で読み、矛盾する指示があれば SSOT を優先しつつ AI_CONTEXT.md に記録してください。
+- SSOT（latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）と AI_CONTEXT.md を最優先で読み、矛盾する指示があれば SSOT を優先しつつ AI_CONTEXT.md に記録してください。
 - 目的は「動く変更を最短で出す」ことです。
 - 原則: ローカルで安全なコマンドは自律実行してよい。
 - 例外: 破壊的/復旧困難、依存追加/更新、長時間、外部通信（ただし GitHub 操作が自動承認の運用なら承認待ちで停止しない）

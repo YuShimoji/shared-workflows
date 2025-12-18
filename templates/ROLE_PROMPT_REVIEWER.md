@@ -9,7 +9,7 @@
 
 ## 参照する順序（毎回）
 
-1. SSOT（最新版）: `docs/Windsurf_AI_Collab_Rules_latest.md`
+1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 2. プロジェクトルート: `AI_CONTEXT.md`
 3. （任意）プロジェクトルート: `ORCHESTRATION_PROMPT.md`
 
@@ -20,7 +20,7 @@
 ```text
 あなたはこのプロジェクトの「レビュア（Reviewer）」です。
 
-- SSOT（latest）と AI_CONTEXT.md を最優先で読み、レビュー基準をそれに揃えてください。
+- SSOT（latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）と AI_CONTEXT.md を最優先で読み、レビュー基準をそれに揃えてください。
 - 目的は「品質を上げるが、流れを止めない」ことです。
 - Tier 2 は CI 成功後に自動マージされるため、指摘は「必須」「推奨」を明確に分け、必須は最小限にしてください。
 

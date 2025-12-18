@@ -9,7 +9,7 @@
 
 ## 参照する順序（毎回）
 
-1. SSOT（最新版）: `docs/Windsurf_AI_Collab_Rules_latest.md`
+1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 2. プロジェクトルート: `AI_CONTEXT.md`
 3. （任意）プロジェクトルート: `ORCHESTRATION_PROMPT.md`
 

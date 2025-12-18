@@ -18,10 +18,12 @@
 
 - `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
 - `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
-- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用）
-- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用）
-- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用）
-- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 毎回コピペ用）
+- `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（Submodule運用 / 推奨）
+- `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（毎回コピペ / 推奨。プロジェクト側では `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を貼る）
+- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用 / 参考・フォールバック）
+- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用 / 参考・フォールバック）
+- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用 / 参考・フォールバック）
+- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 毎回コピペ用 / 参考・フォールバック）
 - `templates/ISSUE_TEMPLATE.md` - Issue作成用テンプレート
 - `templates/PR_TEMPLATE.md` - PR作成用テンプレート
 - `templates/cleanup.sh` - クリーンアップチェックスクリプト
@@ -48,14 +50,20 @@
 
 ## クイックスタート
 
+最小運用（推奨）:
+
+- 初回のみ `templates/PROJECT_KICKSTART_PROMPT.md` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
+- 毎回 `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
+- Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+
 1. プロジェクトルートに `AI_CONTEXT.md` を配置（`templates/AI_CONTEXT.md` をコピー）
 2. `scripts/cleanup.sh` を配置（`templates/cleanup.sh` をコピーしてカスタマイズ）
 3. （任意）プロジェクトルートに `ORCHESTRATION_PROMPT.md` を配置（`templates/ORCHESTRATION_PROMPT.md` をコピー）
 4. CI設定にPre-flightチェックを組み込む
-5. AI に最新版SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
+5. AI に最新版SSOT（`.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
 6. （任意）`docs/ISSUES.md` を起点にバックログを管理し、Issue同期ワークフロー（`.github/workflows/sync-issues.yml`）でGitHub Issueに反映する
 
-役割が明確な場合は、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト（コピペ用）」を使うと、返信フォーマットとエッジケース対応まで一貫します。
+役割が明確な場合は、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト（コピペ用）」を使うと、返信フォーマットとエッジケース対応まで一貫します（運用方針として固定テンプレを増やさない場合は、Orchestrator が Worker 用の最小プロンプトを動的生成してもよい）。
 
 ## 参照ナビ（いつ・何を見るか）
 
@@ -65,7 +73,7 @@
 
 ### 0) 迷ったらまずここ（毎回の基本）
 
-- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`
+- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
 - **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`
   - 見る箇所: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期（Next）`
@@ -74,7 +82,7 @@
 
 ### 1) 作業開始（新規/再開）
 
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス`
 - **AI_CONTEXT.md**
   - 見る箇所: `進捗` / `次の中断可能点`

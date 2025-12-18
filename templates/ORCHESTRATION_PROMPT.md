@@ -5,22 +5,32 @@
 - このファイルは、プロジェクトでAI開発を回すための **オーケストレーション用プロンプト**です。
 - 各プロジェクトでは、本ファイルをプロジェクトルートに `ORCHESTRATION_PROMPT.md` として配置して運用します（任意）。
 
+## 推奨の最小運用（プロンプトは2つ）
+
+- 初回（セットアップ / 参照が不安定な場合の立て直し）:
+  - `.shared-workflows/templates/PROJECT_KICKSTART_PROMPT.md` をセットアップ担当スレッドに貼る
+- 毎回（開発継続 / Orchestratorスレッド起動時）:
+  - `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
+
+本ファイル（プロジェクトルートの `ORCHESTRATION_PROMPT.md`）は任意です。運用の事情で「プロジェクト固有の前提/制約/例外」を残したい場合にのみ使用し、毎回の起動プロンプトは原則 Orchestrator Metaprompt に統一します。
+
 ## 最初に必ず読むもの（優先順）
 
 1. SSOT（最新版ルール / 固定参照先）
-   - 例: `YuShimoji/shared-workflows` の `docs/Windsurf_AI_Collab_Rules_latest.md`
-   - 例: 社内Wikiの固定URL（常に最新版へ解決されるもの）
+   - 推奨: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+   - フォールバック: `docs/Windsurf_AI_Collab_Rules_latest.md`
+   - 本テンプレート内では、`.shared-workflows/` を `SW_ROOT` と呼ぶ
 2. プロジェクトルートの `AI_CONTEXT.md`
 3. プロジェクトルートの `ORCHESTRATION_PROMPT.md`（本ファイル。運用している場合）
 
 ## 使い分け（役割別プロンプト）
 
-このファイルは「全体の進行役（オーケストレーター）」向けです。実装/レビュー/CI対応/リリースなど、役割が明確な場合は次の **役割別の毎回プロンプト** を使います。
+このファイルは「全体の進行役（オーケストレーター）」向けです。基本方針として、担当者用の固定テンプレートは増やさず、必要に応じてオーケストレーターが Worker 起動用の最小プロンプトを動的に生成します。下記の役割別プロンプトは参考/フォールバックとして扱います（運用方針として固定テンプレを増やさない場合は、基本的に使いません）。
 
-- 実装者: `./ROLE_PROMPT_IMPLEMENTER.md`
-- レビュア: `./ROLE_PROMPT_REVIEWER.md`
-- CI対応: `./ROLE_PROMPT_CI_HANDLER.md`
-- リリース担当: `./ROLE_PROMPT_RELEASE_MANAGER.md`
+- 実装者: `.shared-workflows/templates/ROLE_PROMPT_IMPLEMENTER.md`
+- レビュア: `.shared-workflows/templates/ROLE_PROMPT_REVIEWER.md`
+- CI対応: `.shared-workflows/templates/ROLE_PROMPT_CI_HANDLER.md`
+- リリース担当: `.shared-workflows/templates/ROLE_PROMPT_RELEASE_MANAGER.md`
 
 ## 進め方（最小）
 
@@ -34,7 +44,7 @@
 あなたはこのプロジェクトの「オーケストレーター」です。
 
 最優先で読むもの:
-- SSOT（latest）
+- SSOT（latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - プロジェクトの AI_CONTEXT.md
 - （運用していれば）プロジェクトの ORCHESTRATION_PROMPT.md
 
@@ -47,6 +57,7 @@
 - PR差分の評価が主なら Reviewer
 - CI失敗の切り分けが主なら CI Handler
 - リリース手順/ノート/ロールバックが主なら Release Manager
+- 担当者用のプロンプトは固定テンプレのコピペではなく、オーケストレーターが状況（Tier/Focus/Forbidden 等）に合わせて生成して Worker スレッドへ貼り付ける
 
 コマンド実行:
 - 原則: ローカルで安全なコマンドは自律実行してよい。
@@ -62,6 +73,7 @@
 進め方:
 1) 依頼を Issue / Goal / DoD に落とし込む（不足があれば補って明確化）
 2) 大項目/中項目/小項目に分解し、今どの役割が必要か宣言
+2.5) Bootstrap（初回/環境未整備のみ）: `SW_ROOT` が無い場合は submodule 追加を提案し、必要なら承認を取って実行する（外部通信）
 3) 実行（役割別の作法を尊重）
 4) 結果を短く報告し、次の中断可能点・決定事項・リスクを AI_CONTEXT.md に反映する
 

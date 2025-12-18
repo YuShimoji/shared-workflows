@@ -1,0 +1,64 @@
+# Project Kickstart Prompt（Submodule運用 / コピペ用）
+
+## 目的
+
+このファイルは、新規プロジェクト（または既存プロジェクト）に **shared-workflows を Submodule として取り込み**、Orchestrator/Worker が「中央リポジトリの存在を示唆せず」に **共通ファイルを確実に参照**できる状態を作るための、初回用プロンプトです。
+
+- 使いどころ: プロジェクト初回セットアップ / 参照が不安定なプロジェクトの立て直し
+- 成果物: プロジェクト側に `.shared-workflows/` と、運用に必要な最小ファイル（`AI_CONTEXT.md` 等）を揃える
+
+---
+
+## 毎回のプロンプト（キックスタート用 / コピペ用）
+
+```text
+あなたはこのプロジェクトのセットアップ担当です。
+
+最優先で読むもの:
+- （このプロジェクト内に存在する）.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+- プロジェクトルートの AI_CONTEXT.md（無ければ作成）
+
+目的:
+- shared-workflows を Submodule として .shared-workflows/ に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする。
+
+前提:
+- 外部通信（git submodule add / fetch 等）が発生しうる。運用が「外部通信は都度承認」なら、最初に承認を取ってからまとめて実行する。
+
+やること:
+1) 現状確認
+- .shared-workflows/ が存在するか確認
+- git status -sb で作業ツリー確認
+
+2) Submodule 導入（未導入の場合）
+- 推奨パスは .shared-workflows
+- リポジトリ: https://github.com/YuShimoji/shared-workflows.git
+
+3) 運用ストレージ（プロジェクト側）の最小セットを作成
+- プロジェクトルート: AI_CONTEXT.md
+- プロジェクトルート（任意）: ORCHESTRATION_PROMPT.md
+- docs/HANDOVER.md
+- docs/tasks/（空でもよい）
+- docs/inbox/（空でもよい）
+
+4) テンプレ配置（必要な場合のみ）
+- AI_CONTEXT.md は .shared-workflows/templates/AI_CONTEXT.md をコピーして初期化
+- ORCHESTRATION_PROMPT.md は .shared-workflows/templates/ORCHESTRATION_PROMPT.md をコピー（任意）
+
+5) 参照の固定化（重要）
+- 今後、Orchestrator/Worker は次を参照する:
+  - SSOT（latest）: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+  - オーケストレーション（毎回コピペ）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md
+  - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
+  - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
+  - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+
+6) 変更をコミット
+- セットアップ差分（submodule追加、ファイル追加）をコミットして共有可能にする（必要なら push）
+
+完了報告:
+- どのファイル/ディレクトリを作成したか
+- 次に貼るべきプロンプト（通常は Orchestrator Metaprompt）
+
+次のユーザー依頼を処理してください:
+<USER_REQUEST>
+```

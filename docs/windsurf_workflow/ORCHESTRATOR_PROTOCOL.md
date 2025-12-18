@@ -1,16 +1,16 @@
 # Windsurf Orchestration Protocol
-
-> 分散開発ワークフローのための標準プロトコル。Orchestrator用とWorker用の2種類のプロンプトで構成される。
-
----
-
-## 運用概要
-
-| 用途 | プロンプト | 使用頻度 |
-|------|-----------|---------|
-| オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
-| オーケストレーション | Orchestrator Protocol | 毎回（作業開始/統合時） |
-| 作業実行 | Worker Protocol | 毎回（各スレッド起動時） |
+ 
+> 分散開発ワークフローのための標準プロトコル。推奨の最小運用は「Kickstart（初回）」と「Orchestrator Metaprompt（毎回）」の2つ。Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成し、本ファイル内の Worker Protocol はその生成ベースとして扱う。
+ 
+ ---
+ 
+ ## 運用概要
+ 
+ | 用途 | プロンプト | 使用頻度 |
+ |------|-----------|---------|
+ | オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
+ | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
+ | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 
 **フロー:**
 ```
@@ -138,15 +138,17 @@ Next: [ユーザーの次のアクション]
 ---
 
 ## 2. Worker Protocol
-
-```text
-# Worker Protocol
-
-あなたは分散開発チームのWorkerである。
+ 
+ 通常、Workerスレッドには Orchestrator が生成した「チケット専用の最小プロンプト」を投入する。本セクションの Worker Protocol は、その生成のベース（参考文面）として扱う。
+ 
+ ```text
+ # Worker Protocol
+ 
+ あなたは分散開発チームのWorkerである。
 
 ## 必須参照
 作業開始前に以下を確認すること:
-- 中央ルール（SSOT / latest）: docs/Windsurf_AI_Collab_Rules_latest.md
+- 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - 進捗状況: docs/HANDOVER.md
 
 ## 基本制約
@@ -245,8 +247,8 @@ docs/
 
 | 操作 | コマンド/ファイル |
 |------|------------------|
-| 作業開始 | docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md を投入 |
-| Worker起動 | 新規スレッドに「Worker Protocol」を投入 |
+| 作業開始 | `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を投入（推奨。無ければ `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`） |
+| Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
 | 未完了タスク | docs/tasks/ で Status: OPEN を検索 |
 | 納品物確認 | docs/inbox/ 参照 |
@@ -255,7 +257,7 @@ docs/
 
 ## 5. 参照
 
-- 中央ルール（SSOT / latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`
-- 中央リポジトリ参照: `docs/CENTRAL_REPO_REF.md`
-- コピペ用メタプロンプト: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
-- レポート設定: `REPORT_CONFIG.yml`
+- 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
+- 中央リポジトリ参照: `.shared-workflows/docs/CENTRAL_REPO_REF.md`（推奨。無ければ `docs/CENTRAL_REPO_REF.md`）
+- コピペ用メタプロンプト: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`（推奨。無ければ `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`）
+- レポート設定: `.shared-workflows/REPORT_CONFIG.yml`（推奨。無ければ `REPORT_CONFIG.yml`）

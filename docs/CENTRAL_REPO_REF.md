@@ -51,3 +51,8 @@ git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-work
 ```
 
 参照: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+
+#### 運用メモ（推奨）
+
+- 初回導入/立て直しは、中央リポジトリの `templates/PROJECT_KICKSTART_PROMPT.md` をプロジェクトのセットアップ担当スレッドに貼り付けて実行する。
+- 以降の作業は、プロジェクト内の `.shared-workflows/` を参照することで「中央リポジトリの存在を示唆せず」に SSOT を安定参照できる。
