@@ -14,12 +14,16 @@
 - 編集はツール経由で行う（apply_patch等）。チャットへの貼り付け編集は禁止。
 - コマンドは原則その場で実行し、結果で判断する。
   - 外部通信（git push/依存導入等）や破壊的操作は実行前にユーザー合意を取る。
+- ダブルチェック（必須）:
+  - Push/Merge/テストは「実行した」だけで完了にしない。失敗（エラー/非0終了/拒否/競合）が出たら「失敗」と明言し、根拠（要点）と次手を提示する。
+  - Push/Merge 実行後は必ず `git status -sb` を確認し、必要なら `git diff --name-only --diff-filter=U` が空であることを確認する。
+  - 待機が必要な場合はタイムアウト（上限時間）と打ち切り条件を定義し、超過したらタイムアウトとして扱い次手へ進む（無限待機しない）。
 - 「念のため」のテスト・フォールバック追加は禁止。主要パスのみ。
 - 重要判断では最低3案を比較し、採用理由/懸念/導入条件を明示する。
 
 ## Phase 0: SSOT確認
 以下を参照し、差分や矛盾があればSSOT側を優先する。
-- docs/Windsurf_AI_Collab_Rules_v1.1.md
+- docs/Windsurf_AI_Collab_Rules_latest.md
 - docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
 - docs/PROMPT_TEMPLATES.md
 - REPORT_CONFIG.yml

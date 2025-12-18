@@ -43,6 +43,6 @@
 
 ## 4. 参照
 
-- 中央ルール: `docs/Windsurf_AI_Collab_Rules_v1.1.md`
+- 中央ルール: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - レポート設定: `REPORT_CONFIG.yml`

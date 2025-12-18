@@ -12,7 +12,7 @@
 
 | ファイル | 役割 |
 |----------|------|
-| `docs/Windsurf_AI_Collab_Rules_v1.1.md` | 中央ルール |
+| `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（固定参照先 / latest） |
 | `docs/PROMPT_TEMPLATES.md` | テンプレート集 |
 | `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` | オーケストレーション・プロトコル |
 | `REPORT_CONFIG.yml` | レポート設定 |
@@ -31,7 +31,7 @@ Windsurfの Settings > Memories に以下を追加:
 
 ```
 中央リポジトリ: c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1
-作業開始時は上記リポジトリの docs/Windsurf_AI_Collab_Rules_v1.1.md を参照すること。
+作業開始時は上記リポジトリの docs/Windsurf_AI_Collab_Rules_latest.md を参照すること。
 ```
 
 ### 方法2: プロジェクト内に参照ファイルを配置
@@ -41,7 +41,7 @@ Windsurfの Settings > Memories に以下を追加:
 ```markdown
 ## 中央ルール参照
 - Path: c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1
-- SSOT: docs/Windsurf_AI_Collab_Rules_v1.1.md
+- SSOT: docs/Windsurf_AI_Collab_Rules_latest.md
 ```
 
 ### 方法3: Git Submodule
@@ -50,4 +50,4 @@ Windsurfの Settings > Memories に以下を追加:
 git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows
 ```
 
-参照: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
+参照: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
