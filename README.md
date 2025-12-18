@@ -17,6 +17,7 @@
 ### テンプレート
 
 - `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
+- `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
 - `templates/ISSUE_TEMPLATE.md` - Issue作成用テンプレート
 - `templates/PR_TEMPLATE.md` - PR作成用テンプレート
 - `templates/cleanup.sh` - クリーンアップチェックスクリプト
