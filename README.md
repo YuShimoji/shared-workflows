@@ -46,10 +46,13 @@
 
 1. プロジェクトルートに `AI_CONTEXT.md` を配置（`templates/AI_CONTEXT.md` をコピー）
 2. `scripts/cleanup.sh` を配置（`templates/cleanup.sh` をコピーしてカスタマイズ）
-3. CI設定にPre-flightチェックを組み込む
-4. AI に最新版SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
+3. （任意）プロジェクトルートに `ORCHESTRATION_PROMPT.md` を配置（`templates/ORCHESTRATION_PROMPT.md` をコピー）
+4. CI設定にPre-flightチェックを組み込む
+5. AI に最新版SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
+6. （任意）`docs/ISSUES.md` を起点にバックログを管理し、Issue同期ワークフロー（`.github/workflows/sync-issues.yml`）でGitHub Issueに反映する
 
 ## 関連リンク
 
 - [Windsurf AI 協調開発ルール（最新版 / SSOT）](./docs/Windsurf_AI_Collab_Rules_latest.md)
 - [変更履歴（v2.0）](./docs/Windsurf_AI_Collab_Rules_v2.0.md#変更履歴)
+- [Issue同期用バックログ（docs/ISSUES.md）](./docs/ISSUES.md)
