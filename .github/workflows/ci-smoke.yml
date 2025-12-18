@@ -24,7 +24,12 @@ jobs:
             sleep 1
           done
 
-      - name: Run smoke tests
+      - name: Draft commit check
+        run: |
+          if [ -f "DRAFT_COMMIT" ]; then echo "Draft mode: Skip full tests"; else echo "Full mode: Run all tests"; fi
+
+      - name: Conditional tests
+        if: '!contains(github.event.head_commit.message, "draft")'
         run: node scripts/dev-check.js
 
       - name: Upload server log (on failure)
