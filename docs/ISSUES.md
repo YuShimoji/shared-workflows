@@ -4,6 +4,7 @@
 
 - 更新の基本: 見出しタイトルを変えなければ同じIssueが更新されます
 - 削除の扱い: ここから削除された見出しは、`managed:docs-sync` ラベル付きの既存Issueが自動でクローズされます
+- 実行方法: `docs/ISSUES.md` 更新時に自動実行（mainのみ）し、必要なら手動実行（workflow_dispatch）もできます
 
 ---
 
@@ -16,11 +17,11 @@
 ### DoD（受入基準）
 
 - [ ] 本ファイルの運用ルール（命名、更新、削除の扱い）が簡潔に記載されている
-- [ ] Actionsから手動実行（workflow_dispatch）でIssue同期ができる
+- [ ] Actionsから自動実行（push）または手動実行（workflow_dispatch）でIssue同期ができる
 
 ### Note（補足）
 
-- 先に `.github/workflows/sync-issues.yml` を手動実行対応にする（workflow_dispatch）
+- `.github/workflows/sync-issues.yml` は `docs/ISSUES.md` 更新時に自動実行（push）し、必要なら手動実行（workflow_dispatch）もできます
 
 ## 2) README に Issue 同期（docs/ISSUES.md）運用の導線を追加
 

@@ -3,6 +3,11 @@ name: Reusable Sync Issues from docs
 on:
   workflow_call:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/ISSUES.md
 
 permissions:
   issues: write
