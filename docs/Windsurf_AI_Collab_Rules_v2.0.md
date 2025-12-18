@@ -711,6 +711,26 @@ git push
 
 ---
 
+## 付録 G: 毎回のプロンプト（テンプレ / 役割別）
+
+運用の目的は「迷わず、止まらず、同じ品質で回す」ことです。
+
+- オーケストレーション（全体進行）: `templates/ORCHESTRATION_PROMPT.md`
+- 実装者（Implementer）: `templates/ROLE_PROMPT_IMPLEMENTER.md`
+- レビュア（Reviewer）: `templates/ROLE_PROMPT_REVIEWER.md`
+- CI対応（CI Handler）: `templates/ROLE_PROMPT_CI_HANDLER.md`
+- リリース担当（Release Manager）: `templates/ROLE_PROMPT_RELEASE_MANAGER.md`
+
+### 使い分け（最小）
+
+- 依頼を分解して役割を切り替えたい → **オーケストレーション**
+- 変更を作る（テスト込み） → **実装者**
+- PR差分を評価して指摘を返す → **レビュア**
+- CIを緑に戻す → **CI対応**
+- リリースノート/手順/ロールバックを整える → **リリース担当**
+
+---
+
 ## 変更履歴
 
 - **v2.0 (2025-01-01)**: 全面的な再設計。自動マージの確実性向上、クリーンアップの義務化

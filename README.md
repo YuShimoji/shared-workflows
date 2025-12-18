@@ -18,6 +18,10 @@
 
 - `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
 - `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
+- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用）
+- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用）
+- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用）
+- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 毎回コピペ用）
 - `templates/ISSUE_TEMPLATE.md` - Issue作成用テンプレート
 - `templates/PR_TEMPLATE.md` - PR作成用テンプレート
 - `templates/cleanup.sh` - クリーンアップチェックスクリプト
@@ -50,6 +54,8 @@
 4. CI設定にPre-flightチェックを組み込む
 5. AI に最新版SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
 6. （任意）`docs/ISSUES.md` を起点にバックログを管理し、Issue同期ワークフロー（`.github/workflows/sync-issues.yml`）でGitHub Issueに反映する
+
+役割が明確な場合は、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト（コピペ用）」を使うと、返信フォーマットとエッジケース対応まで一貫します。
 
 ## 関連リンク
 
