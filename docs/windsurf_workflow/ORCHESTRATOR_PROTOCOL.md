@@ -90,6 +90,10 @@
 
 docs/tasks/ にチケットファイルを作成。
 
+チケットの雛形（推奨）:
+
+- `.shared-workflows/templates/TASK_TICKET_TEMPLATE.md`
+
 ファイル名: TASK_[番号]_[担当名].md
 
 内容:
@@ -138,6 +142,23 @@ Next: [ユーザーの次のアクション]
 
 その後、チケットファイルをコミット・プッシュ。
 ```
+
+---
+
+## Phase 4.5: 巡回監査（不備検知 / 乖離検知）
+
+最低限、次をチェックして異常を検知する:
+
+1. DONE チケットに Report パスがあるか（なければ不備）
+2. docs/inbox/ の REPORT が、対応チケットに紐づいているか（紐づかない場合は不備）
+3. docs/HANDOVER.md の要約が、OPEN/IN_PROGRESS の列挙と矛盾していないか（乖離）
+
+異常があれば、最小の修正（追記/ステータス修正/タスク化）を行い、根拠を残す。
+
+任意で、監査を機械化する（推奨。ローカル安全コマンド）:
+- `node .shared-workflows/scripts/orchestrator-audit.js`（Submoduleが無い場合は `node scripts/orchestrator-audit.js`）
+
+Worker レポート内の `## Proposals` は、次回タスクの候補として回収し、必要なら `docs/tasks/` に新規チケットを起票する。
 
 ---
 

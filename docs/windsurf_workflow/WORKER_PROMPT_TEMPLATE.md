@@ -40,7 +40,7 @@
 - 仕様の仮定が 3 つ以上必要
 - 依存関係の追加/更新が必要
 - 外部通信（git fetch/pull/push 等）が必要で、GitHubAutoApprove が true であることが docs/HANDOVER.md で確認できない
-- 破壊的/復旧困難（rebase/reset/force push 等）が必要
+- 破壊的/復旧困難（rebase/reset/force push 等）が必要（GitHubAutoApprove が true でも常に停止）
 - 長時間（数分以上）かかり、タイムアウト超過が見込まれる
 
 ## ルール
@@ -81,6 +81,9 @@ Completed: <ISO8601>
 
 ## Handover
 - Orchestrator への申し送り（次にやること、注意点、停止条件に該当した事実など）
+
+## Proposals（任意）
+- 担当外で気づいた改善案/バグ/追加タスク案（次回Orchestratorが回収してタスク化する前提）
 ```
 
 ---

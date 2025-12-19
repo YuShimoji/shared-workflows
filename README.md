@@ -21,6 +21,7 @@
 - `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（Submodule運用 / 推奨）
 - `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（毎回コピペ / 推奨。プロジェクト側では `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を貼る）
 - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
+- `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形（Orchestratorがチケット発行時に使用）
 - `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用 / 参考・フォールバック）
 - `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用 / 参考・フォールバック）
 - `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用 / 参考・フォールバック）
@@ -86,6 +87,8 @@
     - `docs/tasks/`: `Status: OPEN/IN_PROGRESS/DONE`（チケットのSSOT）
     - `docs/inbox/`: `REPORT_...md`（Worker納品物。次回Orchestratorが回収）
     - `docs/HANDOVER.md`: 全体進捗、ブロッカー、運用フラグ（例: `GitHubAutoApprove: true`）
+- **巡回監査（任意）**: `node .shared-workflows/scripts/orchestrator-audit.js`
+  - 見る箇所: Warnings/Anomalies（報告漏れ/乖離の検知）
 
 ### 1) 作業開始（新規/再開）
 

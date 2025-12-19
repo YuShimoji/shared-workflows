@@ -31,6 +31,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - コマンドは原則その場で実行し、結果で判断する。
   - 外部通信（git push/依存導入等）や破壊的操作は実行前にユーザー合意を取る。
     - ただし **GitHub操作を自動承認する運用（GitHubAutoApprove=true）** なら、push/PR/merge で承認待ち停止しない。
+    - ただし GitHubAutoApprove が true でも、破壊的/復旧困難（rebase/reset/force push 等）は自動実行しない（常に停止して合意を取る）。
 - ダブルチェック（必須）:
   - Push/Merge/テストは「実行した」だけで完了にしない。失敗（エラー/非0終了/拒否/競合）が出たら「失敗」と明言し、根拠（要点）と次手を提示する。
   - Push/Merge 実行後は必ず `git status -sb` を確認し、必要なら `git diff --name-only --diff-filter=U` が空であることを確認する。
@@ -75,6 +76,20 @@ SSOTが読めない/参照が不確実な場合は停止し、参照方法（特
    - ファイルがあれば docs/HANDOVER.md に統合
    - 回収後は git rm docs/inbox/*
    - 統合結果をコミット
+
+## Phase 1.5: 巡回監査（不備検知 / 乖離検知）
+docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を検知する:
+
+- Status: DONE のチケットに Report パスが無い / 参照先ファイルが存在しない
+- docs/inbox/ に REPORT があるのに、対応するチケットが無い / Status が DONE ではない
+- docs/HANDOVER.md の進捗要約と、未完了チケット（OPEN/IN_PROGRESS）の列挙が乖離している
+
+異常があれば「原因仮説」「最小の修正（追記/ステータス修正/タスク化）」を提案し、必要なら Orchestrator 自身が docs/ を修正して整合させる。
+
+任意で、監査を機械化する（推奨。ローカル安全コマンド）:
+- `node .shared-workflows/scripts/orchestrator-audit.js`（Submoduleが無い場合は `node scripts/orchestrator-audit.js`）
+
+また、Worker レポート内の `## Proposals` は次回タスク化の候補として回収し、必要なら `docs/tasks/` に新規チケットを起票する。
 
 ## Phase 2: 状況把握
 1. docs/HANDOVER.md を読み、現在の目標/進捗/ブロッカー/バックログを抽出

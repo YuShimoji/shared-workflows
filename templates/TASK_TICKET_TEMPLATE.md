@@ -1,0 +1,33 @@
+# Task: <タスク名>
+Status: OPEN
+Tier: <1/2/3>
+Branch: <main または feature/...>
+Owner: <担当名>
+Created: <ISO8601>
+Report: 
+
+## Objective
+- 
+
+## Context
+- 
+
+## Focus Area
+- 
+
+## Forbidden Area
+- 
+
+## Constraints
+- テスト: 主要パスのみ（網羅テストは後続タスクへ分離）
+- フォールバック: 新規追加禁止
+- 
+
+## DoD
+- [ ] 目的が達成されている
+- [ ] 主要パスの検証が完了している
+- [ ] docs/inbox/ にレポート（REPORT_...md）が作成されている
+- [ ] 本チケットの Report 欄にレポートパスが追記されている
+
+## Notes
+- 
