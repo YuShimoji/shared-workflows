@@ -5,6 +5,10 @@
 - Active Threads: 0
 - Last Update: 2025-12-18T04:50+09:00
 
+## Operation Flags
+
+- GitHubAutoApprove: false
+
 ## Active Tasks
 | Task ID | Description | Assigned To | Status |
 |---------|-------------|-------------|--------|

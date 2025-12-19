@@ -5,12 +5,17 @@
 - このファイルは、プロジェクトでAI開発を回すための **オーケストレーション用プロンプト**です。
 - 各プロジェクトでは、本ファイルをプロジェクトルートに `ORCHESTRATION_PROMPT.md` として配置して運用します（任意）。
 
-## 推奨の最小運用（プロンプトは2つ）
+## 推奨の最小運用（3テンプレで完結）
 
 - 初回（セットアップ / 参照が不安定な場合の立て直し）:
   - `.shared-workflows/templates/PROJECT_KICKSTART_PROMPT.md` をセットアップ担当スレッドに貼る
 - 毎回（開発継続 / Orchestratorスレッド起動時）:
   - `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
+
+Orchestrator が各担当者（Worker）を起動する際の「タスク分解済みプロンプト」は、毎回チケット内容に合わせて **可変で自動生成**する。
+生成のベース（3つ目のテンプレ / 参照用）は以下:
+
+- `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 
 本ファイル（プロジェクトルートの `ORCHESTRATION_PROMPT.md`）は任意です。運用の事情で「プロジェクト固有の前提/制約/例外」を残したい場合にのみ使用し、毎回の起動プロンプトは原則 Orchestrator Metaprompt に統一します。
 

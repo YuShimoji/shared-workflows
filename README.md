@@ -20,6 +20,7 @@
 - `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
 - `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（Submodule運用 / 推奨）
 - `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（毎回コピペ / 推奨。プロジェクト側では `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を貼る）
+- `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
 - `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用 / 参考・フォールバック）
 - `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用 / 参考・フォールバック）
 - `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用 / 参考・フォールバック）
@@ -55,6 +56,7 @@
 - 初回のみ `templates/PROJECT_KICKSTART_PROMPT.md` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
 - 毎回 `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
 - Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+  - 生成ベース（参照用テンプレ）: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 
 1. プロジェクトルートに `AI_CONTEXT.md` を配置（`templates/AI_CONTEXT.md` をコピー）
 2. `scripts/cleanup.sh` を配置（`templates/cleanup.sh` をコピーしてカスタマイズ）
@@ -79,6 +81,11 @@
   - 見る箇所: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期（Next）`
 - **全体進行（任意）**: プロジェクトルート `ORCHESTRATION_PROMPT.md`
   - 見る箇所: `毎回のプロンプト（オーケストレーター用）` / `エッジケース早見表` / `デモ`
+- **タスク堆積（必須）**: `docs/tasks/` / `docs/inbox/` / `docs/HANDOVER.md`
+  - 見る箇所:
+    - `docs/tasks/`: `Status: OPEN/IN_PROGRESS/DONE`（チケットのSSOT）
+    - `docs/inbox/`: `REPORT_...md`（Worker納品物。次回Orchestratorが回収）
+    - `docs/HANDOVER.md`: 全体進捗、ブロッカー、運用フラグ（例: `GitHubAutoApprove: true`）
 
 ### 1) 作業開始（新規/再開）
 
@@ -116,6 +123,8 @@
   - 見る箇所: `Step 5: Pre-flight Check` / `Step 8: CI実行（AIは待機）`
 - **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
   - 見る箇所: `デモ3: CIが失敗する` / `デモ5: 権限不足` / `デモ7: Secrets/環境変数が足りない`
+
+（補足）Worker起動プロンプトの作り方は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を参照。
 
 ### 6) リリース（本番系はTier 3になりやすい）
 

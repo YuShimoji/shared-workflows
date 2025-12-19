@@ -40,6 +40,10 @@
 - docs/tasks/（空でもよい）
 - docs/inbox/（空でもよい）
 
+空ディレクトリをGit管理したい場合は、次を作る（任意）:
+- docs/tasks/.gitkeep
+- docs/inbox/.gitkeep
+
 4) テンプレ配置（必要な場合のみ）
 - AI_CONTEXT.md は .shared-workflows/templates/AI_CONTEXT.md をコピーして初期化
 - ORCHESTRATION_PROMPT.md は .shared-workflows/templates/ORCHESTRATION_PROMPT.md をコピー（任意）
@@ -51,6 +55,11 @@
   - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+
+運用フラグ（重要）:
+- GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 `docs/HANDOVER.md` に
+  - `GitHubAutoApprove: true`
+  を記載して判断根拠を固定する（未記載なら Orchestrator が1回だけ確認して追記する）。
 
 6) 変更をコミット
 - セットアップ差分（submodule追加、ファイル追加）をコミットして共有可能にする（必要なら push）

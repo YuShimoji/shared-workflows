@@ -1,16 +1,20 @@
 # Windsurf Orchestration Protocol
  
-> 分散開発ワークフローのための標準プロトコル。推奨の最小運用は「Kickstart（初回）」と「Orchestrator Metaprompt（毎回）」の2つ。Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成し、本ファイル内の Worker Protocol はその生成ベースとして扱う。
+> 分散開発ワークフローのための標準プロトコル。推奨の最小運用は「Kickstart（初回）」と「Orchestrator Metaprompt（毎回）」の2つを“貼る”運用。
+> ただし運用全体としては、Worker用プロンプトの生成ベース（テンプレ）も含めて **3テンプレで完結**する。
+> Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成し、`.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` をベースとして扱う。
  
  ---
  
  ## 運用概要
  
- | 用途 | プロンプト | 使用頻度 |
- |------|-----------|---------|
- | オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
- | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
- | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
+| 用途 | プロンプト | 使用頻度 |
+|------|-----------|---------|
+| 初回セットアップ | Project Kickstart Prompt | 初回（セットアップ/立て直し） |
+| オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
+| オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
+| 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
+| Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
 
 **フロー:**
 ```
@@ -140,6 +144,10 @@ Next: [ユーザーの次のアクション]
 ## 2. Worker Protocol
  
  通常、Workerスレッドには Orchestrator が生成した「チケット専用の最小プロンプト」を投入する。本セクションの Worker Protocol は、その生成のベース（参考文面）として扱う。
+
+Worker Prompt の生成ベース（テンプレ）は以下:
+
+- `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
  
  ```text
  # Worker Protocol
@@ -225,6 +233,15 @@ Completed: [ISO8601]
 4. 全ファイルをコミット・プッシュ
 5. チャットに1行のみ:
    Done: TASK_[番号]. Report: docs/inbox/REPORT_xxx.md
+
+追加ルール（申し送りの確実化）:
+
+- DONE にする前に、チケットファイル（`docs/tasks/TASK_*.md`）へ **Report パス** を追記する
+- 停止条件に該当した場合は、チケットを DONE にせず、Status を IN_PROGRESS（または BLOCKED）として
+  - 事実（何が必要になったか）
+  - 根拠（エラー要点/ログ要点）
+  - 次手（候補）
+  を残す
 ```
 
 ---

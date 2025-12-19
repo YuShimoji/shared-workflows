@@ -5,7 +5,7 @@
 ## リポジトリ情報
 
 - **リポジトリ名**: shared-workflows
-- **絶対パス**: `c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1`
+- **絶対パス**: `<your-local-path-to-shared-workflows>`（環境依存）
 - **GitHub URL**: https://github.com/YuShimoji/shared-workflows
 
 ## SSOT (Single Source of Truth)
@@ -30,7 +30,7 @@
 Windsurfの Settings > Memories に以下を追加:
 
 ```
-中央リポジトリ: c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1
+中央リポジトリ: <your-local-path-to-shared-workflows>
 作業開始時は上記リポジトリの docs/Windsurf_AI_Collab_Rules_latest.md を参照すること。
 ```
 
@@ -40,7 +40,7 @@ Windsurfの Settings > Memories に以下を追加:
 
 ```markdown
 ## 中央ルール参照
-- Path: c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1
+- Path: <your-local-path-to-shared-workflows>
 - SSOT: docs/Windsurf_AI_Collab_Rules_latest.md
 ```
 

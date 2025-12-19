@@ -45,4 +45,6 @@
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
+- Orchestrator起動（毎回コピペ）: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
+- Worker生成テンプレ（参照）: `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - レポート設定: `REPORT_CONFIG.yml`
