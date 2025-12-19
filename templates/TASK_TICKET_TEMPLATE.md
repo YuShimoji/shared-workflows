@@ -30,4 +30,5 @@ Report:
 - [ ] 本チケットの Report 欄にレポートパスが追記されている
 
 ## Notes
-- 
+- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想定
+- BLOCKED の場合は、事実/根拠/次手（候補）を本文に追記し、Report に docs/inbox/REPORT_...md を必ず設定

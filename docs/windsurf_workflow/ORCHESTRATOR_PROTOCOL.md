@@ -60,6 +60,10 @@
    - git rm docs/inbox/* で削除
    - 統合結果をコミット
 
+   併せて、未完了/停止の回収を行う:
+   - docs/tasks/ の Status: BLOCKED を検索し、対応する Report の有無を確認
+   - BLOCKED があれば、次の一手（承認依頼/チケット分割/代替手順）を決めてチケット更新または新規チケット起票
+
 3. 状況把握
    - docs/HANDOVER.md から進捗確認
    - docs/tasks/ から未完了チケット確認
@@ -290,6 +294,7 @@ docs/
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
 | 未完了タスク | docs/tasks/ で Status: OPEN を検索 |
+| ブロッカー回収 | docs/tasks/ で Status: BLOCKED を検索（Report/次手の回収） |
 | 納品物確認 | docs/inbox/ 参照 |
 
 ---

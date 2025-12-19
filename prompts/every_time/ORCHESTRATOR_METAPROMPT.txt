@@ -14,6 +14,14 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 
 - `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 
+重要（未完了で止まらないための運用）:
+- Worker が停止条件に該当した場合でも、何も出さずに止まることを禁止する。
+- 必ず以下を残してから停止させる（テンプレにも明記）:
+  - チケットを Status: BLOCKED（または IN_PROGRESS）で更新し、事実/根拠/次手/Report パスを追記
+  - docs/inbox/ に未完了レポート（REPORT_...md）を作成
+  - commit（push は GitHubAutoApprove 根拠がある場合のみ）
+  - チャット 1 行: Blocked: <TICKET_PATH> ... Report: docs/inbox/REPORT_...md
+
 担当者（Worker）用の固定テンプレートは増やさない方針とし、Worker起動用の最小プロンプトは本メタプロンプトに従って Orchestrator が都度生成する。
 
 ## SW_ROOT（shared-workflows の配置）

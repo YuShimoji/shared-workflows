@@ -35,6 +35,11 @@
 - Focus Area: <FOCUS_AREA>
 - Forbidden Area: <FORBIDDEN_AREA>
 
+補足（ブランチ不一致）:
+- 現在のブランチが <BRANCH> と異なること自体は停止理由ではない。
+- まず `git status -sb` で未コミット差分が無いことを確認し、可能なら `git switch <BRANCH>`（または `git checkout <BRANCH>`）で切り替える。
+- 切替に「破壊的/復旧困難」操作が必要になりそうな場合のみ停止条件として扱う。
+
 ## 停止条件（当てはまったら作業を止めてOrchestratorに申し送り）
 - Forbidden Area への変更が必要
 - 仕様の仮定が 3 つ以上必要
@@ -43,9 +48,33 @@
 - 破壊的/復旧困難（rebase/reset/force push 等）が必要（GitHubAutoApprove が true でも常に停止）
 - 長時間（数分以上）かかり、タイムアウト超過が見込まれる
 
+## 停止時の必須アウトプット（止まっても「次に進むトリガー」を残す）
+停止条件に該当した場合でも、以下を必ず行ってから停止する。
+
+1) チケット（<TICKET_PATH>）を更新
+- Status: DONE にしない（IN_PROGRESS のまま、または BLOCKED にする）
+- 事実: 何が起きたか（例: CommandNotFoundException / ブランチ不一致 / 権限不足）
+- 根拠: エラーログの要点（貼りすぎない）
+- 次手: Orchestrator/人間が次に選べる選択肢を 1-3 個
+- Report: に `docs/inbox/REPORT_...md` のパスを追記
+
+2) docs/inbox/ に「未完了レポート」を作る（必須）
+- 成果物が未完了でも、調査結果・詰まりポイント・次手を回収できる形で残す
+
+3) commit する（必須）
+- push は、GitHubAutoApprove=true で根拠が確認できる場合のみ自律実行してよい
+- それ以外は「push が必要」までを明記して停止する
+
+4) チャットは 1 行だけ（必須）
+- Blocked: <TICKET_PATH>. Reason: <要点>. Next: <次手要点>. Report: docs/inbox/REPORT_...md
+
 ## ルール
 - チャットで完結させない。成果はファイルで残す（下記）。
 - コマンドは実行して結果で判断。失敗したら「失敗」と明言し、根拠（エラー要点）と次手を出す。
+- 指示されたコマンドが環境に存在しない場合（CommandNotFoundException 等）は、それ自体を停止条件にしない:
+  - まず `Get-Command <cmd>`（PowerShell）等で存在確認
+  - 代替コマンド/代替手順を 1-3 個提示して継続
+  - それでも前提ツールの導入（依存追加/外部通信）が必要なら停止条件へ
 - コマンドをスタックさせない:
   - 期待時間を宣言し、進まない場合はタイムアウトとして打ち切る（無限待機しない）
   - 失敗したコマンドを放置しない（原因→次手→再試行/別案/エスカレーション）
@@ -65,6 +94,7 @@
 ## 納品レポート（docs/inbox/REPORT_...md）フォーマット
 # Report: <タスク名>
 Ticket: <TICKET_PATH>
+State: DONE/BLOCKED
 Completed: <ISO8601>
 
 ## Changes
@@ -78,6 +108,13 @@ Completed: <ISO8601>
 
 ## Remaining
 - なし / <残件>
+
+## Blocked（State: BLOCKED の場合）
+- Reason: <要点>
+- Evidence: <ログ要点>
+- Options:
+  - <次手1>
+  - <次手2>
 
 ## Handover
 - Orchestrator への申し送り（次にやること、注意点、停止条件に該当した事実など）

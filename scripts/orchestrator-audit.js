@@ -47,9 +47,9 @@ function main() {
     const report = parseKeyLine(content, 'Report');
     tasks.set(file, { file, full, status, report });
 
-    if (status === 'DONE') {
+    if (status === 'DONE' || status === 'BLOCKED') {
       if (!report) {
-        anomalies.push(`DONE チケットに Report がありません: docs/tasks/${file}`);
+        anomalies.push(`${status} チケットに Report がありません: docs/tasks/${file}`);
       } else {
         const reportPath = path.isAbsolute(report) ? report : path.join(root, report);
         if (!fs.existsSync(reportPath)) {
