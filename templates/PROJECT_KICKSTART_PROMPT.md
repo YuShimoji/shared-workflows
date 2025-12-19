@@ -1,4 +1,4 @@
-# Project Kickstart Prompt（Submodule運用 / コピペ用）
+# Project Kickstart Prompt（Submodule運用 / 参照）
 
 ## 目的
 
@@ -6,6 +6,9 @@
 
 - 使いどころ: プロジェクト初回セットアップ / 参照が不安定なプロジェクトの立て直し
 - 成果物: プロジェクト側に `.shared-workflows/` と、運用に必要な最小ファイル（`AI_CONTEXT.md` 等）を揃える
+
+コピペ用（推奨）:
+- `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
 
 ---
 
@@ -52,7 +55,7 @@
 - 今後、Orchestrator/Worker は次を参照する:
   - SSOT（latest）: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
   - 運用者の入口: .shared-workflows/docs/windsurf_workflow/OPEN_HERE.md
-  - オーケストレーション（毎回コピペ）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md
+  - オーケストレーション（毎回コピペ）: .shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt
   - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する

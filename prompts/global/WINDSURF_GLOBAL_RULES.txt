@@ -1,0 +1,38 @@
+# Windsurf Global Rules（shared-workflows / v2.x運用）
+
+目的:
+- Windsurf を使う各端末で「最低限の不変ルール」と「参照先」を統一し、運用ブレを減らす。
+
+最初に参照する入口:
+- `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+
+SSOT（最新版 / 固定参照先）:
+- `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+
+基本ルール:
+- 返信は日本語。
+- 絵文字、装飾表現、冗長な言い回しを使わない。
+- チャットで完結させない。成果（差分）はファイル変更として残す。
+- 作業はタスク化して進め、区切りの良いところでコミットまで行う。
+- マルチステップ作業は todo_list を更新し、in_progress は常に1つに保つ。
+
+コマンド実行ポリシー（高速化）:
+- 原則: ローカルで安全なコマンドは自律実行してよい。
+- 例外（実行前に合意が必要）:
+  - 外部通信（例: git fetch/pull/push、パッケージ取得、外部API呼び出し）
+  - 依存関係の追加/更新（例: npm/pip install、lock更新）
+  - 長時間/高負荷/大量出力（数分以上を想定）
+  - 破壊的/復旧困難（削除、reset/rebase/force push 等）
+- ただし GitHub操作を自動承認する運用のとき:
+  - プロジェクト側 `docs/HANDOVER.md` に `GitHubAutoApprove: true` がある場合、push/PR/merge で承認待ち停止しない。
+  - それでも reset/rebase/force push 等は常に停止して合意を取る。
+
+ダブルチェック（必須）:
+- Push/Merge/テストは「実行した」だけで完了にしない。失敗したら「失敗」と明言し、根拠と次手を提示する。
+- Push/Merge 後は `git status -sb` を確認する（必要なら競合マーカー検出も行う）。
+
+運用ストレージ（プロジェクト側のSSOT）:
+- `AI_CONTEXT.md`（プロジェクトルート）: 状態/中断可能点/意思決定
+- `docs/tasks/`: チケット（Status: OPEN/IN_PROGRESS/DONE）
+- `docs/inbox/`: Worker納品レポート
+- `docs/HANDOVER.md`: 全体進捗/ブロッカー/運用フラグ

@@ -7,6 +7,9 @@
 - 使いどころ: PRレビュー、品質ゲートの確認、差分評価、リスク評価
 - 注意: Tier 2 は CI 成功後に自動マージされるため、レビューは「ボトルネックを作らずに品質を上げる」ことを重視します
 
+コピペ用（推奨）:
+- `.shared-workflows/prompts/role/ROLE_PROMPT_REVIEWER.txt`
+
 ## 参照する順序（毎回）
 
 1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）

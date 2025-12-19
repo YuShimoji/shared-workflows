@@ -7,12 +7,12 @@
  ---
  
  ## 運用概要
- 
+
 | 用途 | プロンプト | 使用頻度 |
 |------|-----------|---------|
-| 初回セットアップ | Project Kickstart Prompt | 初回（セットアップ/立て直し） |
+| 初回セットアップ（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` | 初回（セットアップ/立て直し） |
 | 運用者の入口（参照） | OPEN HERE | 参照（迷った時） |
-| オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
+| オーケストレーション（コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | 毎回（Orchestratorスレッド起動時） |
 | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
@@ -286,7 +286,7 @@ docs/
 
 | 操作 | コマンド/ファイル |
 |------|------------------|
-| 作業開始 | `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を投入（推奨。無ければ `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`） |
+| 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`） |
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
 | 未完了タスク | docs/tasks/ で Status: OPEN を検索 |
@@ -298,5 +298,5 @@ docs/
 
 - 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - 中央リポジトリ参照: `.shared-workflows/docs/CENTRAL_REPO_REF.md`（推奨。無ければ `docs/CENTRAL_REPO_REF.md`）
-- コピペ用メタプロンプト: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`（推奨。無ければ `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`）
+- コピペ用メタプロンプト: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`）
 - レポート設定: `.shared-workflows/REPORT_CONFIG.yml`（推奨。無ければ `REPORT_CONFIG.yml`）

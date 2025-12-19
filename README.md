@@ -18,15 +18,19 @@
 
 - `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
 - `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
-- `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（Submodule運用 / 推奨）
+- `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（参照。説明付き / フォールバック）
 - `docs/windsurf_workflow/OPEN_HERE.md` - 運用者の入口（参照。どのフォルダを開く / どれをコピペする、を1枚に集約）
-- `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（毎回コピペ / 推奨。プロジェクト側では `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を貼る）
+- `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（参照）
 - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
+- `prompts/first_time/PROJECT_KICKSTART.txt` - 初回セットアップ用プロンプト（コピペ用）
+- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` - Orchestrator起動用（毎回コピペ用）
+- `prompts/global/WINDSURF_GLOBAL_RULES.txt` - Windsurf Global Rules（端末ごとの統一 / コピペ用）
+- `prompts/role/ROLE_PROMPT_*.txt` - 役割別プロンプト（コピペ用 / 参考・フォールバック）
 - `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形（Orchestratorがチケット発行時に使用）
-- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 毎回コピペ用 / 参考・フォールバック）
-- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 毎回コピペ用 / 参考・フォールバック）
-- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 毎回コピペ用 / 参考・フォールバック）
-- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 毎回コピペ用 / 参考・フォールバック）
+- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 参照。説明・デモ付き）
 - `templates/ISSUE_TEMPLATE.md` - Issue作成用テンプレート
 - `templates/PR_TEMPLATE.md` - PR作成用テンプレート
 - `templates/cleanup.sh` - クリーンアップチェックスクリプト
@@ -55,11 +59,15 @@
 
 最小運用（推奨）:
 
-- 初回のみ `templates/PROJECT_KICKSTART_PROMPT.md` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
+- 初回のみ `prompts/first_time/PROJECT_KICKSTART.txt` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
 - 運用者の入口（参照。どのフォルダを開く/どれをコピペする）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
-- 毎回 `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
+- 毎回 `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を Orchestrator スレッドに貼る
 - Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
   - 生成ベース（参照用テンプレ）: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+
+端末ごとの統一（推奨）:
+
+- Windsurf の Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼る
 
 1. プロジェクトルートに `AI_CONTEXT.md` を配置（`templates/AI_CONTEXT.md` をコピー）
 2. `scripts/cleanup.sh` を配置（`templates/cleanup.sh` をコピーしてカスタマイズ）
@@ -79,6 +87,7 @@
 ### 0) 迷ったらまずここ（毎回の基本）
 
 - **運用者の入口（参照。どのフォルダを開く/どれをコピペする）**: `docs/windsurf_workflow/OPEN_HERE.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（プロジェクト側 / Submodule）
+- **コピペ用プロンプト集**: `prompts/`（このリポジトリ内） / `.shared-workflows/prompts/`（プロジェクト側 / Submodule）
 - **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
 - **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`

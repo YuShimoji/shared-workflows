@@ -7,6 +7,9 @@
 - 使いどころ: リリースノート作成、タグ/バージョン整理、変更点の要約、ロールバック手順整理
 - 注意: 本番デプロイや本番データ操作は Tier 3（高リスク）になりやすいので、基本は **提案・準備** に留めます
 
+コピペ用（推奨）:
+- `.shared-workflows/prompts/role/ROLE_PROMPT_RELEASE_MANAGER.txt`
+
 ## 参照する順序（毎回）
 
 1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）

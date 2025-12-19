@@ -7,6 +7,9 @@
 - 使いどころ: 実装・修正・リファクタリング・テスト追加
 - 対象: Tier 1/2 の日常作業（Tier 3 は人間承認を前提）
 
+コピペ用（推奨）:
+- `.shared-workflows/prompts/role/ROLE_PROMPT_IMPLEMENTER.txt`
+
 ## 参照する順序（毎回）
 
 1. SSOT（最新版）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）

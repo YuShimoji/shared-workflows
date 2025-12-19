@@ -45,8 +45,11 @@
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
+- コピペ用プロンプト集: `prompts/`
+- Windsurf Global Rules（端末統一）: `prompts/global/WINDSURF_GLOBAL_RULES.txt`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- Orchestrator起動（毎回コピペ）: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
+- Orchestrator起動（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+- Orchestrator起動（参照）: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
 - Worker生成テンプレ（参照）: `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - チケット雛形: `templates/TASK_TICKET_TEMPLATE.md`
 - レポート設定: `REPORT_CONFIG.yml`

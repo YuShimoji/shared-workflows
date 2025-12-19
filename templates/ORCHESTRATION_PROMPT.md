@@ -8,9 +8,9 @@
 ## 推奨の最小運用（3テンプレで完結）
 
 - 初回（セットアップ / 参照が不安定な場合の立て直し）:
-  - `.shared-workflows/templates/PROJECT_KICKSTART_PROMPT.md` をセットアップ担当スレッドに貼る
+  - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` をセットアップ担当スレッドに貼る
 - 毎回（開発継続 / Orchestratorスレッド起動時）:
-  - `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
+  - `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を Orchestrator スレッドに貼る
 
 運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
 - `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`

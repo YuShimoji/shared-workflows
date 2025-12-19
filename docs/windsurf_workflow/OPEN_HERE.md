@@ -9,16 +9,20 @@
 
 ## 最短ルート（迷ったらこれだけ）
 
-開くフォルダ:
+開くフォルダ（参照）:
 - `.shared-workflows/docs/windsurf_workflow/`
 
+開くフォルダ（コピペ）:
+- `.shared-workflows/prompts/`
+
 毎回コピペするもの:
-- **Orchestrator起動（毎回）**: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
-  - コピペ範囲: ファイル内の `text` ブロック（テキスト用コードブロック）を丸ごと
+- **Orchestrator起動（毎回）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
 
 初回だけコピペするもの（環境が未整備の場合）:
-- **Kickstart（初回）**: `.shared-workflows/templates/PROJECT_KICKSTART_PROMPT.md`
-  - コピペ範囲: ファイル内の `text` ブロック（テキスト用コードブロック）を丸ごと
+- **Kickstart（初回）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
+
+Windsurf Global Rules（端末ごとの統一）:
+- **貼り付け用**: `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`
 
 参照するもの（コピペは原則しない）:
 - **Worker生成テンプレ（参照）**: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
@@ -47,4 +51,5 @@
 - ルール本体（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
 - テンプレ一覧: `.shared-workflows/docs/PROMPT_TEMPLATES.md`
 - オーケストレーション手順（参照）: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
+- コピペ用プロンプト集（貼るだけ）: `.shared-workflows/prompts/`
 - 進行の全体像（任意）: プロジェクトルート `ORCHESTRATION_PROMPT.md`（採用している場合のみ）

@@ -14,9 +14,13 @@
 |----------|------|
 | `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（固定参照先 / latest） |
 | `docs/PROMPT_TEMPLATES.md` | テンプレート集 |
-| `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（Submodule導入 / 立て直し） |
+| `prompts/first_time/PROJECT_KICKSTART.txt` | 初回セットアップ（コピペ用） |
+| `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（参照。説明付き / フォールバック） |
 | `docs/windsurf_workflow/OPEN_HERE.md` | 運用者の入口（どのフォルダを開く / どれをコピペする） |
-| `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` | Orchestrator起動（毎回コピペ） |
+| `prompts/` | コピペ用プロンプト集（貼るだけ） |
+| `prompts/global/WINDSURF_GLOBAL_RULES.txt` | Windsurf Global Rules（端末ごとの統一 / コピペ用） |
+| `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | Orchestrator起動（毎回コピペ） |
+| `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` | Orchestrator起動（参照） |
 | `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` | オーケストレーション・プロトコル |
 | `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` | Worker起動プロンプト生成テンプレ（参照用） |
 | `templates/TASK_TICKET_TEMPLATE.md` | チケット雛形（docs/tasks/TASK_*.md） |
@@ -60,5 +64,5 @@ git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-work
 
 #### 運用メモ（推奨）
 
-- 初回導入/立て直しは、中央リポジトリの `templates/PROJECT_KICKSTART_PROMPT.md` をプロジェクトのセットアップ担当スレッドに貼り付けて実行する。
+- 初回導入/立て直しは、中央リポジトリの `prompts/first_time/PROJECT_KICKSTART.txt` をプロジェクトのセットアップ担当スレッドに貼り付けて実行する。
 - 以降の作業は、プロジェクト内の `.shared-workflows/` を参照することで「中央リポジトリの存在を示唆せず」に SSOT を安定参照できる。
