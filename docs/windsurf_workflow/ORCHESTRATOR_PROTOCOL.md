@@ -11,6 +11,7 @@
 | 用途 | プロンプト | 使用頻度 |
 |------|-----------|---------|
 | 初回セットアップ | Project Kickstart Prompt | 初回（セットアップ/立て直し） |
+| 運用者の入口（参照） | OPEN HERE | 参照（迷った時） |
 | オーケストレーション（コピペ用） | Orchestrator Metaprompt | 毎回（Orchestratorスレッド起動時） |
 | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |

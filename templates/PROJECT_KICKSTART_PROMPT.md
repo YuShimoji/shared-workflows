@@ -51,6 +51,7 @@
 5) 参照の固定化（重要）
 - 今後、Orchestrator/Worker は次を参照する:
   - SSOT（latest）: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+  - 運用者の入口: .shared-workflows/docs/windsurf_workflow/OPEN_HERE.md
   - オーケストレーション（毎回コピペ）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md
   - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md

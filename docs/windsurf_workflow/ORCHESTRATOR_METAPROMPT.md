@@ -11,6 +11,9 @@
 - 初回: `.shared-workflows/templates/PROJECT_KICKSTART_PROMPT.md`
 - 毎回: 本メタプロンプト
 
+運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
+- `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+
 Worker起動用プロンプト（各担当者向け）は、Orchestrator が **毎回動的生成**する。
 生成のベース（テンプレ）は以下（= 3つ目のテンプレ）:
 

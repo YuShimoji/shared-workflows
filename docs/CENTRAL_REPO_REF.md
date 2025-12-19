@@ -15,6 +15,7 @@
 | `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（固定参照先 / latest） |
 | `docs/PROMPT_TEMPLATES.md` | テンプレート集 |
 | `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（Submodule導入 / 立て直し） |
+| `docs/windsurf_workflow/OPEN_HERE.md` | 運用者の入口（どのフォルダを開く / どれをコピペする） |
 | `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` | Orchestrator起動（毎回コピペ） |
 | `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` | オーケストレーション・プロトコル |
 | `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` | Worker起動プロンプト生成テンプレ（参照用） |

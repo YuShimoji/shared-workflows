@@ -12,6 +12,9 @@
 - 毎回（開発継続 / Orchestratorスレッド起動時）:
   - `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
 
+運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
+- `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+
 Orchestrator が各担当者（Worker）を起動する際の「タスク分解済みプロンプト」は、毎回チケット内容に合わせて **可変で自動生成**する。
 生成のベース（3つ目のテンプレ / 参照用）は以下:
 

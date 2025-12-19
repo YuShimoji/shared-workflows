@@ -19,6 +19,7 @@
 - `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
 - `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
 - `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（Submodule運用 / 推奨）
+- `docs/windsurf_workflow/OPEN_HERE.md` - 運用者の入口（参照。どのフォルダを開く / どれをコピペする、を1枚に集約）
 - `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（毎回コピペ / 推奨。プロジェクト側では `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を貼る）
 - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
 - `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形（Orchestratorがチケット発行時に使用）
@@ -55,6 +56,7 @@
 最小運用（推奨）:
 
 - 初回のみ `templates/PROJECT_KICKSTART_PROMPT.md` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
+- 運用者の入口（参照。どのフォルダを開く/どれをコピペする）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
 - 毎回 `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` を Orchestrator スレッドに貼る
 - Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
   - 生成ベース（参照用テンプレ）: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
@@ -76,6 +78,7 @@
 
 ### 0) 迷ったらまずここ（毎回の基本）
 
+- **運用者の入口（参照。どのフォルダを開く/どれをコピペする）**: `docs/windsurf_workflow/OPEN_HERE.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（プロジェクト側 / Submodule）
 - **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
 - **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`
