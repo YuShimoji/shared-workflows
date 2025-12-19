@@ -92,14 +92,14 @@
 
 ### 1) 作業開始（新規/再開）
 
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md`（プロジェクト側 / Submodule）
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス`
 - **AI_CONTEXT.md**
   - 見る箇所: `進捗` / `次の中断可能点`
 
 ### 2) Issue化・計画（Goal/DoDの明文化）
 
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
   - 見る箇所: `3. 必須フロー（Tier 2の標準）` の `Step 1: Issue作成`
 - **テンプレ**: `templates/ISSUE_TEMPLATE.md`
 
@@ -107,13 +107,13 @@
 
 - **役割別プロンプト（実装者）**: `templates/ROLE_PROMPT_IMPLEMENTER.md`
   - 見る箇所: `毎回のプロンプト（コピペ用）` / `デモ`
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
   - 見る箇所: `Step 3: 実装` → `Step 4: クリーンアップチェック` → `Step 5: Pre-flight Check` → `Step 6: コミット`
 - **クリーンアップ**: `templates/cleanup.sh`（各プロジェクトで `scripts/cleanup.sh` に配置）
 
 ### 4) PR作成・レビュー
 
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
   - 見る箇所: `Step 7: PR自動作成` / `Step 8: CI実行（AIは待機）` / `Step 9: 自動マージ`
 - **役割別プロンプト（レビュア）**: `templates/ROLE_PROMPT_REVIEWER.md`
 - **テンプレ**: `templates/PR_TEMPLATE.md`
@@ -122,7 +122,7 @@
 
 - **役割別プロンプト（CI対応）**: `templates/ROLE_PROMPT_CI_HANDLER.md`
   - 見る箇所: `毎回のプロンプト（コピペ用）` / `判断基準` / `デモ`
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
   - 見る箇所: `Step 5: Pre-flight Check` / `Step 8: CI実行（AIは待機）`
 - **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
   - 見る箇所: `デモ3: CIが失敗する` / `デモ5: 権限不足` / `デモ7: Secrets/環境変数が足りない`
@@ -132,7 +132,7 @@
 ### 6) リリース（本番系はTier 3になりやすい）
 
 - **役割別プロンプト（リリース担当）**: `templates/ROLE_PROMPT_RELEASE_MANAGER.md`
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
   - 見る箇所: `2. 簡素化されたTier分類` の `Tier 3（人間承認必須）`
 
 ### 7) よくある詰まり（まとめ）

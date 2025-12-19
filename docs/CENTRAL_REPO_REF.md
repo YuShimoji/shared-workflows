@@ -14,7 +14,12 @@
 |----------|------|
 | `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（固定参照先 / latest） |
 | `docs/PROMPT_TEMPLATES.md` | テンプレート集 |
+| `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（Submodule導入 / 立て直し） |
+| `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` | Orchestrator起動（毎回コピペ） |
 | `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` | オーケストレーション・プロトコル |
+| `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` | Worker起動プロンプト生成テンプレ（参照用） |
+| `templates/TASK_TICKET_TEMPLATE.md` | チケット雛形（docs/tasks/TASK_*.md） |
+| `scripts/orchestrator-audit.js` | 巡回監査（任意。tasks/inbox/HANDOVER の乖離検知） |
 | `REPORT_CONFIG.yml` | レポート設定 |
 
 ## 参照の確実性（重要）
