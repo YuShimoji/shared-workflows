@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const child_process = require('child_process');
 
 function readFileSafe(filePath) {
   try {
@@ -18,20 +19,62 @@ function listFilesSafe(dirPath) {
 }
 
 function parseKeyLine(content, key) {
-  const re = new RegExp(`^${key}\\s*:\\s*(.*)$`, 'im');
+  const re = new RegExp(`^\\*\\*${key}\\*\\*\\s*:\\s*(.*)$`, 'im');
   const m = content.match(re);
   return m ? m[1].trim() : '';
 }
 
+function validateReportConsistency(reportPath, anomalies, warnings) {
+  const content = readFileSafe(reportPath);
+  if (!content) return;
+
+  const timestamp = parseKeyLine(content, 'Timestamp');
+  const actor = parseKeyLine(content, 'Actor');
+  const type = parseKeyLine(content, 'Type');
+  const duration = parseKeyLine(content, 'Duration');
+  const changes = parseKeyLine(content, 'Changes');
+
+  if (!timestamp) warnings.push(`レポート ${reportPath} に Timestamp がありません`);
+  if (!actor) warnings.push(`レポート ${reportPath} に Actor がありません`);
+  if (!type) warnings.push(`レポート ${reportPath} に Type がありません`);
+  if (!duration) warnings.push(`レポート ${reportPath} に Duration がありません`);
+  if (!changes) warnings.push(`レポート ${reportPath} に Changes がありません`);
+
+  const hasRisk = content.includes('## Risk');
+  const hasProposals = content.includes('## Proposals');
+  if (!hasRisk) warnings.push(`レポート ${reportPath} に Risk セクションがありません`);
+  if (!hasProposals) warnings.push(`レポート ${reportPath} に Proposals セクションがありません`);
+}
+
+function validateHandoverConsistency(handoverPath, anomalies, warnings) {
+  const handoverContent = readFileSafe(handoverPath);
+  if (!handoverContent) return;
+
+  const timestamp = parseKeyLine(handoverContent, 'Timestamp');
+  const actor = parseKeyLine(handoverContent, 'Actor');
+  const type = parseKeyLine(handoverContent, 'Type');
+  const mode = parseKeyLine(handoverContent, 'Mode');
+
+  if (!timestamp) warnings.push(`HANDOVER.md に Timestamp がありません`);
+  if (!actor) warnings.push(`HANDOVER.md に Actor がありません`);
+  if (!type) warnings.push(`HANDOVER.md に Type がありません`);
+  if (!mode) warnings.push(`HANDOVER.md に Mode がありません`);
+
+  const hasRisk = handoverContent.includes('## リスク');
+  const hasProposals = handoverContent.includes('## Proposals');
+  if (!hasRisk) warnings.push(`HANDOVER.md に リスク セクションがありません`);
+  if (!hasProposals) warnings.push(`HANDOVER.md に Proposals セクションがありません`);
+}
+
 function checkWorkerStatus(aiContextPath, anomalies, warnings) {
-  const content = readFileSafe(aiContextPath);
-  if (!content) {
+  const contextContent = readFileSafe(aiContextPath);
+  if (!contextContent) {
     warnings.push('AI_CONTEXT.md が存在しません。Workerステータスを確認できません。');
     return;
   }
-  const asyncMode = parseKeyLine(content, 'async_mode');
+  const asyncMode = parseKeyLine(contextContent, 'async_mode');
   const isAsync = asyncMode && asyncMode.toLowerCase() === 'true';
-  const workerLine = parseKeyLine(content, 'Worker完了ステータス');
+  const workerLine = parseKeyLine(contextContent, 'Worker完了ステータス');
   if (!workerLine) {
     warnings.push('AI_CONTEXT.md に Worker完了ステータス が記載されていません。');
     return;
@@ -66,9 +109,11 @@ function main() {
 
   const anomalies = [];
   const warnings = [];
+  const handover = readFileSafe(handoverPath) || '';
 
   const taskFiles = listFilesSafe(tasksDir).filter((f) => /^TASK_.*\.md$/i.test(f));
   const tasks = new Map();
+  const orchestratorReports = [];
 
   for (const file of taskFiles) {
     const full = path.join(tasksDir, file);
@@ -88,6 +133,16 @@ function main() {
         }
       }
     }
+
+    if (orchestratorReports.length > 0) {
+      const latestOrch = orchestratorReports[orchestratorReports.length - 1].file;
+      if (!handover.includes(latestOrch)) {
+        warnings.push(`HANDOVER.md に最新 Orchestrator レポート ${latestOrch} の記載がありません`);
+      }
+      if (!/## Outlook/i.test(handover)) {
+        warnings.push('HANDOVER.md に Outlook セクションがありません（Short/Mid/Long を追加してください）');
+      }
+    }
   }
 
   const reportFiles = listFilesSafe(inboxDir).filter((f) => /^REPORT_.*\.md$/i.test(f));
@@ -96,6 +151,35 @@ function main() {
     const full = path.join(inboxDir, file);
     const content = readFileSafe(full);
     if (!content) continue;
+
+    const isOrchestratorReport =
+      /^REPORT_ORCH_/i.test(file) || /Type\s*:\s*Orchestrator/i.test(content);
+
+    if (isOrchestratorReport) {
+      orchestratorReports.push({ file, full, content });
+
+      validateReportConsistency(full, anomalies, warnings);
+
+      const validatorPath = path.join(__dirname, 'report-validator.js');
+      const configPath = path.join(root, 'REPORT_CONFIG.yml');
+      if (fs.existsSync(validatorPath) && fs.existsSync(configPath)) {
+        try {
+          const result = child_process.execSync(
+            `node "${validatorPath}" "${full}" "${configPath}" "${root}"`,
+            { encoding: 'utf8' }
+          );
+          if (result.includes('Errors:')) {
+            anomalies.push(`Orchestratorレポート検証エラー: ${file}`);
+          } else if (result.includes('Warnings:')) {
+            warnings.push(`Orchestratorレポート検証警告: ${file}`);
+          }
+        } catch (e) {
+          warnings.push(`Orchestratorレポート検証実行失敗: ${file}`);
+        }
+      }
+
+      continue;
+    }
 
     const ticket = parseKeyLine(content, 'Ticket');
     const ticketMatch = ticket.match(/TASK_[^\s/\\]+\.md/i);
@@ -118,9 +202,41 @@ function main() {
     if (task.report && task.report !== `docs/inbox/${file}`) {
       warnings.push(`チケットの Report が REPORT ファイル名と一致しません: docs/tasks/${ticketFile} (Report: ${task.report}, Actual: docs/inbox/${file})`);
     }
+
+    validateReportConsistency(full, anomalies, warnings);
+
+    // Run report validator
+    const validatorPath = path.join(__dirname, 'report-validator.js');
+    const configPath = path.join(root, 'REPORT_CONFIG.yml');
+    if (fs.existsSync(validatorPath) && fs.existsSync(configPath)) {
+      try {
+        const result = require('child_process').execSync(`node "${validatorPath}" "${full}" "${configPath}" "${root}"`, { encoding: 'utf8' });
+        if (result.includes('Errors:')) {
+          anomalies.push(`レポート検証エラー: ${file}`);
+        } else if (result.includes('Warnings:')) {
+          warnings.push(`レポート検証警告: ${file}`);
+        }
+      } catch (e) {
+        warnings.push(`レポート検証実行失敗: ${file}`);
+      }
+    }
+
+    // Added new code here
+    const handoverContent = readFileSafe(handoverPath);
+    if (handoverContent) {
+      const handoverLines = handoverContent.split('\n');
+      const newHandoverLines = handoverLines.map(line => {
+        if (line.startsWith('## Active Tasks')) {
+          return line + '\n' + `| Task | Status |`;
+        }
+        return line;
+      });
+      const newHandoverContent = newHandoverLines.join('\n');
+      fs.writeFileSync(handoverPath, newHandoverContent);
+    }
   }
 
-  const handover = readFileSafe(handoverPath);
+  validateHandoverConsistency(handoverPath, anomalies, warnings);
   if (handover) {
     const activeTasksSection = handover.split(/\n## Active Tasks\n/i)[1] || '';
     const activeLines = activeTasksSection.split(/\n## /)[0].trim();

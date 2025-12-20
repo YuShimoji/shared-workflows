@@ -186,6 +186,7 @@ PR作成禁止
 3. **Linter**: エラー0件（warning は許容）
 4. **テスト実行**: 全テスト成功、カバレッジ ≥ 80%
 5. **セキュリティスキャン**: High/Critical の脆弱性 0件
+6. **タスクチェック漏れ防止**: `scripts/todo-leak-preventer.js` でAI_CONTEXT.mdのtodo_listをチェック。pending/in_progressタスクの完了条件を自動判定。
 
 #### Pre-flight失敗時の対応
 

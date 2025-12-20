@@ -3,7 +3,7 @@
 > Orchestratorスレッド開始時に貼り付ける、コピペ用メタプロンプト。
 
 コピペ用（推奨）:
-- `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（shared-workflows サブモジュールを使う場合は `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`）
 
 ```text
 # Orchestrator Metaprompt
@@ -15,12 +15,12 @@
 - 毎回: 本メタプロンプト
 
 運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
-- `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+- `docs/windsurf_workflow/OPEN_HERE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`）
 
 Worker起動用プロンプト（各担当者向け）は、Orchestrator が **毎回動的生成**する。
 生成のベース（テンプレ）は以下（= 3つ目のテンプレ）:
 
-- `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+- `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`）
 
 重要（未完了で止まらないための運用）:
 - Worker が停止条件に該当した場合でも、何も出さずに止まることを禁止する。
@@ -35,7 +35,8 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 ## SW_ROOT（shared-workflows の配置）
 - 参照の確実性のため、プロジェクト内に shared-workflows を配置して参照する。
 - 既定の配置先は `.shared-workflows/` とし、以降はこれを `SW_ROOT` と呼ぶ。
-- もし `.shared-workflows/` が存在しない場合、**参照が不確実になりうる**ため、可能なら submodule で配置する。
+- もし `.shared-workflows/` が存在しない場合は、`docs/` 直下にある同名ファイル（例: `docs/windsurf_workflow/OPEN_HERE.md`, `docs/Windsurf_AI_Collab_Rules_v2.0.md`）を直接参照する。
+- submodule を導入する場合は、参照先を `.shared-workflows/` に差し替えてよい。
 
 ## 必須ルール
 - 返信は日本語。
@@ -67,11 +68,11 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
    - `docs/inbox/`
 
 ## Phase 0: SSOT確認
-以下を参照し、差分や矛盾があればSSOT側を優先する。
-- `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
-- `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- `.shared-workflows/docs/PROMPT_TEMPLATES.md`
-- `.shared-workflows/REPORT_CONFIG.yml`
+以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。
+- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
+- `docs/PROMPT_TEMPLATES.md`
+- `REPORT_CONFIG.yml`
 - `docs/HANDOVER.md`
 
 加えて、`docs/HANDOVER.md` に以下が記載されているか確認する:
@@ -87,13 +88,13 @@ SSOTが読めない/参照が不確実な場合は停止し、参照方法（特
 2. git status -sb
 3. 必要に応じて git diff / git log を確認
 4. docs/inbox/ を確認
-   - ファイルがあれば docs/HANDOVER.md に統合
+   - ファイルがあれば HANDOVER.md に統合
    - 回収後は REPORT のみ削除（ディレクトリ維持のため `.gitkeep` は残す）:
      - git rm docs/inbox/REPORT_*.md
    - 統合結果をコミット
 
 ## Phase 1.5: 巡回監査（不備検知 / 乖離検知）
-docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を検知する:
+docs/tasks/, docs/inbox/, HANDOVER.md を横断して、以下の異常を検知する:
 
 - Status: DONE のチケットに Report パスが無い / 参照先ファイルが存在しない
 - docs/inbox/ に REPORT があるのに、対応するチケットが無い / Status が DONE ではない
@@ -136,27 +137,56 @@ Worker の成果は `docs/inbox/` に納品され、次回 Orchestrator が回�
 - 停止条件（Forbiddenに触れる必要、仮定が3つ以上、前提を覆す変更など）
 - 納品先: docs/inbox/REPORT_...
 
-プロンプト生成は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` をベースにし、
+プロンプト生成は `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`）をベースにし、
 チケット内容（Tier/Focus/Forbidden/DoD）から **可変** にする。
 
 Worker用の共通参照（毎回含める）:
-- `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
 - `docs/HANDOVER.md`
-- （必要なら）`.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` の Worker Protocol
+- （必要なら）`docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` の Worker Protocol
 
 ## Phase 6: Orchestrator Report（チャット出力）
 チャットには以下を出力する。
 
 ## Orchestrator Report
-State: <進捗要約。2行以内>
+
+**Timestamp**: <ISO8601>
+**Actor**: Cascade
+**Issue/PR**: <関連Issue/PR>
+**Mode**: <mode>
+**Type**: Orchestrator
+
+State: <進捗要約。詳細に（目標達成率、完了タスク数、残タスク数）>
+
 Strategy:
 - Workers: <0-3>
-- Reason: <1文>
+- Reason: <詳細理由（タスク依存関係、並列化判断）>
+- Risk: <リスク評価（Tier分布、潜在ブロッカー）>
+- Duration: <推定所要時間>
+
 Tickets:
-- <TASK...>: <概要1行>
+- <TASK...>: <概要 + 詳細（Tier, DoD概要）>
+
 Next:
 - <ユーザーの次のアクション>
 
-Workers が必要な場合は、続けて **Worker Prompts** を出力する（各Workerスレッドにコピペして起動するため）。
-Worker Prompts は、チケットごとに **1つの code block** にまとめる。
-```
+Proposals: <将来提案（バックログ候補）>
+
+Outlook:
+- Short-term: <直近1セッションで着手すべき内容>
+- Mid-term: <今後数セッションで扱うべき内容>
+- Long-term: <中長期でのゴールや布石>
+
+**報告スタイルの強制**: スタイルプリセット（standard/narrative 等）に関係なく、必須ヘッダー（State, Strategy, Tickets, Next）を必ず含む。一貫性を優先し、モデル依存のスタイル差を最小化。
+
+### レポート保存と検証
+- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
+- 保存後に `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` を実行し、エラー/警告が無いことを確認する。
+- 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
+
+### 完了状態（残タスク0）の追加要件
+- State には「完了サマリ」を含めること（総タスク数/完了数/統合済みレポート等）。
+- Tickets が空でも「完了済みである」と明記し、最後に実施した作業を列挙する。
+- Next では必ず 1 つ以上の提案やフォローアップ（レトロ、監査、バックログ化など）を提示する。
+- Proposals には、今後の改善案や次回チケット候補（例: 「メンテナンスチケット起票」「振り返り実施」）を最低1件含める。
+- Outlook では Short/Mid/Long の各観点を必須とし、完了済みでも「次に観測すべき指標」「必要なら起票するチケット案」を示す。

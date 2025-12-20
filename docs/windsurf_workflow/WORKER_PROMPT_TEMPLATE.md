@@ -93,21 +93,28 @@
 
 ## 納品レポート（docs/inbox/REPORT_...md）フォーマット
 # Report: <タスク名>
-Ticket: <TICKET_PATH>
-State: DONE/BLOCKED
-Completed: <ISO8601>
+
+**Timestamp**: <ISO8601>
+**Actor**: Worker
+**Ticket**: <TICKET_PATH>
+**Type**: Worker
+**Duration**: <所要時間>
+**Changes**: <変更量>
 
 ## Changes
-- <file>: <what>
+- <file>: <詳細変更内容（何をどう変更したか）>
 
 ## Decisions
-- <decision>: <why>
+- <decision>: <why（理由の詳細）>
 
 ## Verification
-- <command>: <result>
+- <command>: <result（実行結果の詳細）>
+
+## Risk
+- <リスク評価（潜在問題、将来影響）>
 
 ## Remaining
-- なし / <残件>
+- なし / <残件（未完了事項の詳細）>
 
 ## Blocked（State: BLOCKED の場合）
 - Reason: <要点>

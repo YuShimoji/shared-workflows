@@ -1,8 +1,23 @@
+change_summary:
+  - version: v2.0
+    applied_projects: all
+    changes: |
+      - Worker同期強化：AI_CONTEXT.mdにWorker完了ステータスを追加。uncompleted Workerで中断。
+      - 非同期モードオプション：async_mode trueでcritical Workerのみ同期、非criticalは並行実行。
+      - タイムアウト設定：Workerにtimeout（デフォルト30分）を追加。超過でerror。
+      - 優先度分類：Workerをcritical/non-criticalに分類。
+      - スクリプト拡張：orchestrator-audit.jsにWorkerチェック追加、新スクリプトworker-monitor.jsで監視。
+      - コマンド安全性チェック：command-safety-check.jsで自動判定。
+
 default_style: standard
+strict_mode: true
 banned_phrases:
   - 了解しました
   - 続けてください
   - 特にありません
+  - 完了しました
+  - 向上されました
+  - 問題ありません
 style_presets:
   standard:
     headers:
