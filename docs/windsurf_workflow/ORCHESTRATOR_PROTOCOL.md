@@ -57,7 +57,8 @@
 2. Inbox回収
    docs/inbox/ を確認。ファイルがあれば:
    - 内容を docs/HANDOVER.md に統合
-   - git rm docs/inbox/* で削除
+   - 回収後は REPORT のみ削除（ディレクトリ維持のため `.gitkeep` は残す）:
+     - git rm docs/inbox/REPORT_*.md
    - 統合結果をコミット
 
    併せて、未完了/停止の回収を行う:

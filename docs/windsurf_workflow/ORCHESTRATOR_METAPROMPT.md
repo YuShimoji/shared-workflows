@@ -88,7 +88,8 @@ SSOTが読めない/参照が不確実な場合は停止し、参照方法（特
 3. 必要に応じて git diff / git log を確認
 4. docs/inbox/ を確認
    - ファイルがあれば docs/HANDOVER.md に統合
-   - 回収後は git rm docs/inbox/*
+   - 回収後は REPORT のみ削除（ディレクトリ維持のため `.gitkeep` は残す）:
+     - git rm docs/inbox/REPORT_*.md
    - 統合結果をコミット
 
 ## Phase 1.5: 巡回監査（不備検知 / 乖離検知）
