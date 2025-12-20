@@ -132,7 +132,7 @@ Created: [ISO8601]
 
 チャットには以下のみ出力:
 
-## Orchestrator Report
+## Phase 6: Orchestrator Report（チャット出力）
 
 State: [進捗要約。2行以内]
 
@@ -144,10 +144,39 @@ Tickets:
 - TASK_001_xxx: [概要]
 - TASK_002_xxx: [概要]
 
-Next: [ユーザーの次のアクション]
+- Next: <ユーザーの次アクション>
+- Proposals: <将来提案（バックログ候補）>
+- Outlook:
+  - Short-term: <直近1セッションで着手する内容>
+  - Mid-term: <今後数セッションで扱う内容>
+  - Long-term: <中長期のゴールや布石>
 
-その後、チケットファイルをコミット・プッシュ。
+### 完了状態（残タスク0）の追加要件
+- State で完了サマリを提示（総タスク数/完了数/統合済みレポート等）。
+- Tickets ヘッダーは必ず残し、空の場合は「全タスク完了。最後に行った作業: ...」と記載。
+- Next では 1 件以上のフォローアップ提案（例: レトロ実施、バックログ作成、監査）を提示。
+- Proposals に今後の改善案や次回チケット候補を最低1件含める。
+- Outlook では Short/Mid/Long を必須とし、完了後でも次に観測すべき指標や必要なら起票するチケット案を記載する。
+
+---
+
+## Phase 4.1: REPORT_ORCH CLI での保存・検証（推奨）
+
+Orchestrator レポートは CLI で自動生成・検証・HANDOVER 同期まで行う。
+
 ```
+node scripts/report-orch-cli.js \
+  --issue "AI Reporting Improvement" \
+  --mode orchestration \
+  --summary "Stateサマリを記載" \
+  --sync-handover
+```
+
+- docs/inbox/REPORT_ORCH_<timestamp>.md をテンプレから生成し、`REPORT_CONFIG.yml` に基づき自動検証を実行。
+- `--summary` は HANDOVER.md の Latest Orchestrator Report セクションに反映される。
+- `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
+
+手動でテンプレを貼る場合でも、生成後に必ず `node scripts/report-validator.js <report> REPORT_CONFIG.yml .` を実行し、警告/エラーを解消してから納品する。
 
 ---
 
@@ -242,14 +271,22 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 
 内容:
 # Report: [タスク名]
-Ticket: TASK_[番号]
-Completed: [ISO8601]
+
+**Timestamp**: [ISO8601]
+**Actor**: Worker
+**Ticket**: TASK_[番号]
+**Type**: Worker
+**Duration**: <所要時間>
+**Changes**: <変更量>
 
 ## Changes
-- [ファイル]: [変更内容]
+- [ファイル]: [詳細変更内容]
 
 ## Decisions
 - [判断内容と理由]
+
+## Risk
+- [リスク評価]
 
 ## Remaining
 - [未解決事項] または「なし」
@@ -257,8 +294,12 @@ Completed: [ISO8601]
 ## Handover
 - [次の作業者への申し送り]
 
+## Proposals
+- [将来提案]
+
 4. 全ファイルをコミット・プッシュ
-5. チャットに1行のみ:
+5. **レポート検証実行**: `node scripts/report-validator.js <REPORT_PATH> REPORT_CONFIG.yml <PROJECT_ROOT>` を実行し、結果を確認。エラーがあれば修正して再納品。
+6. チャットに1行のみ:
    Done: TASK_[番号]. Report: docs/inbox/REPORT_xxx.md
 
 追加ルール（申し送りの確実化）:
