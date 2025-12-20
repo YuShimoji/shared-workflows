@@ -191,6 +191,7 @@
 
 - 長期タスクは「ミッション」と定義し、30 分以上の工程はサブミッションへ自動分割。
 - `AI_CONTEXT.md` の `Backlog` と `決定事項` を更新し、別端末/別会話でもスムーズに再開できるようにする。
+- **Worker同期強化**: WorkerAIの作業完了をOrchestratorが確認してから次のステップへ進む。`AI_CONTEXT.md` にWorker完了ステータスを記録し、未完了時は中断し、リトライまたは手動介入を促す。**非同期モードオプション**: `async_mode: true/false` を追加。true時はcritical Workerのみ同期、非criticalは並行実行。タイムアウト（デフォルト30分）超過時はerror扱い。
 
 ### 3.2 対話的管理
 
@@ -279,6 +280,8 @@
 - モード: <standard|fast|custom>
 - レポートスタイル: <standard|concise|narrative|creative|custom>
 - 使用トリガー: <trigger ids>
+- **async_mode**: <true|false> (true: 非同期でcritical Workerのみ同期、false: 全同期)
+- **Worker完了ステータス**: <worker1: completed|pending|error, priority: critical|non-critical, timeout: <minutes>>, <worker2: ...> (未完了critical Workerがある場合、次ステップを中断)
 
 ## 決定事項
 - <decision/why>

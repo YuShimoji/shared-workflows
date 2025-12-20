@@ -23,6 +23,36 @@ function parseKeyLine(content, key) {
   return m ? m[1].trim() : '';
 }
 
+function checkWorkerStatus(aiContextPath, anomalies, warnings) {
+  const content = readFileSafe(aiContextPath);
+  if (!content) {
+    warnings.push('AI_CONTEXT.md が存在しません。Workerステータスを確認できません。');
+    return;
+  }
+  const asyncMode = parseKeyLine(content, 'async_mode');
+  const isAsync = asyncMode && asyncMode.toLowerCase() === 'true';
+  const workerLine = parseKeyLine(content, 'Worker完了ステータス');
+  if (!workerLine) {
+    warnings.push('AI_CONTEXT.md に Worker完了ステータス が記載されていません。');
+    return;
+  }
+  const workers = workerLine.split(',').map(w => w.trim());
+  for (const worker of workers) {
+    const parts = worker.split(',');
+    const [nameStatus, priority, timeoutStr] = parts.map(p => p.trim());
+    const [name, status] = nameStatus.split(':').map(s => s.trim());
+    const prio = priority ? priority.split(':')[1].trim() : 'critical';
+    const timeout = timeoutStr ? parseInt(timeoutStr.split(':')[1].trim()) || 30 : 30;
+    if (status === 'error') {
+      anomalies.push(`Worker ${name} がエラー状態です。手動介入が必要です。`);
+    } else if (!isAsync && prio === 'critical' && status !== 'completed') {
+      anomalies.push(`Critical Worker ${name} が未完了です (ステータス: ${status})。次のステップを中断してください。`);
+    } else if (status === 'pending' && timeout < 0) { // 仮定: タイムアウト計算は別処理
+      anomalies.push(`Worker ${name} がタイムアウトしました。エラー扱いにします。`);
+    }
+  }
+}
+
 function main() {
   const args = new Set(process.argv.slice(2));
   const noFail = args.has('--no-fail');
@@ -32,6 +62,7 @@ function main() {
   const tasksDir = path.join(docsDir, 'tasks');
   const inboxDir = path.join(docsDir, 'inbox');
   const handoverPath = path.join(docsDir, 'HANDOVER.md');
+  const aiContextPath = path.join(root, 'AI_CONTEXT.md');
 
   const anomalies = [];
   const warnings = [];
@@ -104,6 +135,9 @@ function main() {
       warnings.push('HANDOVER.md に GitHubAutoApprove: true/false が見つかりません。');
     }
   }
+
+  // Worker完了チェック追加
+  checkWorkerStatus(aiContextPath, anomalies, warnings);
 
   console.log('Orchestrator Audit Results');
   console.log(`- tasks: ${taskFiles.length}`);
