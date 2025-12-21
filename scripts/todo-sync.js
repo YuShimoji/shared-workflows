@@ -10,6 +10,10 @@ function getArgValue(flag) {
   return null;
 }
 
+function hasFlag(flag) {
+  return process.argv.includes(flag);
+}
+
 function readFileSafe(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
@@ -136,10 +140,22 @@ function syncAiContext(aiContextPath, todoLines, dryRun) {
 function syncTodoList(tasks) {
   if (!Array.isArray(tasks)) return;
 
+  if (hasFlag('--skip-todo-list')) {
+    console.log('[todo-sync] Skipping todo_list sync (--skip-todo-list).');
+    return;
+  }
+
+  try {
+    execSync('todo_list --help', { stdio: 'ignore' });
+  } catch {
+    console.warn('[todo-sync] todo_list command unavailable. Skipping Windsurf UI sync.');
+    return;
+  }
+
   try {
     execSync('todo_list clear-all', { stdio: 'ignore' });
   } catch {
-    console.warn('[todo-sync] todo_list clear-all failed or unavailable.');
+    console.warn('[todo-sync] todo_list clear-all failed. Continuing.');
   }
 
   tasks.forEach(task => {

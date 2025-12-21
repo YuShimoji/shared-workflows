@@ -78,6 +78,11 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - `scripts/todo-sync.js`（無い場合は `.shared-workflows/scripts/todo-sync.js` をコピーし、`node scripts/todo-sync.js` が必ず実行できる状態にする）
 - `.shared-workflows/scripts/report-validator.js`（無い場合は Submodule を再取得するか、`scripts/report-validator.js` に複製して `node <path>/report-validator.js` が動くよう整備する）
 - `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
+- 共有リポジトリ（Submodule）の状態確認は次で行う（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
+  - `git submodule status --recursive`
+  - `git -C .shared-workflows status -sb`
+  - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
+  - `git -C .shared-workflows rev-parse HEAD`
 - Submodule のワークツリーが欠損/壊れている場合は、以下を自動で実施して再取得する:
   1. `git submodule deinit -f .shared-workflows`
   2. `git rm -f .shared-workflows`（コミット不要）
@@ -87,7 +92,6 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 > スクリプトが見つからない/壊れている場合も **停止せずに** 次を順番に実施する: (1) Submodule sync/update（remote含む）、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を `scripts/` へコピー、(3) 共有クローン直指定。いずれでも解消できない場合のみ、状況と再取得案を報告して停止する。必要に応じて前述の再取得手順で Submodule を貼り直す。
 
 加えて、`docs/HANDOVER.md` に以下が記載されているか確認する:
-
 - `GitHubAutoApprove: true/false`
 
 未記載なら、**ユーザーに1回だけ確認**して `docs/HANDOVER.md` に追記し、以降の判断根拠を固定する。
@@ -123,7 +127,8 @@ docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を�
 1. docs/HANDOVER.md を読み、現在の目標/進捗/ブロッカー/バックログを抽出
 2. docs/tasks/ を確認し、OPEN/IN_PROGRESS を列挙（無ければその旨）
 3. todo_list を更新（1つだけ in_progress を維持）
-   - `node scripts/todo-sync.js` を実行し、docs/tasks/ → AI_CONTEXT.md（短期: Next）→ Windsurf UI todo_list の順で同期する。**AI_CONTEXT.md に `### 短期（Next）` が無くても自動で挿入されるため、手動編集は不要。** CLI が使えない環境では手動同期してから応答する。
+   - `node scripts/todo-sync.js` を実行し、docs/tasks/ → AI_CONTEXT.md（短期: Next）→ Windsurf UI todo_list の順で同期する。**AI_CONTEXT.md に `### 短期（Next）` が無くても自動で挿入されるため、手動編集は不要。**
+     - `todo_list` CLI が無い環境では、`node scripts/todo-sync.js --skip-todo-list` として UI 同期をスキップし、Windsurf UI の todo_list は手動で更新してから応答する。
 
 ※ ここでいう **タスクの堆積先（SSOT）** は `docs/tasks/`。
 Worker の成果は `docs/inbox/` に納品され、次回 Orchestrator が回収して `docs/HANDOVER.md` に統合する。

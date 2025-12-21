@@ -11,6 +11,12 @@
 目的:
 - shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
 
+失敗時の復旧優先ルール（最重要）:
+- どれか1つのチェックやコマンドが失敗しても、そこで停止しない。
+- 失敗した対象について「存在確認（ファイル/ディレクトリ）」→「代替確認コマンド」→「復旧コマンド」→「再実行」の順に進める。
+- 状態確認に `sparse-checkout` 用のファイル（例: `.git/modules/.shared-workflows/info/sparse-checkout`）を前提にしない（未設定なら存在しないのが正常）。
+- 復旧できない場合でも、最後に必ず「何が無い/壊れているか」「試したコマンド」「次に必要な入力」を短く残して止まる。
+
 前提:
 - shared-workflows が明示している外部通信コマンド（git submodule add/update, git fetch/pull/push, scripts/ensure-ssot.js 等）は WINDSURF_GLOBAL_RULES に基づき **事前承認済み**。必要になったら即実行して差し支えない（GitHubAutoApprove が false でも同様）。
 
@@ -26,6 +32,11 @@
 - 導入後は以下を即実行し、必要ファイル（`docs/Windsurf_AI_Collab_Rules_latest.md` / `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` / `scripts/ensure-ssot.js` 等）が `.shared-workflows/` に揃っていることを確認する:
   - `git submodule sync --recursive`
   - `git submodule update --init --recursive --remote`
+- shared-workflows の状態確認は、次で行う（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
+  - `git submodule status --recursive`
+  - `git -C .shared-workflows status -sb`
+  - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
+  - `git -C .shared-workflows rev-parse HEAD`
 - `.shared-workflows/` に無い場合でも、プロジェクト直下にテンプレを複製せず、`../shared-workflows` 等の共有クローンから補完する（`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` など）。取得できるまで再試行し、最終手段として `docs/windsurf_workflow/OPEN_HERE.md` などプロジェクト直下の同名ファイルを一時参照してよいが、整備後は `.shared-workflows/` へ戻すこと。
 - Submodule のワークツリーが欠損/壊れている場合は、**止まらずに再取得**する:
   1. `git submodule deinit -f .shared-workflows`
@@ -56,7 +67,7 @@
   2. それでも不足する場合: 共有クローンを直接指定し、例 `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`
   3. プロジェクト側 `scripts/` に `ensure-ssot.js` をコピーして `node scripts/ensure-ssot.js --project-root .`
   4. いずれのコマンド後も `docs/Windsurf_AI_Collab_Rules_*.md` が揃うまで繰り返す。どうしても取得できない場合のみ一時的に `docs/` 直下の既存ファイルを参照し、整備が完了したら `.shared-workflows/` に戻す。
-  - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は v2.0 へのリンク）
   - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
   - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
   - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`

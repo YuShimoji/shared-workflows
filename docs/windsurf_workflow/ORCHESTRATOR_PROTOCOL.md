@@ -44,6 +44,12 @@
 
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 
+Submodule の状態確認は次で行う（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
+- `git submodule status --recursive`
+- `git -C .shared-workflows status -sb`
+- `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
+- `git -C .shared-workflows rev-parse HEAD`
+
 **フロー:**
 ```
 1. Orchestratorスレッド起動 -> inbox回収 -> タスクチケット発行
@@ -204,6 +210,8 @@ node .shared-workflows/scripts/report-orch-cli.js \
 - `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
 
 手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <report>`）。
+
+`node scripts/report-validator.js` を使う場合は、`node scripts/report-validator.js <report> REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
 
 ---
 
