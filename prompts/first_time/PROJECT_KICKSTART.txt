@@ -1,5 +1,7 @@
 あなたはこのプロジェクトのセットアップ担当です。
-まず `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`（Submoduleが無い場合は `prompts/global/WINDSURF_GLOBAL_RULES.txt`）を確認し、言語/書式ルールに従ってください。
+まず `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`（Submoduleが無い場合は `prompts/global/WINDSURF_GLOBAL_RULES.txt`）を確認し、言語/書式ルールに従ってください。該当ファイルをまだ取得できない場合でも、次を厳守すること:
+- 返信は必ず日本語（英語・他言語は禁止）
+- 絵文字や過度な装飾は使用しない
 
 最優先で読むもの:
 - shared-workflows サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
@@ -54,6 +56,7 @@
   - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+- CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
 
 運用フラグ（重要）:
 - GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に
