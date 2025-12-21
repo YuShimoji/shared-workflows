@@ -17,6 +17,15 @@
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
 
+### SSOT補完の実行方法（全体共通）
+`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、作業開始前に以下いずれかの方法で `scripts/ensure-ssot.js` を実行し、`.shared-workflows/` からコピーする（すべて `--project-root .` を付けると誤検出を避けられる）。
+
+1. **Submodule（推奨）**: `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+2. **共有ディレクトリを直接参照**: shared-workflows リポジトリを別ディレクトリに置いている場合は、`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` のように実体パスを指定
+3. **プロジェクト側 scripts/ にコピーして実行**: `node scripts/ensure-ssot.js --project-root .`
+
+上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
+
 **フロー:**
 ```
 1. Orchestratorスレッド起動 -> inbox回収 -> タスクチケット発行

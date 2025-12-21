@@ -41,7 +41,11 @@
 - REPORT_CONFIG.yml は以下のいずれかを満たすこと:
   - プロジェクトルートに配置し、shared-workflows の設定をコピーする
   - サブモジュール内の `REPORT_CONFIG.yml` を利用する（CLIは自動検出）
-- SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、`node .shared-workflows/scripts/ensure-ssot.js` を実行して `.shared-workflows/` から自動コピーする（無ければ `node scripts/ensure-ssot.js`、または手動でコピー）。
+- SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、以下いずれかで `scripts/ensure-ssot.js` を実行し、自動コピーする（いずれも `--project-root .` を付けると誤検出を避けられる）。
+  1. **推奨**: `.shared-workflows/` をサブモジュールとして配置し、`node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+  2. **共有ディレクトリを直接参照**: shared-workflows を別ディレクトリに置いている場合は、`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` のように相対/絶対パスで呼び出す
+  3. **スクリプトをプロジェクト側にコピー**: WritingPage 側 `scripts/` に `ensure-ssot.js` を配置し、`node scripts/ensure-ssot.js --project-root .`
+  - いずれの方法でも `.shared-workflows/` がなくても SSOT を補完できる。解決できなければ停止し、参照方法を調整する。
 - 今後、Orchestrator/Worker は次を参照する:
   - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
   - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`

@@ -53,3 +53,8 @@ Windsurf Global Rules（端末ごとの統一）:
 - オーケストレーション手順（参照）: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - コピペ用プロンプト集（貼るだけ）: `.shared-workflows/prompts/`
 - 進行の全体像（任意）: プロジェクトルート `ORCHESTRATION_PROMPT.md`（採用している場合のみ）
+- SSOTファイル（`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest`）がプロジェクトに無い場合は、作業開始前に以下いずれかで `scripts/ensure-ssot.js --project-root .` を実行して補完する:
+  1. Submodule推奨: `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+  2. 共有ディレクトリを直接参照: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .` 等
+  3. プロジェクト側 `scripts/` にコピーした `ensure-ssot.js` を実行
+  - いずれも `.shared-workflows/` が無くても SSOT を揃えられる。コマンドで解決できない場合は停止して参照方法を調整する。
