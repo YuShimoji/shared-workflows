@@ -214,6 +214,7 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 作業開始前に以下を確認すること:
 - 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - 進捗状況: docs/HANDOVER.md
+- SSOT確認: docs/Windsurf_AI_Collab_Rules_v2.0.md / docs/Windsurf_AI_Collab_Rules_latest.md / docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md / REPORT_CONFIG.yml / docs/HANDOVER.md を参照し、欠けている場合は `node scripts/ensure-ssot.js` を先に実行して shared-workflows から自動コピー（または手動コピー）
 
 ## 基本制約
 - 絵文字、装飾表現、冗長な言い回しを使用しない
