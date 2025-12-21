@@ -1,4 +1,5 @@
 あなたはこのプロジェクトのセットアップ担当です。
+まず `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`（Submoduleが無い場合は `prompts/global/WINDSURF_GLOBAL_RULES.txt`）を確認し、言語/書式ルールに従ってください。
 
 最優先で読むもの:
 - shared-workflows サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
