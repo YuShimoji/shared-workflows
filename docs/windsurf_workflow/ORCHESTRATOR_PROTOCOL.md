@@ -18,11 +18,18 @@
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
 
 ### SSOT補完の実行方法（全体共通）
-`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、作業開始前に以下いずれかの方法で `scripts/ensure-ssot.js` を実行し、`.shared-workflows/` からコピーする（すべて `--project-root .` を付けると誤検出を避けられる）。
-
-1. **Submodule（推奨）**: `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
-2. **共有ディレクトリを直接参照**: shared-workflows リポジトリを別ディレクトリに置いている場合は、`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` のように実体パスを指定
-3. **プロジェクト側 scripts/ にコピーして実行**: `node scripts/ensure-ssot.js --project-root .`
+`.shared-workflows/` の有無を確認。
+1. 無い場合は `git submodule add` / `git submodule update --init --recursive` を即時実行し、`.shared-workflows/` を整備する（許可確認不要）。
+   - `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+   - `git submodule sync --recursive`
+   - `git submodule update --init --recursive --remote`
+2. プロジェクト側の状態管理ファイル/ディレクトリを用意（存在しなければ作成）:
+   - `AI_CONTEXT.md`（プロジェクトルート）
+   - `docs/HANDOVER.md`
+3. `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、作業開始前に以下いずれかの方法で `scripts/ensure-ssot.js` を実行し、`.shared-workflows/` からコピーする（すべて `--project-root .` を付けると誤検出を避けられる）。
+   - `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+   - `node ../shared-workflows/scripts/ensure-ssot.js --project-root .` のように実体パスを指定
+   - `node scripts/ensure-ssot.js --project-root .`
 
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 
@@ -185,7 +192,7 @@ node .shared-workflows/scripts/report-orch-cli.js \
 - `--summary` は HANDOVER.md の Latest Orchestrator Report セクションに反映される。
 - `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
 
-手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、警告/エラーを解消してから納品する（無ければ `node scripts/report-validator.js <report>`）。
+手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <report>`）。
 
 ---
 
@@ -223,7 +230,12 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 作業開始前に以下を確認すること:
 - 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - 進捗状況: docs/HANDOVER.md
-- SSOT確認: docs/Windsurf_AI_Collab_Rules_v2.0.md / docs/Windsurf_AI_Collab_Rules_latest.md / docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md / REPORT_CONFIG.yml / docs/HANDOVER.md を参照し、欠けている場合は `node .shared-workflows/scripts/ensure-ssot.js` を先に実行して shared-workflows から自動コピー（無ければ `node scripts/ensure-ssot.js`、または手動コピー）
+- SSOT確認: `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
+- `docs/PROMPT_TEMPLATES.md`
+- `REPORT_CONFIG.yml`
+- `docs/HANDOVER.md`
+- `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+- `.shared-workflows/scripts/ensure-ssot.js`（無ければ共有クローンからコピー）
 
 ## 基本制約
 - 絵文字、装飾表現、冗長な言い回しを使用しない

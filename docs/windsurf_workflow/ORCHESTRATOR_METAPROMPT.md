@@ -74,10 +74,13 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - プロジェクト側 scripts/ 配置: `node scripts/ensure-ssot.js --project-root .`
 
  - `docs/Windsurf_AI_Collab_Rules_v2.0.md`
- - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
- - `docs/PROMPT_TEMPLATES.md`
- - `REPORT_CONFIG.yml`
- - `docs/HANDOVER.md`
+- `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
+- `docs/PROMPT_TEMPLATES.md`
+- `REPORT_CONFIG.yml`
+- `docs/HANDOVER.md`
+- `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+- `.shared-workflows/scripts/ensure-ssot.js`（無ければ共有クローンからコピー）
+- `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
 
 加えて、`docs/HANDOVER.md` に以下が記載されているか確認する:
 

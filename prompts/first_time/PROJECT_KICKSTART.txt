@@ -23,6 +23,10 @@
 - 推奨パスは `.shared-workflows`
 - リポジトリ: https://github.com/YuShimoji/shared-workflows.git
 - （導入しない場合は、このステップをスキップして `docs/` 配下のテンプレをそのまま参照する）
+- 導入後は以下を即実行し、必要ファイル（`docs/Windsurf_AI_Collab_Rules_latest.md` / `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` / `scripts/ensure-ssot.js` 等）が `.shared-workflows/` に揃っていることを確認する:
+  - `git submodule sync --recursive`
+  - `git submodule update --init --recursive --remote`
+- `.shared-workflows/` に無い場合でも、プロジェクト直下にテンプレを複製せず、`../shared-workflows` 等の共有クローンから補完する（`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` など）。
 
 3) 運用ストレージ（プロジェクト側）の最小セットを作成
 - プロジェクトルート: AI_CONTEXT.md
