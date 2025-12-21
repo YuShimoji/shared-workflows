@@ -41,7 +41,7 @@
 - REPORT_CONFIG.yml は以下のいずれかを満たすこと:
   - プロジェクトルートに配置し、shared-workflows の設定をコピーする
   - サブモジュール内の `REPORT_CONFIG.yml` を利用する（CLIは自動検出）
-- SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、`node scripts/ensure-ssot.js` を実行して `.shared-workflows/` から自動コピーする（または手動でコピー）。
+- SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、`node .shared-workflows/scripts/ensure-ssot.js` を実行して `.shared-workflows/` から自動コピーする（無ければ `node scripts/ensure-ssot.js`、または手動でコピー）。
 - 今後、Orchestrator/Worker は次を参照する:
   - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
   - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`

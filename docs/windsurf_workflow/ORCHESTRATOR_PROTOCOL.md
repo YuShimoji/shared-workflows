@@ -165,7 +165,7 @@ Tickets:
 Orchestrator レポートは CLI で自動生成・検証・HANDOVER 同期まで行う。
 
 ```
-node scripts/report-orch-cli.js \
+node .shared-workflows/scripts/report-orch-cli.js \
   --issue "AI Reporting Improvement" \
   --mode orchestration \
   --summary "Stateサマリを記載" \
@@ -176,7 +176,7 @@ node scripts/report-orch-cli.js \
 - `--summary` は HANDOVER.md の Latest Orchestrator Report セクションに反映される。
 - `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
 
-手動でテンプレを貼る場合でも、生成後に必ず `node scripts/report-validator.js <report> REPORT_CONFIG.yml .` を実行し、警告/エラーを解消してから納品する。
+手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、警告/エラーを解消してから納品する（無ければ `node scripts/report-validator.js <report>`）。
 
 ---
 
@@ -214,7 +214,7 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 作業開始前に以下を確認すること:
 - 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
 - 進捗状況: docs/HANDOVER.md
-- SSOT確認: docs/Windsurf_AI_Collab_Rules_v2.0.md / docs/Windsurf_AI_Collab_Rules_latest.md / docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md / REPORT_CONFIG.yml / docs/HANDOVER.md を参照し、欠けている場合は `node scripts/ensure-ssot.js` を先に実行して shared-workflows から自動コピー（または手動コピー）
+- SSOT確認: docs/Windsurf_AI_Collab_Rules_v2.0.md / docs/Windsurf_AI_Collab_Rules_latest.md / docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md / REPORT_CONFIG.yml / docs/HANDOVER.md を参照し、欠けている場合は `node .shared-workflows/scripts/ensure-ssot.js` を先に実行して shared-workflows から自動コピー（無ければ `node scripts/ensure-ssot.js`、または手動コピー）
 
 ## 基本制約
 - 絵文字、装飾表現、冗長な言い回しを使用しない
@@ -299,7 +299,7 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 - [将来提案]
 
 4. 全ファイルをコミット・プッシュ
-5. **レポート検証実行**: `node scripts/report-validator.js <REPORT_PATH> REPORT_CONFIG.yml <PROJECT_ROOT>` を実行し、結果を確認。エラーがあれば修正して再納品。
+5. **レポート検証実行**: `node .shared-workflows/scripts/report-validator.js <REPORT_PATH>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <REPORT_PATH>`）。
 6. チャットに1行のみ:
    Done: TASK_[番号]. Report: docs/inbox/REPORT_xxx.md
 

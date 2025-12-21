@@ -29,6 +29,10 @@
 - プロジェクト進捗: docs/HANDOVER.md
 - チケット: <TICKET_PATH>
 
+SSOT（v2.0 / latest）がプロジェクト側に無い場合:
+- 先に `node .shared-workflows/scripts/ensure-ssot.js` を実行してコピーする（無ければ `node scripts/ensure-ssot.js`）。
+- スクリプトで解決できない場合は停止条件として扱う。
+
 ## このタスクの前提
 - Tier: <TIER>
 - Branch: <BRANCH>
@@ -43,6 +47,7 @@
 ## 停止条件（当てはまったら作業を止めてOrchestratorに申し送り）
 - Forbidden Area への変更が必要
 - 仕様の仮定が 3 つ以上必要
+- SSOT（docs/Windsurf_AI_Collab_Rules_v2.0.md / docs/Windsurf_AI_Collab_Rules_latest.md）が見つからず、`ensure-ssot.js` でも解決できない
 - 依存関係の追加/更新が必要
 - 外部通信（git fetch/pull/push 等）が必要で、GitHubAutoApprove が true であることが docs/HANDOVER.md で確認できない
 - 破壊的/復旧困難（rebase/reset/force push 等）が必要（GitHubAutoApprove が true でも常に停止）

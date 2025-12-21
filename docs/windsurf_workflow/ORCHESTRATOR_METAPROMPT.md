@@ -68,7 +68,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
    - `docs/inbox/`
 
 ## Phase 0: SSOT確認
-以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。
+以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。`docs/Windsurf_AI_Collab_Rules_v2.0.md` や `docs/Windsurf_AI_Collab_Rules_latest.md` が無い場合は、作業続行前に `node .shared-workflows/scripts/ensure-ssot.js` を実行して `.shared-workflows/` からコピーする（無ければ `node scripts/ensure-ssot.js`）。スクリプトで解決できない場合は停止し、参照方法を再指示する。
 - `docs/Windsurf_AI_Collab_Rules_v2.0.md`
 - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - `docs/PROMPT_TEMPLATES.md`
@@ -181,7 +181,7 @@ Outlook:
 
 ### レポート保存と検証
 - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
-- 保存後に `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` を実行し、エラー/警告が無いことを確認する。
+- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する（無ければ `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md`）。
 - 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
 
 ### 完了状態（残タスク0）の追加要件

@@ -27,9 +27,58 @@ function copyIfMissing(projectRoot, swRoot, relativePath) {
   return { status: 'copied', relativePath };
 }
 
+function parseArg(flag, defaultValue) {
+  const args = process.argv.slice(2);
+  const index = args.indexOf(flag);
+  if (index === -1) return defaultValue;
+  return args[index + 1];
+}
+
+function hasFlag(flag) {
+  return process.argv.slice(2).includes(flag);
+}
+
+function resolveProjectRoot(initialProjectRoot) {
+  const resolved = path.resolve(initialProjectRoot || process.cwd());
+  return resolved;
+}
+
+function normalizeProjectRoot(projectRoot, swRoot) {
+  if (!projectRoot || !swRoot) return projectRoot;
+
+  const resolvedProjectRoot = path.resolve(projectRoot);
+  const resolvedSwRoot = path.resolve(swRoot);
+
+  const base = path.basename(resolvedSwRoot);
+  const looksLikeSubmodule = base === '.shared-workflows' || base === 'shared-workflows';
+
+  if (looksLikeSubmodule) {
+    const parent = path.dirname(resolvedSwRoot);
+    const insideSwRoot = resolvedProjectRoot === resolvedSwRoot || resolvedProjectRoot.startsWith(resolvedSwRoot + path.sep);
+    if (insideSwRoot) {
+      return parent;
+    }
+  }
+
+  return resolvedProjectRoot;
+}
+
 function main() {
-  const projectRoot = process.cwd();
-  const swRoot = detectSwRoot(projectRoot);
+  if (hasFlag('--help') || hasFlag('-h')) {
+    console.log(`Usage: node <path>/ensure-ssot.js [options]
+
+Options:
+  --project-root <path>   Copy destination project root (default: cwd)
+  --help, -h              Show help
+`);
+    return;
+  }
+
+  const projectRootArg = parseArg('--project-root', '');
+  const initialProjectRoot = resolveProjectRoot(projectRootArg);
+  const swRoot = detectSwRoot(initialProjectRoot);
+
+  const projectRoot = normalizeProjectRoot(initialProjectRoot, swRoot);
 
   if (!swRoot) {
     console.error('shared-workflows の配置を検出できませんでした。SW_ROOT 環境変数を確認してください。');

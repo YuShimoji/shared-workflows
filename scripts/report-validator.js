@@ -11,6 +11,12 @@ function runCommand(cmd, cwd) {
   }
 }
 
+function detectGitRoot(cwd) {
+  const output = runCommand('git rev-parse --show-toplevel', cwd);
+  const root = (output || '').trim();
+  return root || null;
+}
+
 function parseGitLog(repoPath) {
   const log = runCommand('git log --oneline -10', repoPath);
   return /error|fail|exception/i.test(log);
@@ -288,9 +294,10 @@ if (!reportPathArg) {
 }
 
 const resolvedReportPath = path.resolve(reportPathArg);
+const reportDir = path.dirname(resolvedReportPath);
 const resolvedProjectRoot = projectRootArg
   ? path.resolve(projectRootArg)
-  : path.dirname(resolvedReportPath);
+  : detectGitRoot(reportDir) || detectGitRoot(process.cwd()) || reportDir;
 
 function resolveConfigPath(inputPath, projectRoot) {
   if (inputPath) {
