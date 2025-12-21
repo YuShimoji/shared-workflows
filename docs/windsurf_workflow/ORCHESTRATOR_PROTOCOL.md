@@ -33,9 +33,14 @@
    4. いずれでも取得できない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備後に `.shared-workflows/` へ戻す
 4. `.shared-workflows/scripts/` にある CLI（例: `todo-sync.js` / `report-validator.js` / `report-orch-cli.js`）が欠ける場合も **停止せず** 次を順番に試す:
    1. `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
-   2. `.shared-workflows/scripts/<name>.js` を `scripts/` にコピーし、`node scripts/<name>.js` が動くことを確認
+   2. `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を `scripts/` にコピーし、`node scripts/<name>.js` が動くことを確認
    3. 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行
-   4. それでも復旧できない場合のみ状況と再取得案を報告して停止する
+   4. それでも復旧できない場合は以下を実施してサブモジュールを貼り直す:
+      - `git submodule deinit -f .shared-workflows`
+      - `git rm -f .shared-workflows`
+      - `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+      - `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
+   5. 上記でも復旧できない場合のみ状況と再取得案を報告して停止する
 
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 

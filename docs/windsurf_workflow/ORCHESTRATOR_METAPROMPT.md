@@ -83,8 +83,13 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - `scripts/todo-sync.js`（無い場合は `.shared-workflows/scripts/todo-sync.js` をコピーし、`node scripts/todo-sync.js` が必ず実行できる状態にする）
 - `.shared-workflows/scripts/report-validator.js`（無い場合は Submodule を再取得するか、`scripts/report-validator.js` に複製して `node <path>/report-validator.js` が動くよう整備する）
 - `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
+- Submodule のワークツリーが欠損/壊れている場合は、以下を自動で実施して再取得する:
+  1. `git submodule deinit -f .shared-workflows`
+  2. `git rm -f .shared-workflows`（コミット不要）
+  3. `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+  4. `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
 
-> スクリプトが見つからない/壊れている場合も **停止せずに** 次を順番に実施する: (1) Submodule sync/update（remote含む）、(2) `.shared-workflows/scripts/*.js` から `scripts/` へコピー、(3) 共有クローン直指定。いずれでも解消できない場合のみ、状況と再取得案を報告して停止する。
+> スクリプトが見つからない/壊れている場合も **停止せずに** 次を順番に実施する: (1) Submodule sync/update（remote含む）、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を `scripts/` へコピー、(3) 共有クローン直指定。いずれでも解消できない場合のみ、状況と再取得案を報告して停止する。必要に応じて前述の再取得手順で Submodule を貼り直す。
 
 加えて、`docs/HANDOVER.md` に以下が記載されているか確認する:
 
@@ -97,12 +102,13 @@ SSOTが読めない/参照が不確実な場合は停止し、参照方法（特
 ## Phase 1: Sync & Merge
 1. git fetch origin
 2. git status -sb
-3. 必要に応じて git diff / git log を確認
-4. docs/inbox/ を確認
+3. 変更がある場合は目的ごとにコミット計画を立て、不要差分は早期に解消（Stash/Discard）する
+4. 必要に応じて git diff / git log を確認
+5. docs/inbox/ を確認
    - ファイルがあれば HANDOVER.md に統合
    - 回収後は REPORT のみ削除（ディレクトリ維持のため `.gitkeep` は残す）:
      - git rm docs/inbox/REPORT_*.md
-   - 統合結果をコミット
+   - 統合結果をコミットし、`git status -sb` がクリーンであることを確認
 
 ## Phase 1.5: 巡回監査（不備検知 / 乖離検知）
 docs/tasks/, docs/inbox/, HANDOVER.md を横断して、以下の異常を検知する:

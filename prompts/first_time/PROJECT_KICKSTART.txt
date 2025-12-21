@@ -27,6 +27,11 @@
   - `git submodule sync --recursive`
   - `git submodule update --init --recursive --remote`
 - `.shared-workflows/` に無い場合でも、プロジェクト直下にテンプレを複製せず、`../shared-workflows` 等の共有クローンから補完する（`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` など）。取得できるまで再試行し、最終手段として `docs/windsurf_workflow/OPEN_HERE.md` などプロジェクト直下の同名ファイルを一時参照してよいが、整備後は `.shared-workflows/` へ戻すこと。
+- Submodule のワークツリーが欠損/壊れている場合は、**止まらずに再取得**する:
+  1. `git submodule deinit -f .shared-workflows`
+  2. `git rm -f .shared-workflows`（コミット不要）
+  3. `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+  4. `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
 
 3) 運用ストレージ（プロジェクト側）の最小セットを作成
 - プロジェクトルート: AI_CONTEXT.md
@@ -58,7 +63,7 @@
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
 - CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
-  - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/<name>.js` を `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows`）を直接指定して実行。いずれでも復旧できない場合のみ状況と次の案をまとめて報告する。
+  - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を丸ごと `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行、(4) それでも復旧できない場合のみサブモジュール再追加（前述手順）を実施。
 
 運用フラグ（重要）:
 - GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に
