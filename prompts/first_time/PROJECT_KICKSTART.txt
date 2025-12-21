@@ -58,6 +58,7 @@
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
 - CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
+  - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/<name>.js` を `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows`）を直接指定して実行。いずれでも復旧できない場合のみ状況と次の案をまとめて報告する。
 
 運用フラグ（重要）:
 - GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に

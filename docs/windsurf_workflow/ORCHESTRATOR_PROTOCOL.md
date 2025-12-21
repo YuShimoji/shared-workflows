@@ -31,6 +31,11 @@
    2. 不足する場合は共有クローンを直接指定（例: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`）
    3. プロジェクト側 `scripts/` に `ensure-ssot.js` を配置し、`node scripts/ensure-ssot.js --project-root .`
    4. いずれでも取得できない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備後に `.shared-workflows/` へ戻す
+4. `.shared-workflows/scripts/` にある CLI（例: `todo-sync.js` / `report-validator.js` / `report-orch-cli.js`）が欠ける場合も **停止せず** 次を順番に試す:
+   1. `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
+   2. `.shared-workflows/scripts/<name>.js` を `scripts/` にコピーし、`node scripts/<name>.js` が動くことを確認
+   3. 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行
+   4. それでも復旧できない場合のみ状況と再取得案を報告して停止する
 
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 

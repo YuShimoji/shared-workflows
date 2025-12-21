@@ -80,7 +80,11 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - `docs/HANDOVER.md`
 - `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - `.shared-workflows/scripts/ensure-ssot.js`（無ければ共有クローンからコピー）
+- `scripts/todo-sync.js`（無い場合は `.shared-workflows/scripts/todo-sync.js` をコピーし、`node scripts/todo-sync.js` が必ず実行できる状態にする）
+- `.shared-workflows/scripts/report-validator.js`（無い場合は Submodule を再取得するか、`scripts/report-validator.js` に複製して `node <path>/report-validator.js` が動くよう整備する）
 - `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
+
+> スクリプトが見つからない/壊れている場合も **停止せずに** 次を順番に実施する: (1) Submodule sync/update（remote含む）、(2) `.shared-workflows/scripts/*.js` から `scripts/` へコピー、(3) 共有クローン直指定。いずれでも解消できない場合のみ、状況と再取得案を報告して停止する。
 
 加えて、`docs/HANDOVER.md` に以下が記載されているか確認する:
 
