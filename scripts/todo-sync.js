@@ -86,6 +86,33 @@ function buildTodoLines(tasks) {
     .join('\n');
 }
 
+function ensureNextSection(content, todoLines) {
+  const headingPattern = /###\s*短期（Next）/;
+  if (headingPattern.test(content)) {
+    const updated = replaceSection(content, '###\\s*短期（Next）', todoLines);
+    if (updated) {
+      return updated;
+    }
+    // 既存ヘッダがあるが置換に失敗した場合は、そのまま返して後続処理で落ちないようにする
+    console.warn('[todo-sync] Failed to replace existing "### 短期（Next）" section. Keeping original content.');
+    return content;
+  }
+
+  const anchorPattern = /##\s*タスク管理（短期\/中期\/長期）/;
+  if (anchorPattern.test(content)) {
+    console.log('[todo-sync] Inserting "### 短期（Next）" section under タスク管理（短期/中期/長期）.');
+    return content.replace(
+      anchorPattern,
+      match => `${match}\n\n### 短期（Next）\n\n${todoLines}\n`,
+    );
+  }
+
+  console.log('[todo-sync] Adding タスク管理（短期/中期/長期） and "### 短期（Next）" sections at end of AI_CONTEXT.md.');
+  const trimmed = content.trimEnd();
+  const prefix = trimmed.length ? `${trimmed}\n\n` : '';
+  return `${prefix}## タスク管理（短期/中期/長期）\n\n### 短期（Next）\n\n${todoLines}\n`;
+}
+
 function syncAiContext(aiContextPath, todoLines, dryRun) {
   const content = readFileSafe(aiContextPath);
   if (!content) {
@@ -93,11 +120,7 @@ function syncAiContext(aiContextPath, todoLines, dryRun) {
     return;
   }
 
-  const updated = replaceSection(content, '###\\s*短期（Next）', todoLines);
-  if (!updated) {
-    console.warn('[todo-sync] Heading "### 短期（Next）" not found. No changes applied.');
-    return;
-  }
+  const updated = ensureNextSection(content, todoLines);
 
   if (dryRun) {
     console.log('--- AI_CONTEXT preview (Next section) ---');
