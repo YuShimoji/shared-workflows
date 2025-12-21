@@ -50,6 +50,7 @@
 
 - [pending] GitHubのデフォルトブランチを main に統一（origin/HEAD を是正） (ref: docs/tasks/TASK_001_DefaultBranch.md, Status: OPEN)
 - [pending] 他プロジェクトへの参照方法を標準化（導入手順の最短化） (ref: docs/tasks/TASK_002_OnboardingRefStandard.md, Status: OPEN)
+- [pending] レポート欠損調査（docs/inbox / HANDOVER 整合性） (ref: docs/tasks/TASK_005_ReportAudit.md, Status: OPEN)
 
 ### 中期（Later）
 
