@@ -58,6 +58,7 @@ function main() {
   runScript('report-style-hint.js');
   runScript('creativity-booster.js');
   runScript('adapt-response.js');
+  runScript('todo-sync.js', ['--dry-run']);
   runScript('todo-leak-preventer.js');
 
   checkGitConflictState();

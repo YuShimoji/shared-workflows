@@ -48,8 +48,8 @@
 
 ### 短期（Next）
 
-- [ ] report-validator / orchestrator-audit / dev-check を再実行して成果を Verification に記録
-- [ ] git add → commit → push で今回の変更をリモートへ反映する
+- [pending] GitHubのデフォルトブランチを main に統一（origin/HEAD を是正） (ref: docs/tasks/TASK_001_DefaultBranch.md, Status: OPEN)
+- [pending] 他プロジェクトへの参照方法を標準化（導入手順の最短化） (ref: docs/tasks/TASK_002_OnboardingRefStandard.md, Status: OPEN)
 
 ### 中期（Later）
 
