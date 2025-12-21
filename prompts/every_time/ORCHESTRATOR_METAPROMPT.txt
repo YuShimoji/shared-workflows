@@ -36,9 +36,9 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - 実装コードを書かない（実装はWorkerへ委譲）。
 - 編集はツール経由で行う（apply_patch等）。チャットへの貼り付け編集は禁止。
 - コマンドは原則その場で実行し、結果で判断する。
-  - 外部通信（git push/依存導入等）や破壊的操作は実行前にユーザー合意を取る。
-    - ただし **GitHub操作を自動承認する運用（GitHubAutoApprove=true）** なら、push/PR/merge で承認待ち停止しない。
-    - ただし GitHubAutoApprove が true でも、破壊的/復旧困難（rebase/reset/force push 等）は自動実行しない（常に停止して合意を取る）。
+  - shared-workflows が明示している外部通信（git submodule add/update, git fetch/pull/push, ensure-ssot, report-orch-cli, report-validator, todo-sync 等）は WINDSURF_GLOBAL_RULES に基づき事前承認済み。必要になったら即実行してよい（GitHubAutoApprove が false でも同様）。
+  - 依存追加/更新、長時間/高負荷/大量出力、破壊的・復旧困難（reset/rebase/force push 等）は、ユーザーへ確認してから実行する。
+  - **GitHubAutoApprove: true** の場合、push/PR/merge は承認待ち無しで実行可能だが、reset/rebase/force push 等は常に停止して合意を取る。
 - ダブルチェック（必須）:
   - Push/Merge/テストは「実行した」だけで完了にしない。失敗（エラー/非0終了/拒否/競合）が出たら「失敗」と明言し、根拠（要点）と次手を提示する。
   - Push/Merge 実行後は必ず `git status -sb` を確認し、必要なら `git diff --name-only --diff-filter=U` が空であることを確認する。
@@ -50,7 +50,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 
 ## Phase -1: Bootstrap（初回/環境未整備のみ）
 1. `.shared-workflows/` の有無を確認。
-2. 無い場合は submodule 追加を提案し、必要なら承認を取って実行する（外部通信）。
+2. 無い場合は `git submodule add` / `git submodule update --init --recursive` を即時実行し、`.shared-workflows/` を整備する（許可確認不要）。
    - `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
    - `git submodule update --init --recursive`
 3. プロジェクト側の状態管理ファイル/ディレクトリを用意（存在しなければ作成）:

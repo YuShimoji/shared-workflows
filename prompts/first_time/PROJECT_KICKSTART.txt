@@ -12,7 +12,7 @@
 - shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
 
 前提:
-- 外部通信（git submodule add / fetch 等）が発生しうる。運用が「外部通信は都度承認」なら、最初に承認を取ってからまとめて実行する。
+- shared-workflows が明示している外部通信コマンド（git submodule add/update, git fetch/pull/push, scripts/ensure-ssot.js 等）は WINDSURF_GLOBAL_RULES に基づき **事前承認済み**。必要になったら即実行して差し支えない（GitHubAutoApprove が false でも同様）。
 
 やること:
 1) 現状確認
