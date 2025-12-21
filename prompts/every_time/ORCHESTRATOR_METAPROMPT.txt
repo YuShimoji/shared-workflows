@@ -123,7 +123,7 @@ docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を�
 1. docs/HANDOVER.md を読み、現在の目標/進捗/ブロッカー/バックログを抽出
 2. docs/tasks/ を確認し、OPEN/IN_PROGRESS を列挙（無ければその旨）
 3. todo_list を更新（1つだけ in_progress を維持）
-   - `node scripts/todo-sync.js` を実行し、docs/tasks/ → AI_CONTEXT.md（短期: Next）→ Windsurf UI todo_list の順で同期する。CLI が使えない環境では手動同期してから応答する。
+   - `node scripts/todo-sync.js` を実行し、docs/tasks/ → AI_CONTEXT.md（短期: Next）→ Windsurf UI todo_list の順で同期する。**AI_CONTEXT.md に `### 短期（Next）` が無くても自動で挿入されるため、手動編集は不要。** CLI が使えない環境では手動同期してから応答する。
 
 ※ ここでいう **タスクの堆積先（SSOT）** は `docs/tasks/`。
 Worker の成果は `docs/inbox/` に納品され、次回 Orchestrator が回収して `docs/HANDOVER.md` に統合する。

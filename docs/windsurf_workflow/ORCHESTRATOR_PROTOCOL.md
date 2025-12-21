@@ -368,8 +368,7 @@ docs/
 | 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`） |
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
-| 未完了タスク | docs/tasks/ で Status: OPEN を検索 |
-| ブロッカー回収 | docs/tasks/ で Status: BLOCKED を検索（Report/次手の回収） |
+| 未完了タスク   - docs/tasks/ の Status: OPEN/IN_PROGRESS を列挙 (1つだけ in_progress を維持) -> `node scripts/todo-sync.js` を実行し、AI_CONTEXT.md（短期: Next）と Windsurf UI todo_list を同期。**AI_CONTEXT.md に `### 短期（Next）` が無くてもスクリプトが自動挿入するので、手動編集は不要。** CLI が使えない環境では手動同期。|
 | 納品物確認 | docs/inbox/ 参照 |
 
 ---
