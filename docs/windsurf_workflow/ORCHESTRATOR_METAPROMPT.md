@@ -199,7 +199,7 @@ Outlook:
 
 ### レポート保存と検証
 - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
-- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する（無ければ `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md`）。
+- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する。サブモジュール版が欠けてローカルコピーを使う場合は `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
 - 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
 
 ### 完了状態（残タスク0）の追加要件

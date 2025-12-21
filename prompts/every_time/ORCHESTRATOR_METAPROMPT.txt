@@ -193,9 +193,9 @@ Outlook:
 **報告スタイルの強制**: スタイルプリセット（standard/narrative 等）に関係なく、必須ヘッダー（State, Strategy, Tickets, Next）を必ず含む。一貫性を優先し、モデル依存のスタイル差を最小化。
 
 ### レポート保存と検証
-- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成（チャット出力と同じ内容を保存）。
-- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、警告/エラーが無いことを確認（無ければ `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md`）。
-- レポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合後に削除する。
+- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
+- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する。サブモジュール版が欠けてローカルコピーを利用する場合は `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
+- 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
 
 ### 完了状態（残タスク0）の追加要件
 - State には完了サマリ（総タスク数/完了数/統合済みレポート等）を含める。
