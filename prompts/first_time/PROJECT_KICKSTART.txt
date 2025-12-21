@@ -1,11 +1,12 @@
 あなたはこのプロジェクトのセットアップ担当です。
 
 最優先で読むもの:
-- （このプロジェクト内に存在する）.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+- shared-workflows サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- サブモジュールを利用する場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
 - プロジェクトルートの AI_CONTEXT.md（無ければ作成）
 
 目的:
-- shared-workflows を Submodule として .shared-workflows/ に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする。
+- shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
 
 前提:
 - 外部通信（git submodule add / fetch 等）が発生しうる。運用が「外部通信は都度承認」なら、最初に承認を取ってからまとめて実行する。
@@ -16,30 +17,31 @@
 - git status -sb で作業ツリー確認
 
 2) Submodule 導入（未導入の場合）
-- 推奨パスは .shared-workflows
+- 推奨パスは `.shared-workflows`
 - リポジトリ: https://github.com/YuShimoji/shared-workflows.git
+- （導入しない場合は、このステップをスキップして `docs/` 配下のテンプレをそのまま参照する）
 
 3) 運用ストレージ（プロジェクト側）の最小セットを作成
 - プロジェクトルート: AI_CONTEXT.md
 - プロジェクトルート（任意）: ORCHESTRATION_PROMPT.md
-- docs/HANDOVER.md
-- docs/tasks/（空でもよい）
-- docs/inbox/（空でもよい）
+- `docs/HANDOVER.md`
+- `docs/tasks/`（空でもよい）
+- `docs/inbox/`（空でもよい）
 
 空ディレクトリをGit管理したい場合は、次を作る（任意）:
 - docs/tasks/.gitkeep
 - docs/inbox/.gitkeep
 
 4) テンプレ配置（必要な場合のみ）
-- AI_CONTEXT.md は .shared-workflows/templates/AI_CONTEXT.md をコピーして初期化
-- ORCHESTRATION_PROMPT.md は .shared-workflows/templates/ORCHESTRATION_PROMPT.md をコピー（任意）
+- サブモジュール導入時: `.shared-workflows/templates/AI_CONTEXT.md` などからコピー
+- サブモジュール未導入時: `templates/AI_CONTEXT.md` 等のローカルファイルをコピーして初期化
 
 5) 参照の固定化（重要）
-- 今後、Orchestrator/Worker は次を参照する:
-  - SSOT（latest）: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
-  - 運用者の入口: .shared-workflows/docs/windsurf_workflow/OPEN_HERE.md
-  - オーケストレーション（毎回コピペ）: .shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt
-  - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
+- 今後、Orchestrator/Worker は次を参照する（サブモジュールが無い場合は `docs/` 直下を使う）:
+  - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+  - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
+  - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+  - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
   - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
 
