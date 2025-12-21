@@ -26,10 +26,11 @@
 2. プロジェクト側の状態管理ファイル/ディレクトリを用意（存在しなければ作成）:
    - `AI_CONTEXT.md`（プロジェクトルート）
    - `docs/HANDOVER.md`
-3. `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、作業開始前に以下いずれかの方法で `scripts/ensure-ssot.js` を実行し、`.shared-workflows/` からコピーする（すべて `--project-root .` を付けると誤検出を避けられる）。
-   - `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
-   - `node ../shared-workflows/scripts/ensure-ssot.js --project-root .` のように実体パスを指定
-   - `node scripts/ensure-ssot.js --project-root .`
+3. `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、**許可待ちせず自動で補完**する（成功するまで繰り返す）。
+   1. `.shared-workflows/` で `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+   2. 不足する場合は共有クローンを直接指定（例: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`）
+   3. プロジェクト側 `scripts/` に `ensure-ssot.js` を配置し、`node scripts/ensure-ssot.js --project-root .`
+   4. いずれでも取得できない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備後に `.shared-workflows/` へ戻す
 
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 

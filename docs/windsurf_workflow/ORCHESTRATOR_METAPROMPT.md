@@ -68,12 +68,12 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
    - `docs/inbox/`
 
 ## Phase 0: SSOT確認
-以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest` が無い場合は、作業続行前に以下のいずれかで `scripts/ensure-ssot.js` を実行し、`.shared-workflows/` からコピーする（すべて `--project-root .` 併用推奨）。
-- Submodule（推奨）: `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
-- 共有ディレクトリ直参照: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .` など実体パスを直接指定
-- プロジェクト側 scripts/ 配置: `node scripts/ensure-ssot.js --project-root .`
-
- - `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest` が無い場合は **許可待ちせず自動で補完** する（成功するまで繰り返す）。スクリプトで解決できない場合のみ停止し、参照方法を再指示する。
+  1. `.shared-workflows/` にいる状態で `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
+  2. 不足する場合は共有クローンを直接指定（例: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`）
+  3. プロジェクト側 `scripts/` に `ensure-ssot.js` をコピーして `node scripts/ensure-ssot.js --project-root .`
+  4. 上記で揃わない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備完了後に `.shared-workflows/` に戻す
+- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
 - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - `docs/PROMPT_TEMPLATES.md`
 - `REPORT_CONFIG.yml`
