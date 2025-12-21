@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { requireSharedWorkflowsPath } = require('./utils/sw-path');
 
 function parseArg(flag, defaultValue) {
   const args = process.argv.slice(2);
@@ -55,18 +56,24 @@ function normalizePath(p) {
   return p.replace(/\\/g, '/');
 }
 
-function runValidator(reportPath, root) {
-  const validatorPath = path.join(root, 'scripts', 'report-validator.js');
-  const configPath = path.join(root, 'REPORT_CONFIG.yml');
-  if (!fs.existsSync(validatorPath) || !fs.existsSync(configPath)) {
-    console.log('Validator or config not found. Skipping validation.');
-    return;
-  }
+function runValidator(reportPath, projectRoot) {
+  try {
+    const { path: validatorPath } = requireSharedWorkflowsPath(
+      path.join('scripts', 'report-validator.js'),
+      { projectRoot, preferSwRoot: true }
+    );
+    const { path: configPath } = requireSharedWorkflowsPath(
+      'REPORT_CONFIG.yml',
+      { projectRoot, preferSwRoot: true }
+    );
 
-  console.log(`Running validator for ${reportPath}`);
-  execSync(`node "${validatorPath}" "${reportPath}" "${configPath}" "${root}"`, {
-    stdio: 'inherit'
-  });
+    console.log(`Running validator for ${reportPath}`);
+    execSync(`node "${validatorPath}" "${reportPath}" "${configPath}" "${projectRoot}"`, {
+      stdio: 'inherit'
+    });
+  } catch (error) {
+    console.log(`Validator を実行できませんでした: ${error.message}`);
+  }
 }
 
 function updateHandoverLatest(handoverPath, reportPath, summary) {
@@ -119,10 +126,10 @@ Options:
   }
 
   const root = process.cwd();
-  const templatePath = path.join(root, 'templates', 'ORCHESTRATOR_REPORT_TEMPLATE.md');
-  if (!fs.existsSync(templatePath)) {
-    throw new Error('templates/ORCHESTRATOR_REPORT_TEMPLATE.md が見つかりません。');
-  }
+  const { path: templatePath } = requireSharedWorkflowsPath(
+    path.join('templates', 'ORCHESTRATOR_REPORT_TEMPLATE.md'),
+    { projectRoot: root, preferSwRoot: true }
+  );
 
   let template = fs.readFileSync(templatePath, 'utf8');
   const tzOffset = parseInt(parseArg('--tz-offset', '540'), 10);

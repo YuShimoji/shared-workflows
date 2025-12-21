@@ -37,7 +37,11 @@
 - サブモジュール未導入時: `templates/AI_CONTEXT.md` 等のローカルファイルをコピーして初期化
 
 5) 参照の固定化（重要）
-- 今後、Orchestrator/Worker は次を参照する（サブモジュールが無い場合は `docs/` 直下を使う）:
+- SW_ROOT（shared-workflows配置）は `.shared-workflows/` を既定とし、無い場合は `docs/` 直下をフォールバックとして利用する。CLI/スクリプト類は自動で SW_ROOT を判定するが、特殊環境では `SW_ROOT` 環境変数で明示指定できる。
+- REPORT_CONFIG.yml は以下のいずれかを満たすこと:
+  - プロジェクトルートに配置し、shared-workflows の設定をコピーする
+  - サブモジュール内の `REPORT_CONFIG.yml` を利用する（CLIは自動検出）
+- 今後、Orchestrator/Worker は次を参照する:
   - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
   - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
   - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { resolveSharedWorkflowsPath } = require('./utils/sw-path');
 
 function runCommand(cmd, cwd) {
   try {
@@ -279,5 +280,43 @@ function validateReport(reportPath, configPath, projectRoot) {
   return false;
 }
 
-const [,, reportPath, configPath, projectRoot] = process.argv;
-validateReport(reportPath, configPath, projectRoot || path.dirname(reportPath));
+const [, , reportPathArg, configPathArg, projectRootArg] = process.argv;
+
+if (!reportPathArg) {
+  console.error('Usage: node scripts/report-validator.js <reportPath> [configPath] [projectRoot]');
+  process.exit(1);
+}
+
+const resolvedReportPath = path.resolve(reportPathArg);
+const resolvedProjectRoot = projectRootArg
+  ? path.resolve(projectRootArg)
+  : path.dirname(resolvedReportPath);
+
+function resolveConfigPath(inputPath, projectRoot) {
+  if (inputPath) {
+    const absolute = path.resolve(inputPath);
+    if (fs.existsSync(absolute)) {
+      return absolute;
+    }
+  }
+
+  const fallback = resolveSharedWorkflowsPath('REPORT_CONFIG.yml', {
+    projectRoot,
+    preferSwRoot: true
+  });
+
+  if (fallback.path && fs.existsSync(fallback.path)) {
+    return fallback.path;
+  }
+
+  throw new Error('REPORT_CONFIG.yml が見つかりませんでした。プロジェクトルートか shared-workflows の配置を確認してください。');
+}
+
+const resolvedConfigPath = resolveConfigPath(configPathArg, resolvedProjectRoot);
+
+try {
+  validateReport(resolvedReportPath, resolvedConfigPath, resolvedProjectRoot);
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
