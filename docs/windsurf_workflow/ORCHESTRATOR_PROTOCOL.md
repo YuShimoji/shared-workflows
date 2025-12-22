@@ -1,12 +1,12 @@
 # Windsurf Orchestration Protocol
- 
+
 > 分散開発ワークフローのための標準プロトコル。推奨の最小運用は「Kickstart（初回）」と「Orchestrator Metaprompt（毎回）」の2つを“貼る”運用。
 > ただし運用全体としては、Worker用プロンプトの生成ベース（テンプレ）も含めて **3テンプレで完結**する。
 > Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成し、`.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` をベースとして扱う。
+
+---
  
- ---
- 
- ## 運用概要
+## 運用概要
 
 | 用途 | プロンプト | 使用頻度 |
 |------|-----------|---------|
@@ -18,7 +18,9 @@
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
 
 ### SSOT補完の実行方法（全体共通）
+
 `.shared-workflows/` の有無を確認。
+
 1. 無い場合は `git submodule add` / `git submodule update --init --recursive` を即時実行し、`.shared-workflows/` を整備する（許可確認不要）。
    - `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
    - `git submodule sync --recursive`
@@ -45,13 +47,15 @@
 上記で解決できない場合は停止し、参照方法（Submodule導入/ファイル配置）を整備してから再開する。
 
 Submodule の状態確認は次で行う（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
+
 - `git submodule status --recursive`
 - `git -C .shared-workflows status -sb`
 - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
 - `git -C .shared-workflows rev-parse HEAD`
 
 **フロー:**
-```
+
+```text
 1. Orchestratorスレッド起動 -> inbox回収 -> タスクチケット発行
 2. Workerスレッド起動（N個）-> チケット取得 -> 作業 -> inbox納品
 3. 次回Orchestrator起動 -> 1に戻る
@@ -197,7 +201,7 @@ Tickets:
 
 Orchestrator レポートは CLI で自動生成・検証・HANDOVER 同期まで行う。
 
-```
+```sh
 node .shared-workflows/scripts/report-orch-cli.js \
   --issue "AI Reporting Improvement" \
   --mode orchestration \
@@ -205,11 +209,11 @@ node .shared-workflows/scripts/report-orch-cli.js \
   --sync-handover
 ```
 
-- docs/inbox/REPORT_ORCH_<timestamp>.md をテンプレから生成し、`REPORT_CONFIG.yml` に基づき自動検証を実行。
+- docs/inbox/REPORT_ORCH_YYYYMMDD_HHMM.md をテンプレから生成し、`REPORT_CONFIG.yml` に基づき自動検証を実行。
 - `--summary` は HANDOVER.md の Latest Orchestrator Report セクションに反映される。
 - `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
 
-手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <report>`）。
+手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <REPORT_PATH>`）。
 
 `node scripts/report-validator.js` を使う場合は、`node scripts/report-validator.js <report> REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
 
@@ -357,7 +361,7 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 
 ## 3. ディレクトリ構成
 
-```
+```text
 docs/
   HANDOVER.md          # 全体進捗管理（Orchestratorが更新）
   tasks/               # タスクチケット置き場
@@ -376,7 +380,7 @@ docs/
 | 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`） |
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
-| 未完了タスク   - docs/tasks/ の Status: OPEN/IN_PROGRESS を列挙 (1つだけ in_progress を維持) -> `node scripts/todo-sync.js` を実行し、AI_CONTEXT.md（短期: Next）と Windsurf UI todo_list を同期。**AI_CONTEXT.md に `### 短期（Next）` が無くてもスクリプトが自動挿入するので、手動編集は不要。** CLI が使えない環境では手動同期。|
+| 未完了タスク | `node scripts/todo-sync.js --skip-todo-list`（UI todo 同期が不要な場合） |
 | 納品物確認 | docs/inbox/ 参照 |
 
 ---

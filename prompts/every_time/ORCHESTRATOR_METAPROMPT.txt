@@ -164,38 +164,33 @@ Worker用の共通参照（毎回含める）:
 - （必要なら）`docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` の Worker Protocol
 
 ## Phase 6: Orchestrator Report（チャット出力）
-チャットには以下を出力する。
+チャット回答は **固定4セクション**（順番厳守）で出力する。
 
-## Orchestrator Report
+1. `## 現状`  
+   - 進捗サマリと差分（例: 取り込んだレポート、残差分ファイル、警告ログ）。
+2. `## 次のアクション`  
+   - 実行する操作を番号付きリストで列挙。各行は「ファイル/コマンド + 目的」を明記。
+3. `## ガイド`  
+   - 作業の中項目（HANDOVER更新 / docs.inbox整理 / Worker再投入 / Git反映 など）を箇条書きで整理。
+4. `## メタプロンプト再投入条件`  
+   - 「HANDOVER更新と push 完了後」「Worker 納品を回収した後」「ブロッカー発生時」など、次にメタプロンプトを貼る条件を明言。
 
-**Timestamp**: <ISO8601>
-**Actor**: Cascade
-**Issue/PR**: <関連Issue/PR>
-**Mode**: <mode>
-**Type**: Orchestrator
-
-State: <進捗要約。詳細に（目標達成率、完了タスク数、残タスク数）>
-
-Strategy:
-- Workers: <0-3>
-- Reason: <詳細理由（タスク依存関係、並列化判断）>
-- Risk: <リスク評価（Tier分布、潜在ブロッカー）>
-- Duration: <推定所要時間>
-
-Tickets:
-- <TASK...>: <概要 + 詳細（Tier, DoD概要）>
-
-Next:
-- <ユーザーの次のアクション>
-
-Proposals: <将来提案（バックログ候補）>
-
-Outlook:
-- Short-term: <直近1セッションで着手する内容>
-- Mid-term: <今後数セッションで扱う内容>
-- Long-term: <中長期ゴールや布石>
-
-**報告スタイルの強制**: スタイルプリセット（standard/narrative 等）に関係なく、必須ヘッダー（State, Strategy, Tickets, Next）を必ず含む。一貫性を優先し、モデル依存のスタイル差を最小化。
+> 例:
+> ```
+> ## 現状
+> - Workerレポート REPORT_20251222_1416.md を受領、HANDOVER 未統合
+> 
+> ## 次のアクション
+> 1. docs/HANDOVER.md に TASK_002 完了概要とレポートパスを追記
+> 2. git rm docs/inbox/REPORT_ORCH_20251221_1150.md （統合済みのため削除）
+> ...
+> 
+> ## ガイド
+> - HANDOVER更新 → レポート整理 → TASK_005再稼働 → git push
+> 
+> ## メタプロンプト再投入条件
+> - 上記4手順と push が完了したら再投入
+> ```
 
 ### レポート保存と検証
 - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
@@ -203,8 +198,7 @@ Outlook:
 - 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
 
 ### 完了状態（残タスク0）の追加要件
-- State には完了サマリ（総タスク数/完了数/統合済みレポート等）を含める。
-- Tickets が空でも完了済みであることと、最後に実施した作業を列挙する。
-- Next では必ず 1 つ以上の提案やフォローアップ（レトロ、監査、バックログ化など）を提示する。
-- Proposals には今後の改善案や次回チケット候補を最低1件含める。
-- Outlook では Short/Mid/Long の3観点を必須とし、完了後でも次に観測すべき指標や必要なら起票するチケット案を提示する。
+- `## 現状` で完了サマリ（総タスク数/完了数/統合済みレポート等）を記載。
+- `## 次のアクション` が空の場合でも、完了後のフォローアップ案を最低1行含める。
+- `## ガイド` に Short/Mid/Long を含む Outlook を整理する。
+- `## メタプロンプト再投入条件` で「次に貼るタイミング」を明示してから終了する。
