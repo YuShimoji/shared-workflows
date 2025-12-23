@@ -53,6 +53,15 @@ style_presets:
       - Commitments
     notes: |-
       未来志向の提案や大胆な仮説検証を行う際に使用。リスクと成功条件を明示する。
+  handover:
+    headers:
+      - 進捗
+      - 次の中断可能点
+      - 決定事項
+      - リスク/懸念
+      - Backlog（将来提案）
+    notes: |-
+      HANDOVER用のレイアウト。標準レポートの必須ヘッダー（概要/現状/次のアクション）は要求しない。
 
 creativity_triggers:
   default:

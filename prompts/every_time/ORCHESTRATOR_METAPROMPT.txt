@@ -149,8 +149,9 @@ docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を�
    - Latest Orchestrator Report が最新の `docs/inbox/REPORT_ORCH_*.md` を指し、Progress/Latest/Outlook に今回の作業が反映されている
 4. `node scripts/todo-sync.js`（または `.shared-workflows/` 版）を実行済みで、AI_CONTEXT.md と Windsurf todo_list が同期済み
 5. `git status -sb` がクリーン（コミット予定の差分のみ）。未コミット差分が残る場合は「未完了」として扱い、次アクションで解消手順を示す
-6. 直近で生成した Orchestrator/Worker レポートに対し `node .shared-workflows/scripts/report-validator.js <REPORT>`（またはローカルコピー）を実行し、検証ログをレポート本文とチャット両方に記録
-7. `## 次のアクション` で列挙するタスクに実際の owner（自分 or Worker）が割り当てられている
+6. HANDOVER.md に対して `node .shared-workflows/scripts/report-validator.js --profile handover docs/HANDOVER.md REPORT_CONFIG.yml .` を実行し、検証ログを記録
+7. 直近で生成した Orchestrator/Worker レポートに対し `node .shared-workflows/scripts/report-validator.js <REPORT>`（またはローカルコピー）を実行し、検証ログをレポート本文とチャット両方に記録
+8. `## 次のアクション` で列挙するタスクに実際の owner（自分 or Worker）が割り当てられている
 
 Complete Gate を突破したら、Phase 6 の `## 現状` で「Complete Gate: ✅/❌」と検証コマンド結果（Report Validation ログ）を明記する。
 
@@ -212,7 +213,7 @@ Worker用の共通参照（毎回含める）:
 > ## 現状
 > - Workerレポート REPORT_20251222_1416.md を受領、HANDOVER 未統合
 > - Complete Gate: ❌（docs/inbox/ に REPORT が残存）
-> - Report Validation: ✅ node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_20251221_1150.md
+> - Report Validation: ✅ node .shared-workflows/scripts/report-validator.js --profile handover docs/inbox/REPORT_ORCH_20251221_1150.md
 > 
 > ## 次のアクション
 > 1. docs/HANDOVER.md に TASK_002 完了概要とレポートパスを追記
@@ -228,7 +229,7 @@ Worker用の共通参照（毎回含める）:
 
 ### レポート保存と検証
 - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに、`docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成する（チャット出力と同内容を保存）。
-- 保存後に `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する。サブモジュール版が欠けてローカルコピーを利用する場合は `node scripts/report-validator.js docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
+- 保存後に `node .shared-workflows/scripts/report-validator.js --profile handover docs/inbox/REPORT_ORCH_<...>.md` を実行し、エラー/警告が無いことを確認する。サブモジュール版が欠けてローカルコピーを利用する場合は `node scripts/report-validator.js --profile handover docs/inbox/REPORT_ORCH_<...>.md REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
 - 検証OKのレポートは docs/inbox/ に保管し、次回 Phase 1 で HANDOVER へ統合してから削除する。
 
 ### 完了状態（残タスク0）の追加要件
