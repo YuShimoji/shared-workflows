@@ -19,9 +19,17 @@ function listFilesSafe(dirPath) {
 }
 
 function parseKeyLine(content, key) {
-  const re = new RegExp(`^\\*\\*${key}\\*\\*\\s*:\\s*(.*)$`, 'im');
-  const m = content.match(re);
-  return m ? m[1].trim() : '';
+  const patterns = [
+    new RegExp(`^\\*\\*${key}\\*\\*\\s*:\\s*(.*)$`, 'im'),
+    new RegExp(`^-\\s*\\*\\*${key}\\*\\*\\s*:\\s*(.*)$`, 'im'),
+    new RegExp(`^${key}\\s*:\\s*(.*)$`, 'im'),
+    new RegExp(`^-\\s*${key}\\s*:\\s*(.*)$`, 'im'),
+  ];
+  for (const re of patterns) {
+    const m = content.match(re);
+    if (m) return m[1].trim();
+  }
+  return '';
 }
 
 function validateReportConsistency(reportPath, anomalies, warnings) {
