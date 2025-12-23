@@ -223,11 +223,24 @@ function validateReport(reportPath, configPath, projectRoot) {
   if (config.strict_mode) {
     const style = config.style_presets[config.default_style];
     if (style) {
-      for (const header of style.headers) {
-        if (!reportContent.includes(`## ${header}`)) {
-          warnings.push(`必須ヘッダー '${header}' がありません`);
+      function validateHeaders(content, profile) {
+        const requiredHeaders = profile.headers;
+        const missingHeaders = [];
+        
+        // handoverプロファイルでは標準ヘッダーチェックをスキップ
+        if (profile.name === 'handover') {
+          return { missingHeaders: [], suggestions: [] };
         }
+        
+        for (const header of requiredHeaders) {
+          if (!content.includes(`## ${header}`)) {
+            missingHeaders.push(header);
+          }
+        }
+        return { missingHeaders, suggestions: [] };
       }
+      const headerChecks = validateHeaders(reportContent, style);
+      warnings.push(...headerChecks.missingHeaders.map(header => `必須ヘッダー '${header}' がありません`));
     }
   }
 
