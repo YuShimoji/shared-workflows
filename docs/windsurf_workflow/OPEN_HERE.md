@@ -10,23 +10,31 @@
 ## 最短ルート（迷ったらこれだけ）
 
 開くフォルダ（参照）:
+
 - `.shared-workflows/docs/windsurf_workflow/`
 
 開くフォルダ（コピペ）:
+
 - `.shared-workflows/prompts/`
 
 毎回コピペするもの:
+
 - **Orchestrator起動（毎回）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
 
 初回だけコピペするもの（環境が未整備の場合）:
+
 - **Kickstart（初回）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
 
 Windsurf Global Rules（端末ごとの統一）:
+
 - **貼り付け用**: `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`
 
 参照するもの（コピペは原則しない）:
+
 - **Worker生成テンプレ（参照）**: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
   - Orchestrator がチケット内容（Tier/Focus/Forbidden/DoD）に合わせて Worker Prompt を都度生成するためのベース
+- **Worker起動判定（準備ループ防止）**: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
+  - Worker 投入の直前に GO/NO-GO を判断し、整合取りで停滞するループを防ぐ
 
 ---
 
@@ -49,6 +57,7 @@ Windsurf Global Rules（端末ごとの統一）:
 ## 追加の参照（必要なときだけ）
 
 - ルール本体（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+- Worker起動判定（準備ループ防止）: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
 - テンプレ一覧: `.shared-workflows/docs/PROMPT_TEMPLATES.md`
 - オーケストレーション手順（参照）: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - コピペ用プロンプト集（貼るだけ）: `.shared-workflows/prompts/`

@@ -9,13 +9,14 @@
 ## 運用概要
 
 | 用途 | プロンプト | 使用頻度 |
-|------|-----------|---------|
+| --- | --- | --- |
 | 初回セットアップ（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` | 初回（セットアップ/立て直し） |
 | 運用者の入口（参照） | OPEN HERE | 参照（迷った時） |
 | オーケストレーション（コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | 毎回（Orchestratorスレッド起動時） |
 | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
+| Worker起動判定（準備ループ防止） | Worker Activation Checklist | 参照（起動直前） |
 
 ### SSOT補完の実行方法（全体共通）
 
@@ -162,6 +163,17 @@ Created: [ISO8601]
 
 ## DoD
 - [ ] [完了条件]
+
+---
+
+### Worker 起動直前の GO/NO-GO 判定（推奨）
+
+Worker 起動前に以下を実行し、結果に従う（原則は GO。NO-GO は最小化）。
+
+- Submodule 利用時: `node .shared-workflows/scripts/worker-activation-check.js --ticket <TICKET_PATH> --worker-prompt <WORKER_PROMPT_PATH>`
+- Submodule 無し: `node scripts/worker-activation-check.js --ticket <TICKET_PATH> --worker-prompt <WORKER_PROMPT_PATH>`
+
+準備（docs/inbox整理、HANDOVER整合、archive照合等）で停滞し、同じ確認を 2 回繰り返した、または 15 分以上 Worker 起動に到達できない場合は、準備タスクを Tier 1 として別チケット化し、Worker に割り当てて前進する。
 
 ---
 
@@ -378,7 +390,7 @@ docs/
 ## 4. クイックリファレンス
 
 | 操作 | コマンド/ファイル |
-|------|------------------|
+| --- | --- |
 | 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`） |
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |

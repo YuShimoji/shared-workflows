@@ -9,6 +9,7 @@
 運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
 - `docs/windsurf_workflow/OPEN_HERE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`）
 - Request Reflection Checklist（必ず参照）: `.shared-workflows/docs/windsurf_workflow/REQUEST_REFLECTION_CHECKLIST.md`
+- Worker Activation Checklist（準備ループ防止）: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
 
 Worker起動用プロンプト（各担当者向け）は、Orchestrator が **毎回動的生成**する。
 生成のベース（テンプレ）は以下（= 3つ目のテンプレ）:
@@ -48,6 +49,18 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
   - 待機が必要な場合はタイムアウト（上限時間）と打ち切り条件を定義し、超過したらタイムアウトとして扱い次手へ進む（無限待機しない）。
 - 「念のため」のテスト・フォールバック追加は禁止。主要パスのみ。
 - 重要判断では最低3案を比較し、採用理由/懸念/導入条件を明示する。
+
+## 準備ループ防止（必須）
+- 準備（docs/inbox整理、HANDOVER整合、archive照合等）で停滞し、Worker起動に到達できない状態を禁止する。
+- 同じ確認を 2 回繰り返した、または 15 分以上 Worker 起動に到達できない場合:
+  - 「準備タスク」を Tier 1 の別チケットとして発行し、Worker に割り当てて前進する。
+  - 既存チケットは DONE にしない（IN_PROGRESS/BLOCKED のまま）。
+
+## Worker 起動直前の GO/NO-GO 判定（推奨）
+- Worker 起動の直前に以下を実行し、結果に従う:
+  - `node .shared-workflows/scripts/worker-activation-check.js --ticket <TICKET_PATH> --worker-prompt <WORKER_PROMPT_PATH>`
+  - Submodule が無い場合は `node scripts/worker-activation-check.js ...`
+- 原則は GO。NO-GO は「git競合」「指定ファイル不存在」など最小限に留める。
 
 ## Phase -1: Bootstrap（初回/環境未整備のみ）
 1. `.shared-workflows/` の有無を確認。

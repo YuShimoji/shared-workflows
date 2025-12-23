@@ -220,20 +220,6 @@ function main() {
         warnings.push(`レポート検証実行失敗: ${file}`);
       }
     }
-
-    // Added new code here
-    const handoverContent = readFileSafe(handoverPath);
-    if (handoverContent) {
-      const handoverLines = handoverContent.split('\n');
-      const newHandoverLines = handoverLines.map(line => {
-        if (line.startsWith('## Active Tasks')) {
-          return line + '\n' + `| Task | Status |`;
-        }
-        return line;
-      });
-      const newHandoverContent = newHandoverLines.join('\n');
-      fs.writeFileSync(handoverPath, newHandoverContent);
-    }
   }
 
   validateHandoverConsistency(handoverPath, anomalies, warnings);

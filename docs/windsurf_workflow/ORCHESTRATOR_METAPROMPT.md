@@ -16,6 +16,8 @@
 
 運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
 - `docs/windsurf_workflow/OPEN_HERE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`）
+- Request Reflection Checklist（必ず参照）: `.shared-workflows/docs/windsurf_workflow/REQUEST_REFLECTION_CHECKLIST.md`
+- Worker Activation Checklist（準備ループ防止）: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
 
 Worker起動用プロンプト（各担当者向け）は、Orchestrator が **毎回動的生成**する。
 生成のベース（テンプレ）は以下（= 3つ目のテンプレ）:
