@@ -44,6 +44,7 @@ GitHubAutoApprove: false
 ## Verification
 
 - `node scripts/report-orch-cli.js --issue "Repo Freshness Check" --sync-handover --summary "gitはmainでorigin/mainと同期(0/0)..."` → docs/inbox/REPORT_ORCH_20251226_1332.md 生成・検証OK・HANDOVER同期OK。
+- `git remote set-head origin -a` → 実行済み（`git remote show origin` の `HEAD branch` は `chore/central-init` のまま）
 - 次の実行予定: `node scripts/report-validator.js <REPORTS>` / `node scripts/orchestrator-audit.js --no-fail` / `node scripts/dev-check.js`（旧レポート補完後にまとめて実行）。
 - `node scripts/report-validator.js docs/HANDOVER.md REPORT_CONFIG.yml .` → OK (warnings: 必須ヘッダー '概要' がありません, '現状' がありません, '次のアクション' がありません)
 - `node scripts/orchestrator-audit.js --no-fail` → OK (tasks: 3, reports: 2)
