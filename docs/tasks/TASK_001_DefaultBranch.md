@@ -1,6 +1,6 @@
 # Task: GitHubのデフォルトブランチを main に統一（origin/HEAD を是正）
 
-Status: OPEN
+Status: IN_PROGRESS
 Tier: 1
 Branch: main
 Owner: Orchestrator
