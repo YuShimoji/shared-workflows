@@ -66,3 +66,17 @@ git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-work
 
 - 初回導入/立て直しは、中央リポジトリの `prompts/first_time/PROJECT_KICKSTART.txt` をプロジェクトのセットアップ担当スレッドに貼り付けて実行する。
 - 以降の作業は、プロジェクト内の `.shared-workflows/` を参照することで「中央リポジトリの存在を示唆せず」に SSOT を安定参照できる。
+
+## サブモジュールが利用できない場合のフォールバック
+
+shared-workflows がサブモジュールとして導入されていない場合:
+1. 親リポジトリの `scripts/` ディレクトリから必要なスクリプトを直接コピーして使用する
+2. `docs/windsurf_workflow/` 内のファイルを直接参照する
+3. プロジェクトルートに `AI_CONTEXT.md` を手動で作成する
+
+例: `report-validator.js` が必要な場合
+```bash
+cp /path/to/source/shared-workflows/scripts/report-validator.js ./scripts/
+```
+
+```

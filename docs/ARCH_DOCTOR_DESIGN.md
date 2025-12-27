@@ -162,17 +162,42 @@ shared-workflows に閉じたスクリプト群（ensure-ssot, orchestrator-audi
   - `doctor.config.js` や `.doctorrc` による profile/プラグイン設定。
   - shared-workflows は「標準プラグインセット」として利用される。
 
-## 6. 今後の優先タスク
+## 6. CI 連携とカスタム設定
 
-1. **sw-doctor 内部での CheckResult 構造の導入**
-   - 既存のログ出力ロジックを保持しながら、内部的に CheckResult 配列を構築する。
-   - TODO: `sw_doctor_check_api` タスクで実装。
+### 6.1 CI での利用
 
-2. **--format / --profile オプションの仕様確定**
-   - どの profile にどの Check を含めるかを一覧化する。
-   - JSON スキーマ（CheckResult[] + summary）を定義。
+doctor の JSON 出力（`--format json`）を活用して、GitHub Actions や他の CI システムから:
+- 環境チェック結果の機械的な評価
+- PR コメントへの自動レポート生成
+- ビルド失敗判定（profile の severityPolicy に基づく）
 
-3. **メタプロンプトへの doctor 統合方針の詳細化**
-   - ORCHESTRATOR_METAPROMPT の Phase 1.5 / Phase 0 など、どの場面でどの profile を呼ぶかを整理する。
+詳細は `docs/CI_INTEGRATION.md` を参照。
+
+### 6.2 カスタム設定（`.doctorrc.js`）
+
+プロジェクト固有の doctor 設定を `.doctorrc.js` で定義可能にする（将来実装）:
+- プロファイルの追加・上書き
+- カスタム Check/Fix の追加
+- 環境変数や外部設定の読み込み
+
+テンプレートは `templates/.doctorrc.example.js` を参照。
+
+## 7. 今後の優先タスク
+
+1. **✅ sw-doctor 内部での CheckResult 構造の導入** (完了)
+   - CheckResult 配列を構築し、JSON 出力に対応。
+
+2. **✅ --format / --profile オプションの仕様確定** (完了)
+   - 3 つのプロファイル（bootstrap/doctor/ci-strict）を定義。
+   - JSON スキーマを実装。
+
+3. **✅ メタプロンプトへの doctor 統合方針の詳細化** (完了)
+   - ORCHESTRATOR_METAPROMPT / PROJECT_KICKSTART を doctor プロファイル呼び出しベースに更新。
+
+4. **次フェーズ（将来実装）**
+   - `.doctorrc.js` のサポート（カスタムプロファイル・Check/Fix の追加）
+   - 他プロジェクト向けの doctor パッケージ化（npm 公開等）
+   - GitHub Actions テンプレートの提供
+   - プラグインシステムの整備
 
 このドキュメントは、上記タスクの設計上の基準点（SSOT）として扱い、実装変更時には随時更新する。
