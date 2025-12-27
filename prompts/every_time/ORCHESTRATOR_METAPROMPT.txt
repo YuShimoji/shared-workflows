@@ -78,12 +78,15 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 - 以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。
 - `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest` が無い場合は **許可待ちせず自動で補完** する。
 - ただし **SSOT をプレースホルダで自作しない**（存在しない場合は「取得不能」としてログを残し、次手へ切り替える）。
+- 環境チェックを機械化する（推奨）:
+  - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`（Submoduleが無い場合は `node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`）
+  - このプロファイルは SSOT ファイルと基本ディレクトリ構造のみをチェックし、audit/dev-check はスキップする。
+  - PowerShell 例: `Test-Path .shared-workflows/scripts/sw-doctor.js` で存在確認
 - `ensure-ssot.js` の実行は「存在チェック→分岐」で行う。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
   1. `.shared-workflows/scripts/ensure-ssot.js` が存在する場合: `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   3. プロジェクト側 `scripts/ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
   4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に「不足物」「試したコマンド」「次に必要な入力」を必ず記録する（この停止は例外として許可）
-  - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js` で存在確認
 - `docs/Windsurf_AI_Collab_Rules_v2.0.md`
 - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - `docs/PROMPT_TEMPLATES.md`
@@ -135,10 +138,11 @@ docs/tasks/, docs/inbox/, docs/HANDOVER.md を横断して、以下の異常を�
 異常を見つけた場合は、原因仮説 → 必要差分の特定 → docs/tasks・docs/HANDOVER.md・docs/inbox/ の更新 → コミット計画、までを **Phase 1 内で完了** させる。提案のみで次フェーズへ進むことを禁止し、修正内容は必ず `docs/inbox/REPORT_TASK_xxx_*.md` にログを追記する。
 
 任意で、監査を機械化する（推奨。ローカル安全コマンド）:
-- `node .shared-workflows/scripts/orchestrator-audit.js --no-fail`（Submoduleが無い場合は `node scripts/orchestrator-audit.js --no-fail`）
+- `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text`（Submoduleが無い場合は `node scripts/sw-doctor.js --profile shared-orch-doctor --format text`）
   - ただし **スクリプトが存在する場合のみ実行**。見つからない場合は「スクリプト不在」として docs/inbox/REPORT_TASK_SETUP_*.md に記録し、Phase 1.5 自体は手動点検で続行する。
   - 監査スクリプトは **最大1回のみ実行**。警告が出た場合は原因を修正してから再実行（無限リトライ禁止）。
-  - PowerShell 例: `Test-Path .shared-workflows/scripts/orchestrator-audit.js` で存在確認
+  - PowerShell 例: `Test-Path .shared-workflows/scripts/sw-doctor.js` で存在確認
+  - JSON 出力が必要な場合（CI 連携など）は `--format json` に変更
 
 また、Worker レポート内の `## Proposals` は次回タスク化の候補として回収し、必要なら `docs/tasks/` に新規チケットを起票する。
 

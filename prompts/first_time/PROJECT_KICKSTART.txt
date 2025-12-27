@@ -82,7 +82,7 @@
   - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を丸ごと `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行、(4) それでも復旧できない場合のみサブモジュール再追加（前述手順）を実施。
   - 必須スクリプト（例: report-validator.js）が .shared-workflows/scripts/ にない場合、親リポジトリの scripts/ にコピーして運用する
 - `AI_CONTEXT.md` に `## タスク管理（短期/中期/長期）` や `### 短期（Next）` が欠けていても、**手動でテンプレを戻さず** `node scripts/todo-sync.js --dry-run` を実行して自動整形させる。スクリプトが見出しを追加できない場合のみ差分を記録し、原因を調査する。
-- セットアップ完了後は **当日のうちに一度 `node .shared-workflows/scripts/orchestrator-audit.js` を実行し、Complete Gate（後述のメタプロンプト項目）に必要なファイル/テンプレが揃っているか確認** してから引き継ぐ。エラーが出た場合は復旧コマンドと結果を docs/inbox/REPORT_TASK_*** に必ず記録する。
+- セットアップ完了後は **当日のうちに一度 `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text` を実行し、Complete Gate（後述のメタプロンプト項目）に必要なファイル/テンプレが揃っているか確認** してから引き継ぐ。エラーが出た場合は復旧コマンドと結果を docs/inbox/REPORT_TASK_*** に必ず記録する。
 
 運用フラグ（重要）:
 - GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に
