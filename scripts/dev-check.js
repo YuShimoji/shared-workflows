@@ -1,16 +1,25 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 
-function runScript(scriptPath, args = []) {
+function runScript(scriptPath, args = [], options = {}) {
+  const { noFail = false } = options;
   const result = spawnSync(process.execPath, [path.join(__dirname, scriptPath), ...args], {
     stdio: 'inherit',
   });
 
   if (result.error) {
+    if (noFail) {
+      console.warn(`Warning: ${scriptPath} error: ${result.error.message}`);
+      return;
+    }
     throw result.error;
   }
 
   if (result.status !== 0) {
+    if (noFail) {
+      console.warn(`Warning: ${scriptPath} exited with status ${result.status}`);
+      return;
+    }
     throw new Error(`${scriptPath} exited with status ${result.status}`);
   }
 }
@@ -54,16 +63,21 @@ function checkGitConflictState() {
 function main() {
   console.log('Running shared workflow diagnostics...');
 
-  runScript('detect-project-type.js');
-  runScript('report-style-hint.js');
-  runScript('creativity-booster.js');
-  runScript('adapt-response.js');
-  runScript('todo-sync.js', ['--dry-run']);
-  runScript('todo-leak-preventer.js');
+  try {
+    runScript('detect-project-type.js', [], { noFail: true });
+    runScript('report-style-hint.js', [], { noFail: true });
+    runScript('creativity-booster.js', [], { noFail: true });
+    runScript('adapt-response.js', [], { noFail: true });
+    runScript('todo-sync.js', ['--dry-run'], { noFail: true });
+    runScript('todo-leak-preventer.js', [], { noFail: true });
 
-  checkGitConflictState();
+    checkGitConflictState();
 
-  console.log('All shared workflow scripts executed successfully.');
+    console.log('All shared workflow scripts executed successfully.');
+  } catch (e) {
+    console.error(`Fatal error: ${e.message}`);
+    process.exit(1);
+  }
 }
 
 main();

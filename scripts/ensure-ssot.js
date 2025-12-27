@@ -105,8 +105,13 @@ Options:
   });
 
   if (missingSources.length) {
-    console.error(`共有リポジトリに以下のファイルが見つかりませんでした: ${missingSources.join(', ')}`);
-    process.exit(1);
+    const msg = `共有リポジトリに以下のファイルが見つかりませんでした: ${missingSources.join(', ')}`;
+    if (noFail) {
+      console.warn(`Warning: ${msg}`);
+    } else {
+      console.error(msg);
+      process.exit(1);
+    }
   }
 
   if (!copied) {

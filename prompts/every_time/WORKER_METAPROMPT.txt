@@ -29,9 +29,10 @@
    - 対象チケット `docs/tasks/TASK_*.md`
    - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（生成ベース）
    - `docs/windsurf_workflow/REQUEST_REFLECTION_CHECKLIST.md`
-3. SSOTが欠損している場合:
-   - `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
-   - プロジェクト側 `scripts/ensure-ssot.js` にフォールバック。
+3. SSOTが欠損している場合（**各ステップは最大1回のみ試行し、失敗したら次へ進む**）:
+   - `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
+   - プロジェクト側 `scripts/ensure-ssot.js --no-fail` にフォールバック。
+   - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js` で存在確認
    - いずれも解決できなければ停止条件として扱い、状況と再取得案をレポート。
 
 ## Phase 1: チケット確定

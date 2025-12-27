@@ -2,6 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
 
+let resolveSharedWorkflowsPath;
+try {
+  ({ resolveSharedWorkflowsPath } = require('./utils/sw-path'));
+} catch (e) {
+  resolveSharedWorkflowsPath = (relativePath, options = {}) => {
+    const projectRoot = path.resolve(options.projectRoot || process.cwd());
+    return { path: path.join(projectRoot, relativePath), projectRoot, swRoot: null };
+  };
+}
+
 function readFileSafe(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
@@ -117,6 +127,21 @@ function main() {
 
   const anomalies = [];
   const warnings = [];
+
+  if (!fs.existsSync(docsDir)) warnings.push(`docs ディレクトリが存在しません: ${docsDir}`);
+  if (!fs.existsSync(tasksDir)) warnings.push(`docs/tasks ディレクトリが存在しません: ${tasksDir}`);
+  if (!fs.existsSync(inboxDir)) warnings.push(`docs/inbox ディレクトリが存在しません: ${inboxDir}`);
+  if (!fs.existsSync(handoverPath)) warnings.push(`HANDOVER.md が存在しません: ${handoverPath}`);
+
+  const resolvedValidator = resolveSharedWorkflowsPath('scripts/report-validator.js', { projectRoot: root });
+  const resolvedConfig = resolveSharedWorkflowsPath('REPORT_CONFIG.yml', { projectRoot: root });
+  const validatorPath = resolvedValidator.path;
+  const configPath = resolvedConfig.path;
+  const hasValidator = validatorPath && fs.existsSync(validatorPath);
+  const hasConfig = configPath && fs.existsSync(configPath);
+  if (!hasValidator) warnings.push(`report-validator.js が見つかりません: ${validatorPath}`);
+  if (!hasConfig) warnings.push(`REPORT_CONFIG.yml が見つかりません: ${configPath}`);
+
   const handover = readFileSafe(handoverPath) || '';
 
   const taskFiles = listFilesSafe(tasksDir).filter((f) => /^TASK_.*\.md$/i.test(f));
@@ -142,15 +167,6 @@ function main() {
       }
     }
 
-    if (orchestratorReports.length > 0) {
-      const latestOrch = orchestratorReports[orchestratorReports.length - 1].file;
-      if (!handover.includes(latestOrch)) {
-        warnings.push(`HANDOVER.md に最新 Orchestrator レポート ${latestOrch} の記載がありません`);
-      }
-      if (!/## Outlook/i.test(handover)) {
-        warnings.push('HANDOVER.md に Outlook セクションがありません（Short/Mid/Long を追加してください）');
-      }
-    }
   }
 
   const reportFiles = listFilesSafe(inboxDir).filter((f) => /^REPORT_.*\.md$/i.test(f));
@@ -168,9 +184,7 @@ function main() {
 
       validateReportConsistency(full, anomalies, warnings);
 
-      const validatorPath = path.join(__dirname, 'report-validator.js');
-      const configPath = path.join(root, 'REPORT_CONFIG.yml');
-      if (fs.existsSync(validatorPath) && fs.existsSync(configPath)) {
+      if (hasValidator && hasConfig) {
         try {
           const result = child_process.execSync(
             `node "${validatorPath}" "${full}" "${configPath}" "${root}"`,
@@ -214,11 +228,12 @@ function main() {
     validateReportConsistency(full, anomalies, warnings);
 
     // Run report validator
-    const validatorPath = path.join(__dirname, 'report-validator.js');
-    const configPath = path.join(root, 'REPORT_CONFIG.yml');
-    if (fs.existsSync(validatorPath) && fs.existsSync(configPath)) {
+    if (hasValidator && hasConfig) {
       try {
-        const result = require('child_process').execSync(`node "${validatorPath}" "${full}" "${configPath}" "${root}"`, { encoding: 'utf8' });
+        const result = child_process.execSync(
+          `node "${validatorPath}" "${full}" "${configPath}" "${root}"`,
+          { encoding: 'utf8' }
+        );
         if (result.includes('Errors:')) {
           anomalies.push(`レポート検証エラー: ${file}`);
         } else if (result.includes('Warnings:')) {
@@ -227,6 +242,16 @@ function main() {
       } catch (e) {
         warnings.push(`レポート検証実行失敗: ${file}`);
       }
+    }
+  }
+
+  if (orchestratorReports.length > 0 && handover) {
+    const latestOrch = orchestratorReports[orchestratorReports.length - 1].file;
+    if (!handover.includes(latestOrch)) {
+      warnings.push(`HANDOVER.md に最新 Orchestrator レポート ${latestOrch} の記載がありません`);
+    }
+    if (!/## Outlook/i.test(handover)) {
+      warnings.push('HANDOVER.md に Outlook セクションがありません（Short/Mid/Long を追加してください）');
     }
   }
 

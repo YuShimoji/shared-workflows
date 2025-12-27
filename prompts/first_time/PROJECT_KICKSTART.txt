@@ -25,6 +25,7 @@
 - .shared-workflows/ が存在するか確認
 - git status -sb で作業ツリー確認
 - docs/inbox/ が `.gitkeep` のみに保たれているか、docs/tasks/ の DONE がレポートと紐づくかをざっくり確認し、異常があれば「セットアップ完了後の最優先修復項目」としてメモする
+  - PowerShell 例: `Get-ChildItem -Force docs/inbox` / `Get-ChildItem -Force docs/tasks`
 
 2) Submodule 導入（未導入の場合）
 - 推奨パスは `.shared-workflows`
@@ -38,7 +39,10 @@
   - `git -C .shared-workflows status -sb`
   - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
   - `git -C .shared-workflows rev-parse HEAD`
-- `.shared-workflows/` に無い場合でも、プロジェクト直下にテンプレを複製せず、`../shared-workflows` 等の共有クローンから補完する（`node ../shared-workflows/scripts/ensure-ssot.js --project-root .` など）。取得できるまで再試行し、最終手段として `docs/windsurf_workflow/OPEN_HERE.md` などプロジェクト直下の同名ファイルを一時参照してよいが、整備後は `.shared-workflows/` へ戻すこと。
+- `.shared-workflows/scripts/ensure-ssot.js` が存在しない場合は、以下の順で補完する（SSOT をプレースホルダで自作しない）:
+  1. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`
+  2. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root .`
+  3. どれも実行できない場合はここで停止し、「不足物」「試したコマンド」「次に必要な入力」を docs/inbox/REPORT_TASK_SETUP_*.md に記録する
 - Submodule のワークツリーが欠損/壊れている場合は、**止まらずに再取得**する:
   1. `git submodule deinit -f .shared-workflows`
   2. `git rm -f .shared-workflows`（コミット不要）
@@ -63,17 +67,17 @@
 5) 参照の固定化（重要）
 - SW_ROOT（shared-workflows配置）は `.shared-workflows/` を既定とし、無い場合は `docs/` 直下をフォールバックとして利用する。CLI/スクリプト類は自動で SW_ROOT を判定するが、特殊環境では `SW_ROOT` 環境変数で明示指定できる。
 - REPORT_CONFIG.yml は以下のいずれかを満たすこと:
-  - SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、以下の順に **必ず自動補完** する（質問や許可待ちで止まらない）:
-  1. `.shared-workflows/` にいる状態で `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
-  2. それでも不足する場合: 共有クローンを直接指定し、例 `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`
-  3. プロジェクト側 `scripts/` に `ensure-ssot.js` をコピーして `node scripts/ensure-ssot.js --project-root .`
-  4. いずれのコマンド後も `docs/Windsurf_AI_Collab_Rules_*.md` が揃うまで繰り返す。どうしても取得できない場合のみ一時的に `docs/` 直下の既存ファイルを参照し、整備が完了したら `.shared-workflows/` に戻す。
-  - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は v2.0 へのリンク）
-  - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
-  - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
-  - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-  - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
-  - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+  - SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、以下の順に **自動補完** する（ただし SSOT をプレースホルダで自作しない）。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
+  1. `.shared-workflows/scripts/ensure-ssot.js` が存在する場合: `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
+     - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js`
+  2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
+  3. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
+  4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（この停止は例外として許可）
+- SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は v2.0 へのリンク）
+- 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
+- オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+- オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
+- （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
 - CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
   - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を丸ごと `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行、(4) それでも復旧できない場合のみサブモジュール再追加（前述手順）を実施。
   - 必須スクリプト（例: report-validator.js）が .shared-workflows/scripts/ にない場合、親リポジトリの scripts/ にコピーして運用する

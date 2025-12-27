@@ -22,43 +22,37 @@ function checkTodoLeak(aiContextPath) {
     return;
   }
 
-  // AI_CONTEXT.mdからtodo_listを抽出（仮定: ## Backlogセクションにtodo_list情報がある）
-  const backlogSection = content.split(/## Backlog/i)[1];
-  if (!backlogSection) {
+  // AI_CONTEXT.mdからBacklogセクションを抽出
+  const backlogMatch = content.match(/## Backlog[^\n]*\n([\s\S]*?)(?=\n## |\Z)/i);
+  if (!backlogMatch) {
     console.log('Warning: Backlog section not found in AI_CONTEXT.md.');
     return;
   }
 
-  const todos = backlogSection.split('\n').filter(line => line.startsWith('- '));
-  const pendingTasks = [];
-  const inProgressTasks = [];
+  const backlogContent = backlogMatch[1];
+  const todos = backlogContent.split('\n').filter(line => /^\s*-\s*\[/.test(line));
+  const incompleteTasks = [];
 
   for (const todo of todos) {
-    // 仮定: todoは "- [status] task content" 形式
-    const match = todo.match(/-\s*\[(\w+)\]\s*(.+)/);
+    // 形式: "- [ ] task content" (未完了) または "- [x] task content" (完了)
+    const match = todo.match(/^\s*-\s*\[(.)\]\s*(.+)/);
     if (match) {
-      const status = match[1];
+      const checkbox = match[1];
       const task = match[2];
-      if (status === 'pending') {
-        pendingTasks.push(task);
-      } else if (status === 'in_progress') {
-        inProgressTasks.push(task);
+      // [ ] は未完了、[x] または [X] は完了
+      if (checkbox === ' ') {
+        incompleteTasks.push(task);
       }
     }
   }
 
-  if (pendingTasks.length > 0) {
-    console.log('Warning: Pending tasks detected:');
-    pendingTasks.forEach(task => console.log(`  - ${task}`));
-  }
-
-  if (inProgressTasks.length > 0) {
-    console.log('Info: In-progress tasks:');
-    inProgressTasks.forEach(task => console.log(`  - ${task}`));
+  if (incompleteTasks.length > 0) {
+    console.log('Warning: Incomplete tasks in Backlog:');
+    incompleteTasks.forEach(task => console.log(`  - ${task}`));
     // 自律調整: 完了条件をチェック（例: スクリプト実行）
-    checkCompletionConditions(inProgressTasks);
+    checkCompletionConditions(incompleteTasks);
   } else {
-    console.log('All tasks completed.');
+    console.log('All Backlog tasks completed.');
   }
 }
 

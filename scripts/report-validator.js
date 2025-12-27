@@ -221,14 +221,21 @@ function validateReport(reportPath, configPath, projectRoot) {
 
   // Strict mode check
   if (config.strict_mode) {
-    const style = config.style_presets[config.default_style];
+    const isHandover =
+      path.basename(reportPath).toLowerCase() === 'handover.md' ||
+      /Type\s*:\s*Handover/i.test(reportContent);
+    const selectedStyleName =
+      isHandover && config.style_presets.handover
+        ? 'handover'
+        : config.default_style;
+    const style = config.style_presets[selectedStyleName];
     if (style) {
-      function validateHeaders(content, profile) {
+      function validateHeaders(content, profileName, profile) {
         const requiredHeaders = profile.headers;
         const missingHeaders = [];
         
         // handoverプロファイルでは標準ヘッダーチェックをスキップ
-        if (profile.name === 'handover') {
+        if (profileName === 'handover') {
           return { missingHeaders: [], suggestions: [] };
         }
         
@@ -239,7 +246,7 @@ function validateReport(reportPath, configPath, projectRoot) {
         }
         return { missingHeaders, suggestions: [] };
       }
-      const headerChecks = validateHeaders(reportContent, style);
+      const headerChecks = validateHeaders(reportContent, selectedStyleName, style);
       warnings.push(...headerChecks.missingHeaders.map(header => `必須ヘッダー '${header}' がありません`));
     }
   }
