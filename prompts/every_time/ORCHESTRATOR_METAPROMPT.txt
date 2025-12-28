@@ -88,7 +88,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   3. プロジェクト側 `scripts/ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
   4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に「不足物」「試したコマンド」「次に必要な入力」を必ず記録する（この停止は例外として許可）
-- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- SSOT: `docs/Windsurf_AI_Collab_Rules_latest.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`（いずれか最初に見つかったものを基準とする）
 - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - `docs/PROMPT_TEMPLATES.md`
 - `REPORT_CONFIG.yml`

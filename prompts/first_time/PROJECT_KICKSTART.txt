@@ -3,10 +3,11 @@
 - 返信は必ず日本語（英語・他言語は禁止）
 - 絵文字や過度な装飾は使用しない
 
-最優先で読むもの:
-- shared-workflows サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md`
-- サブモジュールを利用する場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+最優先で読むもの（SSOT 参照順序）:
+- サブモジュールがある場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
+- サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`
 - プロジェクトルートの AI_CONTEXT.md（無ければ作成）
+- **重要**: 上記 SSOT のうち最初に見つかったファイルを「このセットアップの基準ルール」として扱い、バージョン違いでエラーにしない
 
 目的:
 - shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
@@ -67,7 +68,7 @@
 5) 参照の固定化（重要）
 - SW_ROOT（shared-workflows配置）は `.shared-workflows/` を既定とし、無い場合は `docs/` 直下をフォールバックとして利用する。CLI/スクリプト類は自動で SW_ROOT を判定するが、特殊環境では `SW_ROOT` 環境変数で明示指定できる。
 - REPORT_CONFIG.yml は以下のいずれかを満たすこと:
-  - SSOT（`docs/Windsurf_AI_Collab_Rules_v2.0.md` および `docs/Windsurf_AI_Collab_Rules_latest.md`）が存在しない場合は、以下の順に **自動補完** する（ただし SSOT をプレースホルダで自作しない）。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
+  - SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md` または `v2.0.md` または `v1.1.md` のいずれか）が存在しない場合は、以下の順に **自動補完** する（ただし SSOT をプレースホルダで自作しない）。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
   1. `.shared-workflows/scripts/ensure-ssot.js` が存在する場合: `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
      - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js`
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`

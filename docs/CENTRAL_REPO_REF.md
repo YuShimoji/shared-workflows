@@ -2,6 +2,20 @@
 
 本ファイルは、shared-workflows リポジトリを他プロジェクトから参照する際の情報を提供する。
 
+## SSOTの参照方法
+
+中央リポジトリ（shared-workflows）にあるSSOTファイルを参照します。
+
+### SSOT バージョンのフォールバック順序
+
+shared-workflows サブモジュールのバージョンによって、SSOT ファイルの存在が異なる場合があります。以下の順序でフォールバック参照し、**最初に見つかったファイルを基準ルールとする**ことで、バージョン違いによるエラーを防ぎます。
+
+1. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+2. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md`
+3. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
+
+サブモジュールが無い場合は `docs/` 直下の同名ファイルを同様の順序で参照します。
+
 ## リポジトリ情報
 
 - **リポジトリ名**: shared-workflows
