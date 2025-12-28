@@ -8,7 +8,9 @@ module.exports = {
       OK: 'pass'
     },
     runAudit: false,
-    runDevCheck: false
+    runDevCheck: false,
+    runReportValidation: false,
+    runTodoCheck: false
   },
   'shared-orch-doctor': {
     description: 'Doctor profile: full environment + audit + dev-check',
@@ -19,7 +21,9 @@ module.exports = {
       OK: 'pass'
     },
     runAudit: true,
-    runDevCheck: true
+    runDevCheck: true,
+    runReportValidation: false,
+    runTodoCheck: false
   },
   'ci-strict': {
     description: 'CI profile: strict mode, WARN also fails',
@@ -30,6 +34,21 @@ module.exports = {
       OK: 'pass'
     },
     runAudit: true,
-    runDevCheck: true
+    runDevCheck: true,
+    runReportValidation: false,
+    runTodoCheck: false
+  },
+  'report-validation': {
+    description: 'Report validation profile: check HANDOVER and recent reports',
+    checks: ['env.*', 'script.*', 'report.*', 'todo.*'],
+    severityPolicy: {
+      ERROR: 'fail',
+      WARN: 'warn',
+      OK: 'pass'
+    },
+    runAudit: false,
+    runDevCheck: false,
+    runReportValidation: true,
+    runTodoCheck: true
   }
 };

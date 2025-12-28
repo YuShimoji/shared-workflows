@@ -310,6 +310,99 @@ function runDevCheck(projectRoot, options = {}) {
   return { issues: [], warnings: [], results };
 }
 
+function runReportValidation(projectRoot, options = {}) {
+  const quiet = options.quiet === true;
+  if (!quiet) {
+    console.log('\n=== Running Report Validation ===\n');
+  }
+
+  const results = [];
+  const handoverPath = path.join(projectRoot, 'docs/HANDOVER.md');
+
+  if (!fs.existsSync(handoverPath)) {
+    const msg = 'docs/HANDOVER.md not found. Skipping report validation.';
+    if (!quiet) {
+      console.warn(msg);
+    }
+    results.push(createCheckResult('report.handover', 'WARN', msg));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  const validatorPath = path.join(projectRoot, 'scripts/report-validator.js');
+  const swValidatorPath = detectSwRoot(projectRoot) ? path.join(detectSwRoot(projectRoot), 'scripts/report-validator.js') : null;
+  let scriptPath = null;
+
+  if (fs.existsSync(validatorPath)) {
+    scriptPath = validatorPath;
+  } else if (swValidatorPath && fs.existsSync(swValidatorPath)) {
+    scriptPath = swValidatorPath;
+  } else {
+    const msg = 'report-validator.js not found. Skipping report validation.';
+    if (!quiet) {
+      console.warn(msg);
+    }
+    results.push(createCheckResult('report.validator', 'WARN', msg));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  const result = runCommand(process.execPath, [scriptPath, handoverPath, 'REPORT_CONFIG.yml', projectRoot], {
+    cwd: projectRoot,
+    stdio: quiet ? 'ignore' : 'inherit',
+  });
+
+  if (result.status !== 0) {
+    const msg = `report-validator.js exited with status ${result.status}`;
+    results.push(createCheckResult('report.validation', 'WARN', msg, { status: result.status }));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  results.push(createCheckResult('report.validation', 'OK', 'HANDOVER.md validation passed'));
+  return { issues: [], warnings: [], results };
+}
+
+function runTodoCheck(projectRoot, options = {}) {
+  const quiet = options.quiet === true;
+  if (!quiet) {
+    console.log('\n=== Running Todo Check ===\n');
+  }
+
+  const results = [];
+  const aiContextPath = path.join(projectRoot, 'AI_CONTEXT.md');
+
+  if (!fs.existsSync(aiContextPath)) {
+    const msg = 'AI_CONTEXT.md not found. Skipping todo check.';
+    if (!quiet) {
+      console.warn(msg);
+    }
+    results.push(createCheckResult('todo.context', 'WARN', msg));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  const todoPath = path.join(projectRoot, 'scripts/todo-leak-preventer.js');
+  if (!fs.existsSync(todoPath)) {
+    const msg = 'todo-leak-preventer.js not found. Skipping todo check.';
+    if (!quiet) {
+      console.warn(msg);
+    }
+    results.push(createCheckResult('todo.preventer', 'WARN', msg));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  const result = runCommand(process.execPath, [todoPath], {
+    cwd: projectRoot,
+    stdio: quiet ? 'ignore' : 'inherit',
+  });
+
+  if (result.status !== 0) {
+    const msg = `todo-leak-preventer.js exited with status ${result.status}`;
+    results.push(createCheckResult('todo.check', 'WARN', msg, { status: result.status }));
+    return { issues: [], warnings: [msg], results };
+  }
+
+  results.push(createCheckResult('todo.check', 'OK', 'AI_CONTEXT.md todo check passed'));
+  return { issues: [], warnings: [], results };
+}
+
 function suggestRepairs(allIssues, allWarnings) {
   console.log('\n=== Repair Suggestions ===\n');
 
@@ -384,6 +477,8 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
   
   let auditResult = { issues: [], warnings: [], results: [] };
   let devCheckResult = { issues: [], warnings: [], results: [] };
+  let reportValidationResult = { issues: [], warnings: [], results: [] };
+  let todoCheckResult = { issues: [], warnings: [], results: [] };
   
   if (profile.runAudit && envCheck.issues.length === 0) {
     auditResult = runAudit(projectRoot, envCheck.swRoot, { quiet });
@@ -393,11 +488,21 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
     devCheckResult = runDevCheck(projectRoot, { quiet });
   }
   
+  if (profile.runReportValidation && envCheck.issues.length === 0) {
+    reportValidationResult = runReportValidation(projectRoot, { quiet });
+  }
+  
+  if (profile.runTodoCheck && envCheck.issues.length === 0) {
+    todoCheckResult = runTodoCheck(projectRoot, { quiet });
+  }
+  
   const allResults = [
     ...envCheck.results,
     ...scriptCheck.results,
     ...auditResult.results,
-    ...devCheckResult.results
+    ...devCheckResult.results,
+    ...reportValidationResult.results,
+    ...todoCheckResult.results
   ];
   
   const filteredResults = filterResultsByProfile(allResults, profile);
@@ -411,7 +516,9 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
       environment: envCheck.results,
       scripts: scriptCheck.results,
       audit: auditResult.results,
-      devCheck: devCheckResult.results
+      devCheck: devCheckResult.results,
+      reportValidation: reportValidationResult.results,
+      todoCheck: todoCheckResult.results
     },
     allResults: filteredResults
   };
@@ -479,6 +586,8 @@ module.exports = {
   checkScripts, 
   runAudit, 
   runDevCheck,
+  runReportValidation,
+  runTodoCheck,
   runAllChecks,
   createCheckResult,
   doctorProfiles
