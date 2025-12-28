@@ -44,10 +44,18 @@ if not A_IsAdmin
 }
 
 ; =====================================
+; 設定ファイル読み込み
+; =====================================
+
+ConfigFile := A_ScriptDir "\windsurf_autopilot.ini"
+LoadConfig()
+
+; =====================================
 ; GUI 作成（WindowSlu 風ダークテーマ）
 ; =====================================
 
 sendModeIndex := SendMode + 1
+LogFile := A_ScriptDir "\windsurf_autopilot_debug.log"
 
 Gui, -MaximizeBox +MinimizeBox +AlwaysOnTop +ToolWindow
 Gui, Color, 0x1E1E1E
@@ -122,7 +130,7 @@ GuiToggle:
 ApplySettings:
     Gui, Submit, NoHide
     global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
-    global SendMode, SendSequence
+    global SendMode, SendSequence, ConfigFile
     
     if (IntervalEdit >= 50)
         IntervalMs := IntervalEdit
@@ -144,6 +152,7 @@ ApplySettings:
             SendMode := 0
     }
     
+    SaveConfig()
     SetTimer, TimerMainLoop, %IntervalMs%
     UpdateGui()
     return
@@ -290,6 +299,7 @@ MainLoop()
 
     Send, %SendSequence%
     LastSendTime := now
+    LogEvent("SEND", "Mode=" (SendMode = 0 ? "Always" : "CmdOnly") " Keys=" SendSequence " Exe=" CurrentExe)
 }
 
 FindOrangeInWindow(ByRef orangeX, ByRef orangeY)
@@ -334,4 +344,58 @@ AutoReset() {
     global AutoEnabled
     AutoEnabled := false
     UpdateGui()
+}
+
+LoadConfig()
+{
+    global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
+    global SendMode, SendSequence, ConfigFile
+    
+    if !FileExist(ConfigFile)
+        return
+    
+    IniRead, val, %ConfigFile%, Settings, IntervalMs
+    if (val != "ERROR" && val >= 50)
+        IntervalMs := val
+    
+    IniRead, val, %ConfigFile%, Settings, MinSendIntervalMs
+    if (val != "ERROR" && val >= 50)
+        MinSendIntervalMs := val
+    
+    IniRead, val, %ConfigFile%, Settings, TargetExePattern
+    if (val != "ERROR" && val != "")
+        TargetExePattern := val
+    
+    IniRead, val, %ConfigFile%, Settings, RequiredTitleKeywords
+    if (val != "ERROR")
+        RequiredTitleKeywords := val
+    
+    IniRead, val, %ConfigFile%, Settings, SendMode
+    if (val != "ERROR" && (val = 0 || val = 1))
+        SendMode := val
+    
+    IniRead, val, %ConfigFile%, Settings, SendSequence
+    if (val != "ERROR" && val != "")
+        SendSequence := val
+}
+
+SaveConfig()
+{
+    global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
+    global SendMode, SendSequence, ConfigFile
+    
+    IniWrite, %IntervalMs%, %ConfigFile%, Settings, IntervalMs
+    IniWrite, %MinSendIntervalMs%, %ConfigFile%, Settings, MinSendIntervalMs
+    IniWrite, %TargetExePattern%, %ConfigFile%, Settings, TargetExePattern
+    IniWrite, %RequiredTitleKeywords%, %ConfigFile%, Settings, RequiredTitleKeywords
+    IniWrite, %SendMode%, %ConfigFile%, Settings, SendMode
+    IniWrite, %SendSequence%, %ConfigFile%, Settings, SendSequence
+}
+
+LogEvent(eventType, details)
+{
+    global LogFile
+    timestamp := A_Now
+    line := timestamp " [" eventType "] " details "`n"
+    FileAppend, %line%, %LogFile%
 }
