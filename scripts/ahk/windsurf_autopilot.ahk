@@ -32,6 +32,9 @@ global CurrentExe := ""
 global LastCommandVisibleTick := 0
 global LastGuiUpdateTick := 0
 global GuiUpdateIntervalMs := 500
+global InstructionFile := A_ScriptDir "\..\..\docs\inbox\next_instruction.txt"
+global LastInstructionTime := ""
+global PreserveClipboard := true
 
 ; =====================================
 ; 管理者実行
@@ -48,6 +51,7 @@ if not A_IsAdmin
 ; =====================================
 
 ConfigFile := A_ScriptDir "\windsurf_autopilot.ini"
+global EnableFileWatch := true
 LoadConfig()
 
 ; =====================================
@@ -102,6 +106,7 @@ UpdateGui()
 ; =====================================
 
 SetTimer, TimerMainLoop, %IntervalMs%
+SetTimer, TimerFileWatch, 1000
 
 ; =====================================
 ; ホットキー / ラベル
@@ -121,6 +126,13 @@ F9::
 +Esc::
     ExitApp
 
+; F10: ファイル監視トグル
+F10::
+    global EnableFileWatch
+    EnableFileWatch := !EnableFileWatch
+    LogEvent("TOGGLE", "FileWatch=" (EnableFileWatch ? "ON" : "OFF"))
+    return
+
 ; GUI ボタン
 GuiToggle:
     ToggleAuto()
@@ -130,7 +142,7 @@ GuiToggle:
 ApplySettings:
     Gui, Submit, NoHide
     global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
-    global SendMode, SendSequence, ConfigFile
+    global SendMode, SendSequence, ConfigFile, EnableFileWatch
     
     if (IntervalEdit >= 50)
         IntervalMs := IntervalEdit
@@ -160,6 +172,48 @@ ApplySettings:
 ; メインループタイマー
 TimerMainLoop:
     MainLoop()
+    return
+
+; ファイル監視タイマー
+TimerFileWatch:
+    if (!AutoEnabled || !EnableFileWatch)
+        return
+    if !EnsureTargetActive()
+        return
+    
+    if !FileExist(InstructionFile)
+        return
+    
+    FileGetTime, t, %InstructionFile%, M
+    if (t = "")
+        return
+    
+    if (t = LastInstructionTime)
+        return
+    
+    LastInstructionTime := t
+    
+    FileRead, content, %InstructionFile%
+    if (content = "")
+        return
+    
+    if (PreserveClipboard)
+        clipSaved := ClipboardAll
+    
+    Clipboard := content
+    ClipWait, 1
+    
+    Send, ^v
+    Sleep, 40
+    Send, !{Enter}
+    
+    Sleep, 80
+    
+    if (PreserveClipboard)
+        Clipboard := clipSaved
+    
+    FileDelete, %InstructionFile%
+    LogEvent("FILE_WATCH", "Instruction sent, file deleted")
     return
 
 ; ウィンドウを閉じたら終了
@@ -208,51 +262,6 @@ UpdateGui()
     GuiControl,, InfoText, %info%
 }
 
-EnsureTargetActive()
-{
-    global TargetExePattern, RequiredTitleKeywords, CurrentExe
-
-    ; アクティブウィンドウのチェック
-    WinGet, id, ID, A
-    if (id != "")
-    {
-        WinGet, exe, ProcessName, ahk_id %id%
-        WinGetTitle, title, ahk_id %id%
-        CurrentExe := exe
-        
-        if (RegExMatch(exe, TargetExePattern))
-        {
-            ; タイトルキーワードチェック
-            if (RequiredTitleKeywords = "")
-                return true
-            if (InStr(title, RequiredTitleKeywords))
-                return true
-        }
-    }
-
-    ; 対象ウィンドウを探して起動
-    if WinExist("ahk_exe Windsurf.exe")
-    {
-        CurrentExe := "Windsurf.exe"
-        WinActivate
-        return true
-    }
-    if WinExist("ahk_exe Code.exe")
-    {
-        CurrentExe := "Code.exe"
-        WinActivate
-        return true
-    }
-    if WinExist("ahk_exe Cursor.exe")
-    {
-        CurrentExe := "Cursor.exe"
-        WinActivate
-        return true
-    }
-
-    CurrentExe := ""
-    return false
-}
 
 MainLoop()
 {
@@ -398,4 +407,47 @@ LogEvent(eventType, details)
     timestamp := A_Now
     line := timestamp " [" eventType "] " details "`n"
     FileAppend, %line%, %LogFile%
+}
+
+EnsureTargetActive()
+{
+    global TargetExePattern, RequiredTitleKeywords, CurrentExe
+
+    WinGet, id, ID, A
+    if (id != "")
+    {
+        WinGet, exe, ProcessName, ahk_id %id%
+        WinGetTitle, title, ahk_id %id%
+        CurrentExe := exe
+        
+        if (RegExMatch(exe, TargetExePattern))
+        {
+            if (RequiredTitleKeywords = "")
+                return true
+            if (InStr(title, RequiredTitleKeywords))
+                return true
+        }
+    }
+
+    if WinExist("ahk_exe Windsurf.exe")
+    {
+        CurrentExe := "Windsurf.exe"
+        WinActivate
+        return true
+    }
+    if WinExist("ahk_exe Code.exe")
+    {
+        CurrentExe := "Code.exe"
+        WinActivate
+        return true
+    }
+    if WinExist("ahk_exe Cursor.exe")
+    {
+        CurrentExe := "Cursor.exe"
+        WinActivate
+        return true
+    }
+
+    CurrentExe := ""
+    return false
 }
