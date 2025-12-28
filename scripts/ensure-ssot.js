@@ -3,8 +3,9 @@ const path = require('path');
 const { detectSwRoot } = require('./utils/sw-path');
 
 const FILES = [
+  'docs/Windsurf_AI_Collab_Rules_latest.md',
   'docs/Windsurf_AI_Collab_Rules_v2.0.md',
-  'docs/Windsurf_AI_Collab_Rules_latest.md'
+  'docs/Windsurf_AI_Collab_Rules_v1.1.md'
 ];
 
 function ensureDirectory(filePath) {

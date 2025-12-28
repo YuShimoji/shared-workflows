@@ -155,8 +155,8 @@ function checkEnvironment(projectRoot, options = {}) {
     }
   }
 
-  // Check SSOT files
-  const ssotFiles = ['docs/Windsurf_AI_Collab_Rules_latest.md', 'docs/Windsurf_AI_Collab_Rules_v2.0.md'];
+  // Check SSOT files (fallback order: latest -> v2.0 -> v1.1)
+  const ssotFiles = ['docs/Windsurf_AI_Collab_Rules_latest.md', 'docs/Windsurf_AI_Collab_Rules_v2.0.md', 'docs/Windsurf_AI_Collab_Rules_v1.1.md'];
   for (const file of ssotFiles) {
     const fullPath = path.join(projectRoot, file);
     if (fs.existsSync(fullPath)) {
