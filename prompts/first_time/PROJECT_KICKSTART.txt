@@ -72,7 +72,7 @@
      - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js`
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   3. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
-  4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（この停止は例外として許可）
+  4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（**既存ファイルが無ければ `REPORT_TASK_SETUP_shared-workflows.md` などの新規ファイルを1つ作成し、存在しないパスを推測して何度も読み直さない**）
 - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は v2.0 へのリンク）
 - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
 - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
