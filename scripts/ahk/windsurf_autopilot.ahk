@@ -18,6 +18,9 @@ global RequiredTitleKeywords := "Windsurf"
 global EnableOrangeDetection := false
 global OrangeColor := 0xF0883E
 global OrangeColorTolerance := 25
+global SendSequence := "!{Enter}"
+global SendMode := 0                 ; 0 = Always send, 1 = Only when command visible
+global CommandVisibleTimeoutMs := 4000
 
 ; =====================================
 ; 状態変数
@@ -26,6 +29,9 @@ global OrangeColorTolerance := 25
 global AutoEnabled := false
 global LastSendTime := 0
 global CurrentExe := ""
+global LastCommandVisibleTick := 0
+global LastGuiUpdateTick := 0
+global GuiUpdateIntervalMs := 500
 
 ; =====================================
 ; 管理者実行
@@ -38,31 +44,39 @@ if not A_IsAdmin
 }
 
 ; =====================================
-; GUI 作成
+; GUI 作成（WindowSlu 風ダークテーマ）
 ; =====================================
 
+sendModeIndex := SendMode + 1
+
 Gui, -MaximizeBox +MinimizeBox +AlwaysOnTop +ToolWindow
-Gui, Color, 0x2D2D30
+Gui, Color, 0x1E1E1E
 Gui, Font, cWhite s10 Bold, Segoe UI
 
 ; 行1: ステータスとトグルボタン
-Gui, Add, Text, vStatusText Center w220, AUTO OFF
-Gui, Add, Button, gGuiToggle xp+0 yp+24 w220, Toggle (F8)
+Gui, Add, Text, vStatusText Center w240, AUTO OFF
+Gui, Add, Button, gGuiToggle xp+0 yp+24 w240 Background0x333333 cWhite, Toggle (F8)
 
 ; 行2: パラメータ編集
 Gui, Font, cWhite s9, Segoe UI
-Gui, Add, Text, xm y+10, Interval (ms):
-Gui, Add, Edit, vIntervalEdit w70 Number cBlack, %IntervalMs%
+Gui, Add, Text, xm y+12, Interval (ms):
+Gui, Add, Edit, vIntervalEdit w80 Number cBlack Background0x303030, %IntervalMs%
 Gui, Add, Text, x+10 yp, MinSend (ms):
-Gui, Add, Edit, vMinSendEdit w70 Number cBlack, %MinSendIntervalMs%
+Gui, Add, Edit, vMinSendEdit w80 Number cBlack Background0x303030, %MinSendIntervalMs%
 
-Gui, Add, Text, xm y+6, Target Exe (regex):
-Gui, Add, Edit, vTargetExeEdit w260 cBlack, %TargetExePattern%
+Gui, Add, Text, xm y+8, Target Exe (regex):
+Gui, Add, Edit, vTargetExeEdit w260 cBlack Background0x303030, %TargetExePattern%
 
-Gui, Add, Text, xm y+6, Title Keywords (empty=disabled):
-Gui, Add, Edit, vTitleKeywordsEdit w260 cBlack, %RequiredTitleKeywords%
+Gui, Add, Text, xm y+8, Title Keywords (empty=disabled):
+Gui, Add, Edit, vTitleKeywordsEdit w260 cBlack Background0x303030, %RequiredTitleKeywords%
 
-Gui, Add, Button, gApplySettings xm y+6 w80, Apply
+Gui, Add, Text, xm y+8, Send Mode:
+Gui, Add, DropDownList, vSendModeDDL w260 Choose%sendModeIndex%, Always (interval-based)|Only when command visible (orange)
+
+Gui, Add, Text, xm y+8, Send Keys (AHK syntax):
+Gui, Add, Edit, vSendKeysEdit w260 cBlack Background0x303030, %SendSequence%
+
+Gui, Add, Button, gApplySettings xm y+8 w90 Background0x333333 cWhite, Apply
 
 ; 行3: 情報表示
 Gui, Font, cGray s8, Consolas
@@ -108,6 +122,7 @@ GuiToggle:
 ApplySettings:
     Gui, Submit, NoHide
     global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
+    global SendMode, SendSequence
     
     if (IntervalEdit >= 50)
         IntervalMs := IntervalEdit
@@ -117,6 +132,17 @@ ApplySettings:
         TargetExePattern := TargetExeEdit
     if (TitleKeywordsEdit != "")
         RequiredTitleKeywords := TitleKeywordsEdit
+
+    if (SendKeysEdit != "")
+        SendSequence := SendKeysEdit
+
+    if (SendModeDDL != "")
+    {
+        if (InStr(SendModeDDL, "Only when"))
+            SendMode := 1
+        else
+            SendMode := 0
+    }
     
     SetTimer, TimerMainLoop, %IntervalMs%
     UpdateGui()
@@ -154,6 +180,12 @@ SetAuto(state)
 UpdateGui()
 {
     global AutoEnabled, IntervalMs, MinSendIntervalMs, TargetExePattern, CurrentExe, LastSendTime
+    global SendMode, SendSequence, LastGuiUpdateTick, GuiUpdateIntervalMs
+
+    now := A_TickCount
+    if (now - LastGuiUpdateTick < GuiUpdateIntervalMs)
+        return
+    LastGuiUpdateTick := now
 
     status := AutoEnabled ? "AUTO ON" : "AUTO OFF"
     color  := AutoEnabled ? "0x0078D4" : "0x2D2D30"
@@ -162,7 +194,8 @@ UpdateGui()
     Gui, Color, %color%
 
     elapsed := (LastSendTime = 0) ? "N/A" : (A_TickCount - LastSendTime) " ms"
-    info := "Interval:" IntervalMs "  MinSend:" MinSendIntervalMs "  Exe:" (CurrentExe = "" ? "-" : CurrentExe) "  LastSend:" elapsed
+    modeLabel := (SendMode = 0) ? "Always" : "CmdOnly"
+    info := "Mode:" modeLabel "  Keys:" SendSequence "  Interval:" IntervalMs "  MinSend:" MinSendIntervalMs "  Exe:" (CurrentExe = "" ? "-" : CurrentExe) "  LastSend:" elapsed
     GuiControl,, InfoText, %info%
 }
 
@@ -215,6 +248,8 @@ EnsureTargetActive()
 MainLoop()
 {
     global AutoEnabled, MinSendIntervalMs, LastSendTime, EnableOrangeDetection
+    global SendMode, LastCommandVisibleTick, CommandVisibleTimeoutMs
+    global SendSequence
     global OrangeColor, OrangeColorTolerance
 
     if (!AutoEnabled)
@@ -227,17 +262,34 @@ MainLoop()
     if (now - LastSendTime < MinSendIntervalMs)
         return
 
-    ; オレンジ検知が有効な場合、PixelSearch でチェック
-    if (EnableOrangeDetection)
+    orangeFound := false
+    if (SendMode = 1 || EnableOrangeDetection)
     {
-        if !FindOrangeInWindow(orangeX, orangeY)
+        if (FindOrangeInWindow(orangeX, orangeY))
+        {
+            orangeFound := true
+            LastCommandVisibleTick := now
+        }
+    }
+
+    if (SendMode = 1)
+    {
+        if (!orangeFound)
+        {
+            if (!LastCommandVisibleTick)
+                return
+            if (now - LastCommandVisibleTick > CommandVisibleTimeoutMs)
+                return
+        }
+    }
+    else if (EnableOrangeDetection)
+    {
+        if (!orangeFound)
             return
     }
 
-    ; Alt+Enter 送信
-    Send, !{Enter}
+    Send, %SendSequence%
     LastSendTime := now
-    UpdateGui()
 }
 
 FindOrangeInWindow(ByRef orangeX, ByRef orangeY)
