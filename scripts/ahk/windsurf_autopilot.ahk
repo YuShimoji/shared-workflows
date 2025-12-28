@@ -21,6 +21,8 @@ global OrangeColorTolerance := 25
 global SendSequence := "!{Enter}"
 global SendMode := 0                 ; 0 = Always send, 1 = Only when command visible
 global CommandVisibleTimeoutMs := 4000
+global EnableUserGuard := true        ; ユーザー操作中は送信しない
+global UserIdleThresholdMs := 500    ; ユーザーアイドル時間の閾値
 
 ; =====================================
 ; 状態変数
@@ -72,21 +74,21 @@ Gui, Add, Button, gGuiToggle xp+0 yp+24 w240 Background0x333333 cWhite, Toggle (
 ; 行2: パラメータ編集
 Gui, Font, cWhite s9, Segoe UI
 Gui, Add, Text, xm y+12, Interval (ms):
-Gui, Add, Edit, vIntervalEdit w80 Number cBlack Background0x303030, %IntervalMs%
+Gui, Add, Edit, vIntervalEdit w80 Number, %IntervalMs%
 Gui, Add, Text, x+10 yp, MinSend (ms):
-Gui, Add, Edit, vMinSendEdit w80 Number cBlack Background0x303030, %MinSendIntervalMs%
+Gui, Add, Edit, vMinSendEdit w80 Number, %MinSendIntervalMs%
 
 Gui, Add, Text, xm y+8, Target Exe (regex):
-Gui, Add, Edit, vTargetExeEdit w260 cBlack Background0x303030, %TargetExePattern%
+Gui, Add, Edit, vTargetExeEdit w260, %TargetExePattern%
 
 Gui, Add, Text, xm y+8, Title Keywords (empty=disabled):
-Gui, Add, Edit, vTitleKeywordsEdit w260 cBlack Background0x303030, %RequiredTitleKeywords%
+Gui, Add, Edit, vTitleKeywordsEdit w260, %RequiredTitleKeywords%
 
 Gui, Add, Text, xm y+8, Send Mode:
 Gui, Add, DropDownList, vSendModeDDL w260 Choose%sendModeIndex%, Always (interval-based)|Only when command visible (orange)
 
 Gui, Add, Text, xm y+8, Send Keys (AHK syntax):
-Gui, Add, Edit, vSendKeysEdit w260 cBlack Background0x303030, %SendSequence%
+Gui, Add, Edit, vSendKeysEdit w260, %SendSequence%
 
 Gui, Add, Button, gApplySettings xm y+8 w90 Background0x333333 cWhite, Apply
 
@@ -267,13 +269,16 @@ MainLoop()
 {
     global AutoEnabled, MinSendIntervalMs, LastSendTime, EnableOrangeDetection
     global SendMode, LastCommandVisibleTick, CommandVisibleTimeoutMs
-    global SendSequence
+    global SendSequence, EnableUserGuard, UserIdleThresholdMs
     global OrangeColor, OrangeColorTolerance
 
     if (!AutoEnabled)
         return
 
     if !EnsureTargetActive()
+        return
+
+    if (EnableUserGuard && !IsSafeToSend())
         return
 
     now := A_TickCount
@@ -407,6 +412,22 @@ LogEvent(eventType, details)
     timestamp := A_Now
     line := timestamp " [" eventType "] " details "`n"
     FileAppend, %line%, %LogFile%
+}
+
+IsSafeToSend()
+{
+    global UserIdleThresholdMs
+
+    if (A_TimeIdlePhysical < UserIdleThresholdMs)
+        return false
+
+    if (GetKeyState("LButton", "P") || GetKeyState("RButton", "P") || GetKeyState("MButton", "P"))
+        return false
+
+    if (GetKeyState("Shift", "P") || GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P"))
+        return false
+
+    return true
 }
 
 EnsureTargetActive()
