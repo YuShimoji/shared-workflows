@@ -103,18 +103,24 @@ HudX := A_ScreenWidth - 300
 HudY := 40
 Gui, Show, x%HudX% y%HudY% AutoSize, Windsurf Autopilot
 
-; Edit ボックスの背景色を濃いグレーに設定（CtlColors ライブラリ使用）
-GuiControl, +hwnd hIntervalEdit, IntervalEdit
-GuiControl, +hwnd hMinSendEdit, MinSendEdit
-GuiControl, +hwnd hTargetExeEdit, TargetExeEdit
-GuiControl, +hwnd hTitleKeywordsEdit, TitleKeywordsEdit
-GuiControl, +hwnd hSendKeysEdit, SendKeysEdit
+; =====================================
+; ハンドルの取得と色の適用
+; =====================================
 
-CtlColors_Attach(hIntervalEdit, "000000", "303030")
-CtlColors_Attach(hMinSendEdit, "000000", "303030")
-CtlColors_Attach(hTargetExeEdit, "000000", "303030")
-CtlColors_Attach(hTitleKeywordsEdit, "000000", "303030")
-CtlColors_Attach(hSendKeysEdit, "000000", "303030")
+; GuiControlGet を使って、各コントロールのハンドル(HWND)を正しく取得します
+GuiControlGet, hIntervalEdit, Hwnd, IntervalEdit
+GuiControlGet, hMinSendEdit, Hwnd, MinSendEdit
+GuiControlGet, hTargetExeEdit, Hwnd, TargetExeEdit
+GuiControlGet, hTitleKeywordsEdit, Hwnd, TitleKeywordsEdit
+GuiControlGet, hSendKeysEdit, Hwnd, SendKeysEdit
+
+; CtlColors_Attach(HWND, 背景色, 文字色)
+; 背景をダークグレー(303030)、文字を白(FFFFFF)に設定
+CtlColors_Attach(hIntervalEdit, "303030", "FFFFFF")
+CtlColors_Attach(hMinSendEdit, "303030", "FFFFFF")
+CtlColors_Attach(hTargetExeEdit, "303030", "FFFFFF")
+CtlColors_Attach(hTitleKeywordsEdit, "303030", "FFFFFF")
+CtlColors_Attach(hSendKeysEdit, "303030", "FFFFFF")
 
 UpdateGui()
 
