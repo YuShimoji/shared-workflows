@@ -52,15 +52,15 @@ Gui, Add, Button, gGuiToggle xp+0 yp+24 w220, Toggle (F8)
 ; 行2: パラメータ編集
 Gui, Font, cWhite s9, Segoe UI
 Gui, Add, Text, xm y+10, Interval (ms):
-Gui, Add, Edit, vIntervalEdit w70 Number, %IntervalMs%
+Gui, Add, Edit, vIntervalEdit w70 Number cBlack, %IntervalMs%
 Gui, Add, Text, x+10 yp, MinSend (ms):
-Gui, Add, Edit, vMinSendEdit w70 Number, %MinSendIntervalMs%
+Gui, Add, Edit, vMinSendEdit w70 Number cBlack, %MinSendIntervalMs%
 
 Gui, Add, Text, xm y+6, Target Exe (regex):
-Gui, Add, Edit, vTargetExeEdit w260, %TargetExePattern%
+Gui, Add, Edit, vTargetExeEdit w260 cBlack, %TargetExePattern%
 
 Gui, Add, Text, xm y+6, Title Keywords (empty=disabled):
-Gui, Add, Edit, vTitleKeywordsEdit w260, %RequiredTitleKeywords%
+Gui, Add, Edit, vTitleKeywordsEdit w260 cBlack, %RequiredTitleKeywords%
 
 Gui, Add, Button, gApplySettings xm y+6 w80, Apply
 
