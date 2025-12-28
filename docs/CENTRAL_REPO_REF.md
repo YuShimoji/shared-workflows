@@ -25,6 +25,7 @@
 | `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` | Worker起動プロンプト生成テンプレ（参照用） |
 | `templates/TASK_TICKET_TEMPLATE.md` | チケット雛形（docs/tasks/TASK_*.md） |
 | `scripts/orchestrator-audit.js` | 巡回監査（任意。tasks/inbox/HANDOVER の乖離検知） |
+| `scripts/sw-doctor.js` | 環境・スクリプト・ワークフロー診断（推奨。初期セットアップ検証・定期監査） |
 | `REPORT_CONFIG.yml` | レポート設定 |
 
 ## 参照の確実性（重要）
@@ -67,6 +68,28 @@ git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-work
 - 初回導入/立て直しは、中央リポジトリの `prompts/first_time/PROJECT_KICKSTART.txt` をプロジェクトのセットアップ担当スレッドに貼り付けて実行する。
 - 以降の作業は、プロジェクト内の `.shared-workflows/` を参照することで「中央リポジトリの存在を示唆せず」に SSOT を安定参照できる。
 
+## Doctor（診断ツール）の利用
+
+`sw-doctor.js` は、プロジェクトの環境・スクリプト・ワークフロー状態を自動診断するツールです。
+
+### 基本的な使用方法
+
+```bash
+# Bootstrap プロファイル（初期セットアップ検証）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+
+# Full プロファイル（定期的な監査）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text
+
+# CI Strict プロファイル（本番環境用）
+node .shared-workflows/scripts/sw-doctor.js --profile ci-strict --format text
+
+# JSON 出力（CI 連携用）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
+```
+
+詳細は `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md` を参照。
+
 ## サブモジュールが利用できない場合のフォールバック
 
 shared-workflows がサブモジュールとして導入されていない場合:
@@ -79,4 +102,8 @@ shared-workflows がサブモジュールとして導入されていない場合
 cp /path/to/source/shared-workflows/scripts/report-validator.js ./scripts/
 ```
 
+例: `sw-doctor.js` が必要な場合
+```bash
+cp /path/to/source/shared-workflows/scripts/sw-doctor.js ./scripts/
+cp -r /path/to/source/shared-workflows/scripts/utils ./scripts/
 ```
