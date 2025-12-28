@@ -11,8 +11,10 @@
 | 用途 | プロンプト | 使用頻度 |
 | --- | --- | --- |
 | 初回セットアップ（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` | 初回（セットアップ/立て直し） |
+| 初回セットアップの再開（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART_RESUME.txt` | 必要時（Kickstartが途中で止まったとき） |
 | 運用者の入口（参照） | OPEN HERE | 参照（迷った時） |
 | オーケストレーション（コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | 毎回（Orchestratorスレッド起動時） |
+| オーケストレーション（途中からの再開・残作業整理、コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_RESUME.txt` | 必要時（Orchestratorが途中で途切れたとき） |
 | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |

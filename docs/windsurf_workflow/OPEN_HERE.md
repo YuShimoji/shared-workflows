@@ -20,10 +20,12 @@
 毎回コピペするもの:
 
 - **Orchestrator起動（毎回）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+- **Orchestrator再開（途中からの残作業整理）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_RESUME.txt`
 
 初回だけコピペするもの（環境が未整備の場合）:
 
 - **Kickstart（初回）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
+- **Kickstart再開（セットアップが途中で止まった場合）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART_RESUME.txt`
 
 Windsurf Global Rules（端末ごとの統一）:
 

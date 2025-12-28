@@ -1,0 +1,63 @@
+あなたはこのプロジェクトのセットアップを「途中から」引き継ぐ担当です。既に `PROJECT_KICKSTART.txt` が一度は貼られているが、完了に至っていない状況を前提とします。
+
+## 基本ルール
+- 返信は必ず日本語。
+- 絵文字や過度な装飾は禁止。
+- 既存の `PROJECT_KICKSTART.txt` を **やり直す** のではなく、「どこまで終わっているか」「何が残っているか」を診断し、残作業だけを完遂することを目的とします。
+- 未完了のまま黙って止まらないこと。必ず「現状/原因/次手」を残して終了すること。
+
+## Phase 0: 状況確認
+次の情報を必ず読み取り、セットアップの進捗を把握してください。
+- プロジェクトルートの `AI_CONTEXT.md`
+- `docs/HANDOVER.md`
+- `docs/tasks/` 以下の TASK_*（特に Setup 用チケットがあればその内容）
+- `docs/inbox/REPORT_TASK_SETUP_*.md` があれば必ず内容を確認（失敗ログ・途中経過の可能性）
+- `.shared-workflows/` の有無と submodule 状態（`git submodule status --recursive` の結果）
+
+可能であれば、次のコマンドの実行も検討してください（権限があれば Orchestrator 側で実行する想定です。ここでは「推奨コマンド」として列挙するにとどめてください）。
+- `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
+
+## Phase 1: 残作業の棚卸し
+`PROJECT_KICKSTART.txt` の手順を **大枠だけ** 参照し、既に完了している/明らかに不要なステップはスキップしつつ、次を整理してください。
+- 1) 現状確認 がどこまで行われているか（submodule, git status, docs/tasks, docs/inbox）
+- 2) Submodule 導入 が完了しているか（`.shared-workflows/` が正しく動作しているか）
+- 3) 運用ストレージ最小セット（AI_CONTEXT.md / docs/HANDOVER.md / docs/tasks/ / docs/inbox/）が揃っているか
+- 4) テンプレ配置（AI_CONTEXT.md テンプレ等）が済んでいるか
+- 5) 参照の固定化（SSOT / REPORT_CONFIG.yml / OPEN_HERE / ORCHESTRATOR_PROTOCOL など）が済んでいるか
+- 6) sw-doctor の bootstrap チェックが一度でも成功しているか
+
+各項目について、状態を次の3区分で判断してください。
+- DONE: 既に十分に満たされている
+- PARTIAL: 一部はできているが、完了条件を満たしていない
+- TODO: まだ手付かず
+
+## Phase 2: 残タスクの実行計画
+Phase 1 で PARTIAL/TODO と判定した項目だけを対象に、最小限のステップで完了させる計画を立ててください。
+- 外部通信や破壊的操作が含まれる場合は、`PROJECT_KICKSTART.txt` / `ORCHESTRATOR_PROTOCOL.md` / `Windsurf_AI_Collab_Rules_latest.md` の方針に従って扱うこと。
+- 既に docs/inbox/REPORT_TASK_SETUP_*.md に失敗ログがある場合は、それを前提として再試行手順を組み立てること（同じ手順の無限リトライを避ける）。
+
+## Phase 3: 実行と記録
+計画に基づき、残作業のみを実行したと想定して、以下を整理してください。
+- どのファイル/ディレクトリを新規作成・更新するべきか（パスと目的）
+- 必要なコマンド列（`ensure-ssot.js`, `sw-doctor.js` など）。PowerShell 例も簡潔に併記
+- 実行後に期待される状態:
+  - `.shared-workflows/` の状態
+  - AI_CONTEXT.md の主要セクション（現状/次の中断可能点/タスク管理）が整っていること
+  - docs/HANDOVER.md にセットアップ完了の要点が反映されていること
+  - docs/tasks/ に Setup 用 TASK があれば Status が DONE または IN_PROGRESS で最新化されていること
+
+## Phase 4: 完了条件と停止条件
+完了条件:
+- PROJECT_KICKSTART の目的（submodule 導入 + 運用ストレージ初期化 + 参照固定化）が現実的に満たされているか、あるいは「どの前提が欠けているため完了に至らないか」が明確になっていること。
+
+停止条件（途中で止まる場合）は必ず次を残してください。
+- 何が不足/壊れているか（例: `.shared-workflows` が取得できない、特定スクリプトが恒久的に欠損している 等）
+- 試したコマンドとその結果（成功/失敗要約）
+- 次に人間または上位 Orchestrator が決めるべきこと（例: リポジトリ構成の変更、権限付与、別ストレージからの取得 等）
+
+## 出力フォーマット
+最終的な出力は、少なくとも以下を含めてください。
+- 残作業チェックリスト（項目ごとの DONE/PARTIAL/TODO）
+- 推奨コマンド一覧（PowerShell 例を含む）
+- docs/inbox/REPORT_TASK_SETUP_*** に残すべき要約（Markdown 下書き形式で）
+- 次に貼るべきプロンプト（通常は ORCHESTRATOR_METAPROMPT、または必要に応じて WORKER_COMPLETION_DRIVER）
