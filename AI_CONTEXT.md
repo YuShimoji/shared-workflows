@@ -21,13 +21,17 @@
 
 ## 次の中断可能点
 
+- SSOT バージョンフォールバック対応完了後、WritingPage 等での動作確認完了時。
+- 全タスクが DONE になった時点。
 - REPORT_ORCH CLI の雛形作成と docs/inbox へのレポート生成テスト完了時
 
 ## 決定事項
 
 - Orchestrator レポートは templates/ORCHESTRATOR_REPORT_TEMPLATE.md をベースに docs/inbox/REPORT_ORCH_*.md へ保存し、report-validator.js を必ず実行。
 - HANDOVER.md には Latest Orchestrator Report と Outlook (Short/Mid/Long) を必須で記載。
-- GitHubAutoApprove フラグは docs/HANDOVER.md に `GitHubAutoApprove: true/false` 形式で管理。
+- 中央リポジトリ（shared-workflows）を Submodule として `.shared-workflows/` に配置する運用を推奨する。
+- SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は `v2.0.md` へのリンク）を固定参照先とする。
+- **2024-12-26 追加**: SSOT ファイルはバージョンフォールバック対応 (`latest` → `v2.0` → `v1.1`)。古いサブモジュールでも Kickstart が動作する。
 
 ## リスク/懸念
 
