@@ -110,11 +110,11 @@ GuiControl, +hwnd hTargetExeEdit, TargetExeEdit
 GuiControl, +hwnd hTitleKeywordsEdit, TitleKeywordsEdit
 GuiControl, +hwnd hSendKeysEdit, SendKeysEdit
 
-CtlColors.Attach(hIntervalEdit, "000000", "303030")
-CtlColors.Attach(hMinSendEdit, "000000", "303030")
-CtlColors.Attach(hTargetExeEdit, "000000", "303030")
-CtlColors.Attach(hTitleKeywordsEdit, "000000", "303030")
-CtlColors.Attach(hSendKeysEdit, "000000", "303030")
+CtlColors_Attach(hIntervalEdit, "000000", "303030")
+CtlColors_Attach(hMinSendEdit, "000000", "303030")
+CtlColors_Attach(hTargetExeEdit, "000000", "303030")
+CtlColors_Attach(hTitleKeywordsEdit, "000000", "303030")
+CtlColors_Attach(hSendKeysEdit, "000000", "303030")
 
 UpdateGui()
 
