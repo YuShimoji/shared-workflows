@@ -106,6 +106,31 @@ function updateHandoverLatest(handoverPath, reportPath, summary) {
   console.log(`Updated ${normalizePath(path.relative(process.cwd(), handoverPath))} with latest report info.`);
 }
 
+function updateAiContext(contextPath, timestamp, progressPercent) {
+  if (!fs.existsSync(contextPath)) {
+    console.warn(`Warning: AI_CONTEXT が見つかりません: ${contextPath}`);
+    return;
+  }
+  let content = fs.readFileSync(contextPath, 'utf8');
+
+  // Update Timestamp
+  const timestampRe = /(- \*\*最終更新\*\*|最終更新)\s*:\s*.*$/m;
+  if (timestampRe.test(content)) {
+    content = content.replace(timestampRe, (match, p1) => `${p1}: ${timestamp}`);
+  }
+
+  // Update Progress if provided
+  if (progressPercent !== undefined) {
+    const progressRe = /(- \*\*進捗\*\*|進捗)\s*:\s*(\d+)%/m;
+    if (progressRe.test(content)) {
+      content = content.replace(progressRe, (match, p1) => `${p1}: ${progressPercent}%`);
+    }
+  }
+
+  fs.writeFileSync(contextPath, content, 'utf8');
+  console.log(`Updated ${normalizePath(path.relative(process.cwd(), contextPath))} basics.`);
+}
+
 function main() {
   if (hasFlag('--help')) {
     console.log(`Usage: node scripts/report-orch-cli.js [options]
@@ -119,7 +144,10 @@ Options:
   --skip-validate          Skip automatic report validation
   --output <path>          Custom output path (default: docs/inbox/REPORT_ORCH_<timestamp>.md)
   --sync-handover          Update docs/HANDOVER.md Latest Orchestrator Report section
+  --sync-context           Update AI_CONTEXT.md basic info (Timestamp, Progress)
   --handover-path <path>   Custom HANDOVER path (default: docs/HANDOVER.md)
+  --context-path <path>    Custom AI_CONTEXT path (default: AI_CONTEXT.md)
+  --progress <percent>     Progress percentage to set in AI_CONTEXT.md (e.g. 65)
   --summary <text>         Summary text when syncing HANDOVER
 `);
     return;
@@ -151,6 +179,10 @@ Options:
   const summary = parseArg('--summary', '');
   const syncHandover = hasFlag('--sync-handover');
   const handoverPath = parseArg('--handover-path', path.join(root, 'docs', 'HANDOVER.md'));
+
+  const syncContext = hasFlag('--sync-context');
+  const contextPath = parseArg('--context-path', path.join(root, 'AI_CONTEXT.md'));
+  const progressPercent = parseArg('--progress', undefined);
 
   const replacements = {
     '<ISO8601>': isoTimestamp,
@@ -189,6 +221,10 @@ ${template}`;
   if (syncHandover) {
     const relativeReportPath = normalizePath(path.relative(root, outputPath));
     updateHandoverLatest(handoverPath, relativeReportPath, summary);
+  }
+
+  if (syncContext) {
+    updateAiContext(contextPath, isoTimestamp, progressPercent);
   }
 }
 

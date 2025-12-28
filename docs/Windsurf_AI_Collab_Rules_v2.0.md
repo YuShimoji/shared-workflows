@@ -1,4 +1,7 @@
-# Windsurf: AI 協調開発ルール v2.0
+# Windsurf: AI 協調開発ルール v2.0 (Legacy Reference)
+
+> **注意**: 本ドキュメントは **旧版の参考資料** です。  
+> 現在の規範（SSOT）は常に `docs/Windsurf_AI_Collab_Rules_latest.md` を参照してください。
 
 ## 変更サマリー（v1.1 → v2.0）
 

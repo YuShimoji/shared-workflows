@@ -1,6 +1,7 @@
-# Windsurf Collaborative Playbook v2.0
+# Windsurf Collaborative Playbook (Legacy Reference)
 
-> 本ドキュメントは **参考資料（旧版）** です。規範（SSOT）は常に `docs/Windsurf_AI_Collab_Rules_latest.md` を参照してください。
+> **注意**: 本ドキュメントは **旧版の参考資料** です。  
+> 規範（SSOT）は常に `docs/Windsurf_AI_Collab_Rules_latest.md` を参照してください。
 
 ## 0. 起動シーケンス（プロジェクト抽象化）
 

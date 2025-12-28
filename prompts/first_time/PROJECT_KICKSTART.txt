@@ -3,11 +3,11 @@
 - 返信は必ず日本語（英語・他言語は禁止）
 - 絵文字や過度な装飾は使用しない
 
-最優先で読むもの（SSOT 参照順序）:
-- サブモジュールがある場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
-- サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`
+最優先で読むもの（SSOT 参照）:
+- サブモジュールがある場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+- サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - プロジェクトルートの AI_CONTEXT.md（無ければ作成）
-- **重要**: 上記 SSOT のうち最初に見つかったファイルを「このセットアップの基準ルール」として扱い、バージョン違いでエラーにしない
+- **重要**: `latest.md` が存在しない場合は、`.shared-workflows/docs/` または `docs/` 配下にある `v2.0.md` や `v1.1.md` をフォールバックとして探し、最初に見つかったものを基準ルールとして扱う。
 
 目的:
 - shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
@@ -74,7 +74,7 @@
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   3. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
   4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（**既存ファイルが無ければ `REPORT_TASK_SETUP_shared-workflows.md` などの新規ファイルを1つ作成し、存在しないパスを推測して何度も読み直さない**）
-- SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は v2.0 へのリンク）
+- SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（旧環境では v2.0/v1.1 を latest として扱うよう ensure-ssot.js で補完する）
 - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
 - オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
 - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`

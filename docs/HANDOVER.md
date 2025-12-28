@@ -20,17 +20,14 @@ GitHubAutoApprove: false
 
 ## 進捗
 
-- TASK_001_DefaultBranch: OPEN — origin/HEAD を main へ統一するため、報告ワークフローを固定化しており、次は CLI でのレポート同期結果を HANDOVER に載せた状態で提案をまとめる。
-- TASK_002_OnboardingRefStandard: OPEN — 他プロジェクト展開向けに ORCHESTRATOR_PROTOCOL / METAPROMPT を更新済み。残作業は REPORT_ORCH 手順のテンプレ共有と dev-check 自動化。
-- report-validator.js 強化済み（Orchestrator必須セクション検証 + 虚偽完了検出 + 変更ファイル存在チェック）。
-- HANDOVERテンプレ／メタプロンプトへ Latest Report 欄と Outlook (Short/Mid/Long) を追加し、運用ガイドに反映中。
-- REPORT_ORCH CLI（docs/inbox へのレポート自動生成＋検証）を設計中。
-- レポート生成～HANDOVER同期まで CLI で自動化し、docs/inbox には現状 2 本のレポート（REPORT_ORCH 1本 + TASKレポート 1本）を保持中。
-- 残タスク: 監査再実行ログの更新、Git push、TASK_001 の default branch 統一。
+- **TASK_001_DefaultBranch**: OPEN — origin/HEAD を main へ統一するため、GitHub 側の設定変更が必要。ローカルでは `main` 運用を強制中。
+- **TASK_002_OnboardingRefStandard**: OPEN — 他プロジェクト展開向けに `ORCHESTRATOR_PROTOCOL` / `METAPROMPT` を更新。SSOT エントリポイント一本化を待って最終化。
+- **SSOT フォールバック対応**: COMPLETED — `latest` -> `v2.0` -> `v1.1` の順で探索するロジックをプロンプトとスクリプトに実装済み。
+- **レポート検証/監査機能**: COMPLETED — `report-validator.js`, `orchestrator-audit.js`, `report-orch-cli.js` が稼働中。
 
 ## ブロッカー
 
-- AI_CONTEXT.md が未整備のため Worker 完了ステータスを監査できず、orchestrator-audit.js の警告が解消できない。
+- なし（AI_CONTEXT.md を復旧し、Worker 状態の同期を再開したため解消）。
 
 ## バックログ
 
@@ -66,8 +63,8 @@ GitHubAutoApprove: false
 
 ## Latest Orchestrator Report
 
-- File: docs/inbox/REPORT_ORCH_20251226_1332.md
-- Summary: gitはmainでorigin/mainと同期(0/0)。ただしorigin/HEADがchore/central-initでDefaultBranch未統一、docs/inboxにREPORTが0件でHANDOVER参照と乖離。TASK_001/TASK_005を継続。
+- File: docs/inbox/REPORT_ORCH_20251229_0534.md
+- Summary: SSOT一本化(latest.md)、ワークフロー安定化(背景情報伝達)、TASK_002完了、CLI拡張を実装済み。
 
 ## Outlook
 

@@ -12,6 +12,15 @@ Report: docs/inbox/REPORT_ORCH_20251226_1332.md
 - GitHub 側のデフォルトブランチを `main` に統一し、clone 時の初期ブランチが `main` になる状態にする。
 - ローカルで `git remote show origin` の `HEAD branch` が `main` になっていることを確認できる状態にする。
 
+## Current Status
+- ローカルブランチは `main` に一本化済み。
+- リモート (`origin/HEAD`) は依然として `chore/central-init` を指している。
+- `git remote set-head origin main` は実行したが、GitHub 側のデフォルトブランチ設定が優先されるため反映されない。
+
+## Next Action for User
+- GitHub リポジトリ設定 (Settings > General > Default branch) で `main` をデフォルトブランチに変更してください。
+- 変更後、Orchestrator が `git remote set-head origin -a` を実行して完了とします。
+
 ## Context
 
 - 現状 `origin/HEAD -> origin/chore/central-init` となっており、初見の利用者が `main` ではないブランチに着地しうる。

@@ -24,7 +24,7 @@
 ## Phase 0: SSOT / 状況確認
 1. `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
 2. 参照ファイル
-   - `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（無ければ `docs/` 直下）
+   - `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（無ければ `docs/` 直下、または v2.0.md / v1.1.md へのフォールバック）
    - `docs/HANDOVER.md`
    - 対象チケット `docs/tasks/TASK_*.md`
    - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（生成ベース）

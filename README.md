@@ -5,10 +5,8 @@
 ## 最新ルール
 
 - **ルール本体（最新版 / SSOT）**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 現在の latest は v2.0 を指します（将来はここが更新されます）
-  - v1.1 の問題点（自動PR/マージ直前での停止、不要なコード残留）を根絶
-  - 実行フローの完全明確化、クリーンアップの義務化を実現
-- **旧バージョン**: `docs/Windsurf_AI_Collab_Rules_v1.1.md` (非推奨)
+  - v1.1/v2.0 の改善を取り込んだ単一のエントリポイント
+  - 実行フローの完全明確化、クリーンアップの義務化を定義
 
 ## 各プロジェクトでの運用
 
@@ -88,7 +86,7 @@
 
 - **運用者の入口（参照。どのフォルダを開く/どれをコピペする）**: `docs/windsurf_workflow/OPEN_HERE.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（プロジェクト側 / Submodule）
 - **コピペ用プロンプト集**: `prompts/`（このリポジトリ内） / `.shared-workflows/prompts/`（プロジェクト側 / Submodule）
-- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
+- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
 - **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`
   - 見る箇所: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期（Next）`

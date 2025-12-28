@@ -37,7 +37,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 ## SW_ROOT（shared-workflows の配置）
 - 参照の確実性のため、プロジェクト内に shared-workflows を配置して参照する。
 - 既定の配置先は `.shared-workflows/` とし、以降はこれを `SW_ROOT` と呼ぶ。
-- もし `.shared-workflows/` が存在しない場合は、`docs/` 直下にある同名ファイル（例: `docs/windsurf_workflow/OPEN_HERE.md`, `docs/Windsurf_AI_Collab_Rules_v2.0.md`）を直接参照する。
+- もし `.shared-workflows/` が存在しない場合は、`docs/` 直下にある同名ファイル（例: `docs/windsurf_workflow/OPEN_HERE.md`, `docs/Windsurf_AI_Collab_Rules_latest.md`）を直接参照する。
 - submodule を導入する場合は、参照先を `.shared-workflows/` に差し替えてよい。
 
 ## 必須ルール
@@ -70,12 +70,12 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
    - `docs/inbox/`
 
 ## Phase 0: SSOT確認
-以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。`docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest` が無い場合は **許可待ちせず自動で補完** する（成功するまで繰り返す）。スクリプトで解決できない場合のみ停止し、参照方法を再指示する。
+以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。`docs/Windsurf_AI_Collab_Rules_latest.md` が無い場合は **許可待ちせず自動で補完** する（成功するまで繰り返す）。スクリプトで解決できない場合のみ停止し、参照方法を再指示する。
   1. `.shared-workflows/` にいる状態で `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
   2. 不足する場合は共有クローンを直接指定（例: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`）
   3. プロジェクト側 `scripts/` に `ensure-ssot.js` をコピーして `node scripts/ensure-ssot.js --project-root .`
   4. 上記で揃わない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備完了後に `.shared-workflows/` に戻す
-- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- `docs/Windsurf_AI_Collab_Rules_latest.md`
 - `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - `docs/PROMPT_TEMPLATES.md`
 - `REPORT_CONFIG.yml`
@@ -161,12 +161,13 @@ Worker の成果は `docs/inbox/` に納品され、次回 Orchestrator が回�
 - Focus Area / Forbidden Area
 - 停止条件（Forbiddenに触れる必要、仮定が3つ以上、前提を覆す変更など）
 - 納品先: docs/inbox/REPORT_...
+- **Context（背景）**: `AI_CONTEXT.md` の「決定事項」や「リスク/懸念」のうち、本タスクに関連するものを要約して必ず含めること。
 
 プロンプト生成は `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`）をベースにし、
-チケット内容（Tier/Focus/Forbidden/DoD）から **可変** にする。
+チケット内容（Tier/Focus/Forbidden/DoD）および **AI_CONTEXT の背景情報** を統合して **動的に** 生成する。
 
 Worker用の共通参照（毎回含める）:
-- `docs/Windsurf_AI_Collab_Rules_v2.0.md`
+- `docs/Windsurf_AI_Collab_Rules.md`
 - `docs/HANDOVER.md`
 - （必要なら）`docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` の Worker Protocol
 

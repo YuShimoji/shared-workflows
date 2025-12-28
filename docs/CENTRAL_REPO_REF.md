@@ -6,15 +6,15 @@
 
 中央リポジトリ（shared-workflows）にあるSSOTファイルを参照します。
 
-### SSOT バージョンのフォールバック順序
+### SSOT バージョンのフォールバック順序（自動補完）
 
-shared-workflows サブモジュールのバージョンによって、SSOT ファイルの存在が異なる場合があります。以下の順序でフォールバック参照し、**最初に見つかったファイルを基準ルールとする**ことで、バージョン違いによるエラーを防ぎます。
+shared-workflows サブモジュールのバージョンによって、SSOT ファイルの名称が異なる場合があります。`scripts/ensure-ssot.js` は、以下の順序でファイルを探索し、自動的に `docs/Windsurf_AI_Collab_Rules_latest.md` として配置します。
 
 1. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
 2. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md`
 3. `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
 
-サブモジュールが無い場合は `docs/` 直下の同名ファイルを同様の順序で参照します。
+AI は常に `latest.md` をエントリポイントとして参照してください。
 
 ## リポジトリ情報
 
@@ -26,7 +26,7 @@ shared-workflows サブモジュールのバージョンによって、SSOT フ�
 
 | ファイル | 役割 |
 |----------|------|
-| `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（固定参照先 / latest） |
+| `docs/Windsurf_AI_Collab_Rules_latest.md` | 中央ルール（単一エントリポイント / latest） |
 | `docs/PROMPT_TEMPLATES.md` | テンプレート集 |
 | `prompts/first_time/PROJECT_KICKSTART.txt` | 初回セットアップ（コピペ用） |
 | `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（参照。説明付き / フォールバック） |

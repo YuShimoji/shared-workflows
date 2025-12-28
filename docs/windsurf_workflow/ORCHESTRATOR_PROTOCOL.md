@@ -31,11 +31,11 @@
 2. プロジェクト側の状態管理ファイル/ディレクトリを用意（存在しなければ作成）:
    - `AI_CONTEXT.md`（プロジェクトルート）
    - `docs/HANDOVER.md`
-3. `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、**許可待ちせず自動で補完**する（成功するまで繰り返す）。
+3. `docs/Windsurf_AI_Collab_Rules_latest.md` がプロジェクト側に無い場合は、**許可待ちせず自動で補完**する（成功するまで繰り返す）。
    1. `.shared-workflows/` で `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
    2. 不足する場合は共有クローンを直接指定（例: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`）
    3. プロジェクト側 `scripts/` に `ensure-ssot.js` を配置し、`node scripts/ensure-ssot.js --project-root .`
-   4. いずれでも取得できない場合のみ一時的に `docs/` 直下の同名ファイルを参照し、整備後に `.shared-workflows/` へ戻す
+   4. いずれでも取得できない場合のみ一時的に `docs/latest.md` を使用し、整備後に `.shared-workflows/` へ戻す
 4. `.shared-workflows/scripts/` にある CLI（例: `todo-sync.js` / `report-validator.js` / `report-orch-cli.js`）が欠ける場合も **停止せず** 次を順番に試す:
    1. `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
    2. `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を `scripts/` にコピーし、`node scripts/<name>.js` が動くことを確認
@@ -211,46 +211,6 @@ Tickets:
 
 ---
 
-## Phase 4.1: REPORT_ORCH CLI での保存・検証（推奨）
-
-Orchestrator レポートは CLI で自動生成・検証・HANDOVER 同期まで行う。
-
-```sh
-node .shared-workflows/scripts/report-orch-cli.js \
-  --issue "AI Reporting Improvement" \
-  --mode orchestration \
-  --summary "Stateサマリを記載" \
-  --sync-handover
-```
-
-- docs/inbox/REPORT_ORCH_YYYYMMDD_HHMM.md をテンプレから生成し、`REPORT_CONFIG.yml` に基づき自動検証を実行。
-- `--summary` は HANDOVER.md の Latest Orchestrator Report セクションに反映される。
-- `--skip-validate` でドラフト出力のみ行うことも可能。`--handover-path` で別ハンドオーバーファイルを指定できる。
-
-手動でテンプレを貼る場合でも、生成後に必ず `node .shared-workflows/scripts/report-validator.js <report>` を実行し、結果を確認。エラーがあれば修正して再納品（無ければ `node scripts/report-validator.js <REPORT_PATH>`）。
-
-`node scripts/report-validator.js` を使う場合は、`node scripts/report-validator.js <report> REPORT_CONFIG.yml .` のように **config パスと project root を必ず指定**する。
-
----
-
-## Phase 4.5: 巡回監査（不備検知 / 乖離検知）
-
-最低限、次をチェックして異常を検知する:
-
-1. DONE チケットに Report パスがあるか（なければ不備）
-2. docs/inbox/ の REPORT が、対応チケットに紐づいているか（紐づかない場合は不備）
-3. docs/HANDOVER.md の要約が、OPEN/IN_PROGRESS の列挙と矛盾していないか（乖離）
-
-異常があれば、最小の修正（追記/ステータス修正/タスク化）を行い、根拠を残す。
-
-任意で、監査を機械化する（推奨。ローカル安全コマンド）:
-
-- `node .shared-workflows/scripts/orchestrator-audit.js`（Submoduleが無い場合は `node scripts/orchestrator-audit.js`）
-
-Worker レポート内の `## Proposals` は、次回タスクの候補として回収し、必要なら `docs/tasks/` に新規チケットを起票する。
-
----
-
 ## 2. Worker Protocol
 
 通常、Workerスレッドには Orchestrator が生成した「チケット専用の最小プロンプト」を投入する。本セクションの Worker Protocol は、その生成のベース（参考文面）として扱う。
@@ -267,14 +227,14 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 
 ## 必須参照
 作業開始前に以下を確認すること:
-- 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
-- 進捗状況: docs/HANDOVER.md
+- 中央ルール（SSOT / latest）: `docs/latest.md`
 - SSOT確認: `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote` を実行し、必要ファイルが揃うまで繰り返す
 - `docs/PROMPT_TEMPLATES.md`
 - `REPORT_CONFIG.yml`
 - `docs/HANDOVER.md`
 - `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - `.shared-workflows/scripts/ensure-ssot.js`（無ければ共有クローンからコピー）
+- `AI_CONTEXT.md` の「決定事項」や「リスク/懸念」のうち、本タスクに関連するものを要約して必ず含めること。
 
 ## 基本制約
 - 絵文字、装飾表現、冗長な言い回しを使用しない
@@ -403,7 +363,7 @@ docs/
 
 ## 5. 参照
 
-- 中央ルール（SSOT / latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
+- 中央ルール（SSOT / latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - 中央リポジトリ参照: `.shared-workflows/docs/CENTRAL_REPO_REF.md`（推奨。無ければ `docs/CENTRAL_REPO_REF.md`）
 - コピペ用メタプロンプト: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`）
 - レポート設定: `.shared-workflows/REPORT_CONFIG.yml`（推奨。無ければ `REPORT_CONFIG.yml`）

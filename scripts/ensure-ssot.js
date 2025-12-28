@@ -8,6 +8,32 @@ const FILES = [
   'docs/Windsurf_AI_Collab_Rules_v1.1.md'
 ];
 
+/**
+ * SSOT エントリポイントの保証:
+ * latest.md がソースにないが v2.0 や v1.1 がある場合、それらを latest.md としてコピーする
+ */
+function ensureLatestEntrypoint(projectRoot, swRoot) {
+  const latestDest = path.join(projectRoot, 'docs/Windsurf_AI_Collab_Rules_latest.md');
+  if (fs.existsSync(latestDest)) return;
+
+  const sources = [
+    path.join(swRoot, 'docs/Windsurf_AI_Collab_Rules_latest.md'),
+    path.join(swRoot, 'docs/Windsurf_AI_Collab_Rules_v2.0.md'),
+    path.join(swRoot, 'docs/Windsurf_AI_Collab_Rules_v1.1.md'),
+    path.join(projectRoot, 'docs/Windsurf_AI_Collab_Rules_v2.0.md'),
+    path.join(projectRoot, 'docs/Windsurf_AI_Collab_Rules_v1.1.md')
+  ];
+
+  for (const src of sources) {
+    if (fs.existsSync(src)) {
+      ensureDirectory(latestDest);
+      fs.copyFileSync(src, latestDest);
+      console.log(`Created latest.md entrypoint from: ${src}`);
+      return;
+    }
+  }
+}
+
 function ensureDirectory(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 }
@@ -88,6 +114,8 @@ Options:
 
   let copied = 0;
   let missingSources = [];
+
+  ensureLatestEntrypoint(projectRoot, swRoot);
 
   FILES.forEach((relativePath) => {
     const result = copyIfMissing(projectRoot, swRoot, relativePath);

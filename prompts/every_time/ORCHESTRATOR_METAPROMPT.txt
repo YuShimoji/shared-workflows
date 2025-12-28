@@ -77,7 +77,7 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
 
 ## Phase 0: SSOT確認
 - 以下を参照し、差分や矛盾があればSSOT側を優先する（shared-workflows が無い場合は `docs/` 配下の同名ファイルを参照）。
-- `docs/Windsurf_AI_Collab_Rules_v2.0.md` / `latest` が無い場合は **許可待ちせず自動で補完** する。
+- `docs/Windsurf_AI_Collab_Rules_latest.md` が無い場合は **許可待ちせず自動で補完** する。旧サブモジュール環境（v1.1のみ等）でも `latest.md` として動作させるため、後述の `ensure-ssot.js` による補完を優先する。
 - ただし **SSOT をプレースホルダで自作しない**（存在しない場合は「取得不能」としてログを残し、次手へ切り替える）。
 - 環境チェックを機械化する（推奨）:
   - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`（Submoduleが無い場合は `node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`）
@@ -88,10 +88,11 @@ Worker起動用プロンプト（各担当者向け）は、Orchestrator が **�
   2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
   3. プロジェクト側 `scripts/ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
   4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に「不足物」「試したコマンド」「次に必要な入力」を必ず記録する（この停止は例外として許可）
-- SSOT: `docs/Windsurf_AI_Collab_Rules_latest.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`（いずれか最初に見つかったものを基準とする）
-- `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- `docs/PROMPT_TEMPLATES.md`
+- SSOT（最新ルール）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（無ければ `docs/` 直下）
+- 進捗状況: `docs/HANDOVER.md`
 - `REPORT_CONFIG.yml`
+- `AI_CONTEXT.md`
+- **重要**: `latest.md` が無い場合は `v2.0.md` -> `v1.1.md` の順で自動探索し、最初に見つかったものを基準とする。
 - `docs/HANDOVER.md`
 - `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - `.shared-workflows/scripts/ensure-ssot.js`（無ければ共有クローンからコピー）
@@ -195,9 +196,10 @@ Worker の成果は `docs/inbox/` に納品され、次回 Orchestrator が回�
 - Focus Area / Forbidden Area
 - 停止条件（Forbiddenに触れる必要、仮定が3つ以上、前提を覆す変更など）
 - 納品先: docs/inbox/REPORT_...
-
+- **Context（背景）**: `AI_CONTEXT.md` の「決定事項」や「リスク/懸念」のうち、本タスクに関連するものを要約して必ず含めること。
+ 
 プロンプト生成は `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`）をベースにし、
-チケット内容（Tier/Focus/Forbidden/DoD）から **可変** にする。
+チケット内容（Tier/Focus/Forbidden/DoD）および **AI_CONTEXT の背景情報** を統合して **動的に** 生成する。
 
 Worker用の共通参照（毎回含める）:
 - `docs/Windsurf_AI_Collab_Rules_v2.0.md`

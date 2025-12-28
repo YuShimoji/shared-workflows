@@ -155,9 +155,15 @@ function checkEnvironment(projectRoot, options = {}) {
     }
   }
 
-  // Check SSOT files (fallback order: latest -> v2.0 -> v1.1)
-  const ssotFiles = ['docs/Windsurf_AI_Collab_Rules_latest.md', 'docs/Windsurf_AI_Collab_Rules_v2.0.md', 'docs/Windsurf_AI_Collab_Rules_v1.1.md'];
-  for (const file of ssotFiles) {
+  // Check SSOT files (latest is REQUIRED, others are legacy/optional)
+  const ssotFiles = [
+    { file: 'docs/Windsurf_AI_Collab_Rules_latest.md', required: true },
+    { file: 'docs/Windsurf_AI_Collab_Rules_v2.0.md', required: false },
+    { file: 'docs/Windsurf_AI_Collab_Rules_v1.1.md', required: false }
+  ];
+
+  for (const item of ssotFiles) {
+    const file = item.file;
     const fullPath = path.join(projectRoot, file);
     if (fs.existsSync(fullPath)) {
       if (!quiet) {
@@ -167,10 +173,13 @@ function checkEnvironment(projectRoot, options = {}) {
         createCheckResult('env.ssot-file', 'OK', `SSOT ${file} exists`, { file, path: fullPath })
       );
     } else {
-      const msg = `SSOT ${file} not found`;
-      warnings.push(msg);
+      const severity = item.required ? 'ERROR' : 'WARN';
+      const msg = `SSOT ${file} not found${item.required ? ' (REQUIRED)' : ' (Legacy/Optional)'}`;
+      if (item.required) issues.push(msg);
+      else warnings.push(msg);
+      
       results.push(
-        createCheckResult('env.ssot-file', 'WARN', msg, { file, path: fullPath })
+        createCheckResult('env.ssot-file', severity, msg, { file, path: fullPath })
       );
     }
   }

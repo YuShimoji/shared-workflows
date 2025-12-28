@@ -2,7 +2,7 @@
 
 ## 基本情報
 
-- **最終更新**: 2025-12-21T01:05+09:00
+- **最終更新**: 2025-12-29T05:34:14+09:00
 - **更新者**: Cascade
 
 ## レポート設定（推奨）
@@ -13,47 +13,47 @@
 
 ## 現在のミッション
 
-- **タイトル**: AI Reporting Improvement
-- **Issue**: #0 (ローカル運用タスク)
+- **タイトル**: SSOT Entrypoint Unification & Workflow Stabilization
+- **Issue**: #0 (Project-wide cleanup & optimization)
 - **ブランチ**: main
 - **関連PR**: なし
-- **進捗**: 40%（テンプレ更新・バリデータ強化完了、REPORT_ORCH CLI/自動同期が残）
+- **進捗**: 80%（SSOTフォールバック完了、一本化設計中、ドキュメント乖離是正中）
 
 ## 次の中断可能点
 
-- SSOT バージョンフォールバック対応完了後、WritingPage 等での動作確認完了時。
-- 全タスクが DONE になった時点。
-- REPORT_ORCH CLI の雛形作成と docs/inbox へのレポート生成テスト完了時
+- SSOT エントリポイント化（latest.md への集約）とプロンプト参照の修正完了時
+- TASK_001 / TASK_002 の完了時
 
 ## 決定事項
 
-- Orchestrator レポートは templates/ORCHESTRATOR_REPORT_TEMPLATE.md をベースに docs/inbox/REPORT_ORCH_*.md へ保存し、report-validator.js を必ず実行。
-- HANDOVER.md には Latest Orchestrator Report と Outlook (Short/Mid/Long) を必須で記載。
-- 中央リポジトリ（shared-workflows）を Submodule として `.shared-workflows/` に配置する運用を推奨する。
-- SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md`（本文は `v2.0.md` へのリンク）を固定参照先とする。
-- **2024-12-26 追加**: SSOT ファイルはバージョンフォールバック対応 (`latest` → `v2.0` → `v1.1`)。古いサブモジュールでも Kickstart が動作する。
+- Orchestrator レポートは `report-orch-cli.js` を使用して生成し、`HANDOVER.md` を自動同期する。
+- SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md` を唯一のエントリポイントとし、プロンプト指示をこれに一本化する。
+- 過去のバージョン（v1.1/v2.0）は、サブモジュールのバージョン差異を吸収するための「内部実装」として扱い、AI の表層的な指示からは隠蔽する。
 
 ## リスク/懸念
 
-- AI_CONTEXT.md が欠落していたため Worker 状態監査ができなかった。今後は完了時ごとに更新が必要。
-- REPORT_ORCH CLI 未実装のまま手動作業を継続すると、検証漏れや false completion の再発リスクがある。
+- `AI_CONTEXT.md` と `HANDOVER.md` の記述が過去のセッション状態と混ざり、Worker が混乱する原因になっている。
+- サブモジュールのコミットが古いため、最新のスクリプト機能が一部欠落している（プロジェクト側 `scripts/` で補完中）。
 
 ## Worker完了ステータス
 
-**Worker完了ステータス**: worker_orch-cli:completed
+**Worker完了ステータス**: 
+- worker_ssot_fallback: completed (REPORT_TASK_SSOT_FALLBACK_20241226.md)
+- worker_audit: completed (REPORT_TASK_005_20251226_1345.md)
 
 ## Backlog（将来提案）
 
-- [ ] REPORT_ORCH CLI に `--sync-handover` オプションを追加し、Latest Orchestrator Report 欄を自動更新
-- [ ] worker-monitor.js を docs/HANDOVER や AI_CONTEXT と連携して Warning を自動通知
-- [ ] docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md へ CLI 手順を正式追記
+- [ ] `report-orch-cli.js` に `AI_CONTEXT.md` の `Worker完了ステータス` を自動解析・更新する機能を追加
+- [ ] `sw-doctor.js` に SSOT の「中身」が `latest` に一本化されているかの検証を追加
+- [ ] `docs/tasks/` の自動クリーンアップ（DONEから一定期間経過で削除/アーカイブ）
 
 ## タスク管理（短期/中期/長期）
 
 ### 短期（Next）
 
-- [pending] GitHubのデフォルトブランチを main に統一（origin/HEAD を是正） (ref: docs/tasks/TASK_001_DefaultBranch.md, Status: OPEN)
-- [pending] 他プロジェクトへの参照方法を標準化（導入手順の最短化） (ref: docs/tasks/TASK_002_OnboardingRefStandard.md, Status: OPEN)
+- [pending] GitHubのデフォルトブランチを main に統一（origin/HEAD を是正） (ref: docs/tasks/TASK_001_DefaultBranch.md)
+- [pending] 他プロジェクトへの参照方法を標準化（導入手順の最短化） (ref: docs/tasks/TASK_002_OnboardingRefStandard.md)
+- [in_progress] SSOT エントリポイント一本化（latest.md）
 
 ### 中期（Later）
 
