@@ -7,6 +7,8 @@ SetWorkingDir, %A_ScriptDir%
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 
+#Include CtlColors.ahk
+
 ; =====================================
 ; 設定値（ここだけ調整すればOK）
 ; =====================================
@@ -100,6 +102,19 @@ Gui, Margin, 10, 8
 HudX := A_ScreenWidth - 300
 HudY := 40
 Gui, Show, x%HudX% y%HudY% AutoSize, Windsurf Autopilot
+
+; Edit ボックスの背景色を濃いグレーに設定（CtlColors ライブラリ使用）
+GuiControl, +hwnd hIntervalEdit, IntervalEdit
+GuiControl, +hwnd hMinSendEdit, MinSendEdit
+GuiControl, +hwnd hTargetExeEdit, TargetExeEdit
+GuiControl, +hwnd hTitleKeywordsEdit, TitleKeywordsEdit
+GuiControl, +hwnd hSendKeysEdit, SendKeysEdit
+
+CtlColors.Attach(hIntervalEdit, "000000", "303030")
+CtlColors.Attach(hMinSendEdit, "000000", "303030")
+CtlColors.Attach(hTargetExeEdit, "000000", "303030")
+CtlColors.Attach(hTitleKeywordsEdit, "000000", "303030")
+CtlColors.Attach(hSendKeysEdit, "000000", "303030")
 
 UpdateGui()
 
