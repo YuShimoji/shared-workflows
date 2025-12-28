@@ -66,12 +66,12 @@ sendModeIndex := SendMode + 1
 LogFile := A_ScriptDir "\windsurf_autopilot_debug.log"
 
 Gui, -MaximizeBox +MinimizeBox +AlwaysOnTop +ToolWindow
-Gui, Color, 0x1E1E1E
+Gui, Color, 0x2D2D30
 Gui, Font, cWhite s10 Bold, Segoe UI
 
 ; 行1: ステータスとトグルボタン
 Gui, Add, Text, vStatusText Center w240, AUTO OFF
-Gui, Add, Button, gGuiToggle xp+0 yp+24 w240 Background0x333333 cWhite, Toggle (F8)
+Gui, Add, Button, gGuiToggle xp+0 yp+24 w240 Background0x3E3E42 cWhite, Toggle (F8)
 
 ; 行2: パラメータ編集
 Gui, Font, cWhite s9, Segoe UI
@@ -92,7 +92,7 @@ Gui, Add, DropDownList, vSendModeDDL w260 Choose%sendModeIndex%, Always (interva
 Gui, Add, Text, xm y+8, Send Keys (AHK syntax):
 Gui, Add, Edit, vSendKeysEdit w260, %SendSequence%
 
-Gui, Add, Button, gApplySettings xm y+8 w90 Background0x333333 cWhite, Apply
+Gui, Add, Button, gApplySettings xm y+8 w90 Background0x3E3E42 cWhite, Apply
 
 ; 行3: 情報表示
 Gui, Font, cGray s8, Consolas
@@ -115,12 +115,12 @@ GuiControlGet, hTitleKeywordsEdit, Hwnd, TitleKeywordsEdit
 GuiControlGet, hSendKeysEdit, Hwnd, SendKeysEdit
 
 ; CtlColors_Attach(HWND, 背景色, 文字色)
-; 背景をダークグレー(303030)、文字を白(FFFFFF)に設定
-CtlColors_Attach(hIntervalEdit, "303030", "FFFFFF")
-CtlColors_Attach(hMinSendEdit, "303030", "FFFFFF")
-CtlColors_Attach(hTargetExeEdit, "303030", "FFFFFF")
-CtlColors_Attach(hTitleKeywordsEdit, "303030", "FFFFFF")
-CtlColors_Attach(hSendKeysEdit, "303030", "FFFFFF")
+; 背景を明るめのグレー(505050)、文字を白(FFFFFF)に設定
+CtlColors_Attach(hIntervalEdit, "505050", "FFFFFF")
+CtlColors_Attach(hMinSendEdit, "505050", "FFFFFF")
+CtlColors_Attach(hTargetExeEdit, "505050", "FFFFFF")
+CtlColors_Attach(hTitleKeywordsEdit, "505050", "FFFFFF")
+CtlColors_Attach(hSendKeysEdit, "505050", "FFFFFF")
 
 UpdateGui()
 

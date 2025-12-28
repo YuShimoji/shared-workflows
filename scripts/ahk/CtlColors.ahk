@@ -4,7 +4,9 @@
 global CtlColors_Brushes := {}
 global CtlColors_Colors := {}
 
-CtlColors_Attach(GuiControlHwnd, TextColor, BackColor) {
+; CtlColors_Attach(HWND, BackColorRGB, TextColorRGB)
+; BackColorRGB / TextColorRGB は "303030" や "E0E0E0" のような 16 進文字列を想定
+CtlColors_Attach(GuiControlHwnd, BackColor, TextColor) {
     global CtlColors_Brushes, CtlColors_Colors
     
     if (!CtlColors_Brushes.HasKey(BackColor)) {
@@ -31,5 +33,11 @@ CtlColors_WM_CTLCOLOREDIT(wParam, lParam, msg, hwnd) {
 }
 
 CtlColors_BGR(RGBColor) {
-    return ((RGBColor & 0xFF0000) >> 16) | (RGBColor & 0x00FF00) | ((RGBColor & 0x0000FF) << 16)
+    ; "303030" → 0x303030 に変換してから BGR へ
+    if (SubStr(RGBColor, 1, 2) = "0x")
+        c := RGBColor + 0
+    else
+        c := ("0x" . RGBColor) + 0
+
+    return ((c & 0xFF0000) >> 16) | (c & 0x00FF00) | ((c & 0x0000FF) << 16)
 }
