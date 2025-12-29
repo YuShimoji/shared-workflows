@@ -94,12 +94,10 @@ Submodule の状態確認は次で行う（**`.git/modules/.shared-workflows/inf
    git status
    未取得の変更があれば pull する。
 
-2. Inbox回収
+2. Inbox回収とアーカイブ
    docs/inbox/ を確認。ファイルがあれば:
    - 内容を docs/HANDOVER.md に統合
-   - 回収後は REPORT のみ削除（ディレクトリ維持のため `.gitkeep` は残す）:
-     - git rm docs/inbox/REPORT_*.md
-   - 統合結果をコミット
+   - **削除禁止**: 統合済みのレポートは削除せず、`docs/reports/` へアーカイブする（後述の自動化スクリプトで実行）。
 
    併せて、未完了/停止の回収を行う:
    - docs/tasks/ の Status: BLOCKED を検索し、対応する Report の有無を確認
@@ -331,7 +329,51 @@ Worker Prompt の生成ベース（テンプレ）は以下:
   - 根拠（エラー要点/ログ要点）
   - 次手（候補）
   を残す
+
+---
+
+## Phase 6: Orchestrator Report（チャット出力）
+
+チャット回答は **固定4セクション**（順番厳守）で出力する。
+
+**重要**: 報告の前に必ず `node scripts/finalize-phase.js` を実行し、Inboxの整理とコミットを完了させること。
+
+1. `## 現状`  
+   - 進捗サマリと差分（例: 取り込んだレポート、残差分ファイル、警告ログ）。
+   - `Complete Gate: /` と `Report Validation: <command>` を必ず記載し、検証ログの有無を明示。
+2. `## 次のアクション`  
+   - 実行する操作を番号付きリストで列挙。各行は「ファイル/コマンド + 目的」を明記。
+3. `## ガイド`  
+   - 作業の中項目（HANDOVER更新 / docs.inbox整理 / Worker再投入 / Git反映 など）を箇条書きで整理。
+4. `## メタプロンプト再投入条件`  
+   - 「HANDOVER更新と push 完了後」「Worker 納品を回収した後」「ブロッカー発生時」など、次にメタプロンプトを貼る条件を明言。
+
+> 例:
+> ```text
+> ## 現状
+> - Workerレポート REPORT_20251222_1416.md を受領、HANDOVER 統合済み
+> - 自動整理:  (5 reports archived to docs/reports/)
+> - Complete Gate: 
+> - Report Validation:  node scripts/report-validator.js ...
+> 
+> ## 次のアクション
+> 1. git push origin main
+> ...
+> ```
+
+### 完了処理（Phase Finalization）
+
+チャット報告の直前に以下を実行し、状態を確定させる（**手動での git rm / git commit は原則禁止**）。
+
+```bash
+node scripts/finalize-phase.js --commit "chore(orch): integrate reports and update handover"
 ```
+
+このスクリプトは以下を自動実行する:
+1. `docs/inbox/REPORT_*.md` を `docs/reports/` へ移動（アーカイブ）
+2. `AI_CONTEXT.md` の Worker ステータス更新（引数 `--worker-complete <name>` 指定時）
+3. `sw-doctor.js` によるシステム健全性チェック
+4. `git add .` && `git commit`
 
 ---
 
