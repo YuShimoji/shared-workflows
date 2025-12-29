@@ -106,7 +106,7 @@ function updateHandoverLatest(handoverPath, reportPath, summary) {
   console.log(`Updated ${normalizePath(path.relative(process.cwd(), handoverPath))} with latest report info.`);
 }
 
-function updateAiContext(contextPath, timestamp, progressPercent) {
+function updateAiContext(contextPath, timestamp, progressPercent, workerStatus) {
   if (!fs.existsSync(contextPath)) {
     console.warn(`Warning: AI_CONTEXT が見つかりません: ${contextPath}`);
     return;
@@ -124,6 +124,36 @@ function updateAiContext(contextPath, timestamp, progressPercent) {
     const progressRe = /(- \*\*進捗\*\*|進捗)\s*:\s*(\d+)%/m;
     if (progressRe.test(content)) {
       content = content.replace(progressRe, (match, p1) => `${p1}: ${progressPercent}%`);
+    }
+  }
+
+  // Update Worker Status if provided
+  if (workerStatus) {
+    const workerStatusSectionHeader = '## Worker完了ステータス';
+    const workerStatusRe = /## Worker完了ステータス\s*\n\n([\s\S]*?)(?=\n\n##|$)/;
+    const newEntry = `- ${workerStatus}`;
+
+    if (workerStatusRe.test(content)) {
+      content = content.replace(workerStatusRe, (match, items) => {
+        const lines = items.split('\n').filter(l => l.trim());
+        const [workerName] = workerStatus.split(':');
+        const existingIdx = lines.findIndex(l => l.includes(`- ${workerName}:`));
+        if (existingIdx !== -1) {
+          lines[existingIdx] = newEntry;
+        } else {
+          lines.push(newEntry);
+        }
+        return `${workerStatusSectionHeader}\n\n${lines.join('\n')}`;
+      });
+    } else {
+      // Create section before Backlog or at the end
+      const backlogHeader = '## Backlog';
+      const newSection = `${workerStatusSectionHeader}\n\n${newEntry}\n\n`;
+      if (content.includes(backlogHeader)) {
+        content = content.replace(backlogHeader, `${newSection}${backlogHeader}`);
+      } else {
+        content = content.trimEnd() + '\n\n' + newSection;
+      }
     }
   }
 
@@ -148,6 +178,7 @@ Options:
   --handover-path <path>   Custom HANDOVER path (default: docs/HANDOVER.md)
   --context-path <path>    Custom AI_CONTEXT path (default: AI_CONTEXT.md)
   --progress <percent>     Progress percentage to set in AI_CONTEXT.md (e.g. 65)
+  --worker-status <text>   Append worker status to AI_CONTEXT.md (e.g. "worker_name: completed")
   --summary <text>         Summary text when syncing HANDOVER
 `);
     return;
@@ -183,6 +214,7 @@ Options:
   const syncContext = hasFlag('--sync-context');
   const contextPath = parseArg('--context-path', path.join(root, 'AI_CONTEXT.md'));
   const progressPercent = parseArg('--progress', undefined);
+  const workerStatus = parseArg('--worker-status', undefined);
 
   const replacements = {
     '<ISO8601>': isoTimestamp,
@@ -224,7 +256,7 @@ ${template}`;
   }
 
   if (syncContext) {
-    updateAiContext(contextPath, isoTimestamp, progressPercent);
+    updateAiContext(contextPath, isoTimestamp, progressPercent, workerStatus);
   }
 }
 

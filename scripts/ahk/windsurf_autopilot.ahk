@@ -87,6 +87,10 @@ LoadConfig()
 sendModeIndex := SendMode + 1
 LogFile := A_ScriptDir "\windsurf_autopilot_debug.log"
 
+; 起動時のマウス座標を初期化（初回判定の誤作動防止）
+MouseGetPos, LastMouseX, LastMouseY
+LastUserActivityTick := A_TickCount
+
 Gui, +HwndMyGuiHwnd -MaximizeBox +MinimizeBox +AlwaysOnTop +ToolWindow
 Gui, Color, %clGui%
 Gui, Font, c%clText% s10 Bold, Segoe UI
@@ -94,7 +98,7 @@ Gui, Font, c%clText% s10 Bold, Segoe UI
 ; 行1: ステータス
 Gui, Add, Text, vStatusText Center w240 +HwndhStatusText, AUTO OFF
 
-; ボタン（Progress + Text の擬似ボタン: -Theme で OS スタイルを無効化）
+; ボタン（背景Progress + ラベルText）
 Gui, Add, Progress, x10 y+8 w240 h30 Background%clBtn% -Theme vProgToggle +HwndhProgToggle, 0
 Gui, Add, Text, xp yp wp hp Center BackgroundTrans vBtnToggle +HwndhBtnToggle gGuiToggle +0x200 c%clWhite%, Toggle (F8)
 
@@ -127,7 +131,7 @@ Gui, Add, Slider, xm y+2 w260 vPatrolIntervalSlider Range1-30 ToolTip gOnPatrolS
 Gui, Add, Text, xm y+8 +HwndhLab9 vCleanupIntervalLabel, Cleanup Interval: %CleanupIntervalSec%s
 Gui, Add, Slider, xm y+2 w260 vCleanupIntervalSlider Range1-30 ToolTip gOnCleanupSliderChange +HwndhCleanupSlider -Theme, %CleanupIntervalSec%
 
-; Applyボタン
+; Applyボタン（背景Progress + ラベルText）
 Gui, Add, Progress, xm y+8 w90 h26 Background%clBtn% -Theme vProgApply +HwndhProgApply, 0
 Gui, Add, Text, xp yp wp hp Center BackgroundTrans vBtnApply +HwndhBtnApply gApplySettings +0x200 c%clWhite%, Apply
 
@@ -282,11 +286,22 @@ OnCleanupSliderChange:
 
 ; メインループタイマー
 TimerMainLoop:
-    if (AutoEnabled && EnablePatrol && IsSafeToSend())
-        PatrolAndSwitch()
-    if (AutoEnabled && AutoCloseGitTabs && IsSafeToSend())
-        CloseUnwantedTabs()
-    MainLoop()
+    if (!AutoEnabled)
+        return
+
+    isSafe := IsSafeToSend()
+    if (isSafe)
+    {
+        if (EnablePatrol)
+            PatrolAndSwitch()
+        if (AutoCloseGitTabs)
+            CloseUnwantedTabs()
+        MainLoop(true) ; すでに安全確認済みであることを伝える
+    }
+    else
+    {
+        MainLoop(false)
+    }
     return
 
 ; ファイル監視タイマー
@@ -294,10 +309,15 @@ TimerFileWatch:
     if (!AutoEnabled || !EnableFileWatch)
         return
     if !EnsureTargetActive()
+    {
+        LogEvent("DEBUG_WATCH", "Target Not Active for FileWatch")
         return
+    }
     
     if !FileExist(InstructionFile)
         return
+    
+    LogEvent("DEBUG_WATCH", "Instruction File Found")
     
     FileGetTime, t, %InstructionFile%, M
     if (t = "")
@@ -345,6 +365,7 @@ ToggleAuto()
 {
     global AutoEnabled
     AutoEnabled := !AutoEnabled
+    LogEvent("STATE", "AutoEnabled=" (AutoEnabled ? "ON" : "OFF"))
     UpdateGui()
 }
 
@@ -352,6 +373,7 @@ SetAuto(state)
 {
     global AutoEnabled
     AutoEnabled := state
+    LogEvent("STATE", "AutoEnabled=" (state ? "ON" : "OFF"))
     UpdateGui()
 }
 
@@ -360,7 +382,7 @@ UpdateGui()
     global AutoEnabled, IntervalMs, MinSendIntervalMs, TargetExePattern, CurrentExe, LastSendTime
     global SendMode, SendSequence, LastGuiUpdateTick, GuiUpdateIntervalMs, EnablePatrol
     global clGui, clActive, clText, clBtn, clWhite
-    global hStatusText, hLab1, hLab2, hLab3, hLab4, hLab5, hLab6, hLab7, hLab8, hLab9, hInfoText, hProgToggle, hBtnToggle
+    global hStatusText, hLab1, hLab2, hLab3, hLab4, hLab5, hLab6, hLab7, hLab8, hLab9, hInfoText, hBtnToggle, hProgToggle
     static lastState := -1
 
     now := A_TickCount
@@ -373,7 +395,6 @@ UpdateGui()
         Gui, Color, %currBg%
         
         ; 状態に合わせてラベルの色を再適用
-        ; ステータスと入力値は常に白（強調）、ラベルは灰色
         CtlColors_Attach(hStatusText, currBg, clWhite)
         CtlColors_Attach(hLab1, currBg, clText)
         CtlColors_Attach(hLab2, currBg, clText)
@@ -386,15 +407,18 @@ UpdateGui()
         CtlColors_Attach(hLab9, currBg, clText)
         CtlColors_Attach(hInfoText, currBg, "666666")
         
+        ; ボタンの状態更新
         btnBg := AutoEnabled ? "0078D4" : clBtn
         GuiControl, +Background%btnBg%, ProgToggle
-        CtlColors_Attach(hBtnToggle, btnBg, clWhite)
+        status := AutoEnabled ? "AUTO ON" : "AUTO OFF"
+        GuiControl,, BtnToggle, %status%
+        
+        ; 強制的に再描画
+        Gui, +LastFound
+        WinSet, Redraw
         
         lastState := AutoEnabled
     }
-
-    status := AutoEnabled ? "AUTO ON" : "AUTO OFF"
-    GuiControl,, StatusText, %status%
 
     elapsed := (LastSendTime = 0) ? "N/A" : (A_TickCount - LastSendTime) " ms"
     modeLabel := (SendMode = 0) ? "Always" : "CmdOnly"
@@ -403,33 +427,30 @@ UpdateGui()
     GuiControl,, InfoText, %info%
 }
 
-MainLoop()
+MainLoop(isAlreadySafe := false)
 {
     global AutoEnabled, MinSendIntervalMs, LastSendTime, EnableOrangeDetection
     global SendMode, LastCommandVisibleTick, CommandVisibleTimeoutMs
-    global SendSequence, EnableUserGuard, UserIdleThresholdMs
-    global OrangeColor, OrangeColorTolerance
+    global SendSequence, EnableUserGuard, CurrentExe
 
     if (!AutoEnabled)
         return
 
     if !EnsureTargetActive()
-        return
-
-    ; --- コントロール乗っ取り防止 (送信前最終チェック) ---
-    if (EnableUserGuard)
     {
-        ; 物理的なアイドル時間を確認
-        if (A_TimeIdlePhysical < UserIdleThresholdMs)
-            return
-        
-        ; キーボード/マウスの物理的な押し下げ状態を再確認
-        if (!IsSafeToSend())
-            return
+        LogEvent("DEBUG_MAIN", "Target Not Active: " (CurrentExe = "" ? "None Found" : CurrentExe))
+        return
+    }
+
+    ; --- コントロール乗っ取り防止 ---
+    if (!isAlreadySafe && !IsSafeToSend())
+    {
+        return
     }
 
     now := A_TickCount
-    if (now - LastSendTime < MinSendIntervalMs)
+    elapsedSinceLast := now - LastSendTime
+    if (elapsedSinceLast < MinSendIntervalMs)
         return
 
     orangeFound := false
@@ -459,12 +480,16 @@ MainLoop()
     }
 
     ; 送信直前の最終セーフティ
-    if (EnableUserGuard && !IsSafeToSend())
+    safe := IsSafeToSend()
+    if (!safe)
+    {
+        LogEvent("DEBUG_SEND", "Blocked by Final Safety Check")
         return
+    }
 
     Send, %SendSequence%
     LastSendTime := now
-    LogEvent("SEND", "Mode=" (SendMode = 0 ? "Always" : "CmdOnly") " Keys=" SendSequence " Exe=" CurrentExe)
+    LogEvent("SEND", "Interval=" elapsedSinceLast "ms Mode=" (SendMode = 0 ? "Always" : "CmdOnly") " Keys=" SendSequence " Exe=" CurrentExe)
 }
 
 FindOrangeInWindow(ByRef orangeX, ByRef orangeY)
@@ -679,21 +704,25 @@ EnsureTargetActive()
     {
         CurrentExe := "Windsurf.exe"
         WinActivate
+        Sleep, 50 ; アクティブ化の安定待ち
         return true
     }
     if WinExist("ahk_exe Code.exe")
     {
         CurrentExe := "Code.exe"
         WinActivate
+        Sleep, 50
         return true
     }
     if WinExist("ahk_exe Cursor.exe")
     {
         CurrentExe := "Cursor.exe"
         WinActivate
+        Sleep, 50
         return true
     }
 
+    LogEvent("DEBUG_ACTIVE", "No matching window found")
     CurrentExe := ""
     return false
 }
@@ -701,49 +730,68 @@ EnsureTargetActive()
 IsSafeToSend()
 {
     global UserIdleThresholdMs, LastUserActivityTick, UserCooldownMs
-    global LastMouseX, LastMouseY
+    global LastMouseX, LastMouseY, EnableUserGuard
+    static lastReason := ""
+    static lastLogTick := 0
 
-    ; 1. マウス移動の物理的変化を検知
+    if (!EnableUserGuard)
+        return true
+
+    reason := ""
+    
+    ; 1. マウス移動の検知（微小な揺らぎは許容）
     MouseGetPos, mx, my
-    if (mx != LastMouseX || my != LastMouseY)
+    diffX := Abs(mx - LastMouseX)
+    diffY := Abs(my - LastMouseY)
+    if (diffX > 10 || diffY > 10) ; 閾値を10pxに緩和
     {
         LastMouseX := mx
         LastMouseY := my
         LastUserActivityTick := A_TickCount
-        return false
+        reason := "Mouse Move: diffX=" diffX " diffY=" diffY
     }
-
-    ; 2. 物理的なアイドル時間を確認 (OSレベル)
-    if (A_TimeIdlePhysical < UserIdleThresholdMs)
+    else if (A_TimeIdlePhysical < UserIdleThresholdMs)
     {
+        ; 2. 物理的なアイドル時間を確認 (OSレベル)
         LastUserActivityTick := A_TickCount
-        return false
+        reason := "Physical Idle: " A_TimeIdlePhysical "ms"
     }
-
-    ; 3. ユーザー操作直後のクールダウン時間
-    if (A_TickCount - LastUserActivityTick < UserCooldownMs)
-        return false
-
-    ; 4. マウスボタンの押し下げ状態 (物理的)
-    if (GetKeyState("LButton", "P") || GetKeyState("RButton", "P") || GetKeyState("MButton", "P"))
+    else if (A_TickCount - LastUserActivityTick < UserCooldownMs)
     {
-        LastUserActivityTick := A_TickCount
-        return false
+        ; 3. ユーザー操作直後のクールダウン時間
+        reason := "Cooldown: " (A_TickCount - LastUserActivityTick) "ms"
     }
-
-    ; 5. 修飾キーの押し下げ状態 (物理的)
-    if (GetKeyState("Shift", "P") || GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
+    else if (GetKeyState("LButton", "P") || GetKeyState("RButton", "P") || GetKeyState("MButton", "P"))
     {
+        ; 4. マウスボタンの押し下げ状態 (物理的)
         LastUserActivityTick := A_TickCount
+        reason := "Mouse Button"
+    }
+    else if (GetKeyState("Shift", "P") || GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
+    {
+        ; 5. 修飾キーの押し下げ状態 (物理的)
+        LastUserActivityTick := A_TickCount
+        reason := "Key Down"
+    }
+    else if (A_Cursor = "Wait" || A_Cursor = "AppStarting" || A_Cursor = "SizeAll")
+    {
+        ; 6. カーソル形状の監視
+        LastUserActivityTick := A_TickCount
+        reason := "Cursor Shape: " A_Cursor
+    }
+
+    if (reason != "")
+    {
+        now := A_TickCount
+        if (reason != lastReason || now - lastLogTick > 3000) ; 理由が変わったか3秒経過でログ出力
+        {
+            LogEvent("DEBUG_SAFETY", "Blocked by " reason)
+            lastReason := reason
+            lastLogTick := now
+        }
         return false
     }
 
-    ; 6. カーソル形状の監視 (ユーザーがボタンの上でホバーしている時などは IBeam や Arrow 以外になることがある)
-    ; 一般的な待機状態 (Arrow) または 不明 (Unknown) 以外はユーザー操作中とみなす
-    if (A_Cursor != "Arrow" && A_Cursor != "Unknown") {
-        LastUserActivityTick := A_TickCount
-        return false
-    }
-
+    lastReason := ""
     return true
 }

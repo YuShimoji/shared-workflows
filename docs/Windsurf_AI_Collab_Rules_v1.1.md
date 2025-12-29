@@ -1,9 +1,11 @@
-# Windsurf Collaborative Playbook (Legacy Reference)
+# Windsurf AI 協調開発ルール (v1.1)
 
-> **注意**: 本ドキュメントは **旧版の参考資料** です。  
-> 規範（SSOT）は常に `docs/Windsurf_AI_Collab_Rules_latest.md` を参照してください。
+> [!CAUTION]
+> **本ファイルはレガシー（非推奨）です。**
+> 最新のルールおよびエントリポイントは [Windsurf_AI_Collab_Rules_latest.md](./Windsurf_AI_Collab_Rules_latest.md) を参照してください。
+> 以降のアップデートは `latest.md` に対してのみ行われます.
 
-## 0. 起動シーケンス（プロジェクト抽象化）
+## 0. 起動シーケンス（プロジェクト抽象化)
 
 - 規範（SSOT）は常に本リポジトリの `docs/Windsurf_AI_Collab_Rules_latest.md` を参照してください（本ドキュメントは旧版の参考資料）。
 - AI は「各プロジェクトの」リポジトリ直下にある `AI_CONTEXT.md` を起動時に読み込みます（中央リポジトリのファイルは参照しません）。

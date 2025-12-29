@@ -1,16 +1,17 @@
 # Task: GitHubのデフォルトブランチを main に統一（origin/HEAD を是正）
 
-Status: IN_PROGRESS
+Status: DONE
 Tier: 1
 Branch: main
 Owner: Orchestrator
 Created: 2025-12-20T10:05+09:00
 Report: docs/inbox/REPORT_ORCH_20251226_1332.md
 
-## Objective
-
-- GitHub 側のデフォルトブランチを `main` に統一し、clone 時の初期ブランチが `main` になる状態にする。
-- ローカルで `git remote show origin` の `HEAD branch` が `main` になっていることを確認できる状態にする。
+## DoD
+- [x] GitHub 側のデフォルトブランチを `main` に統一し、clone 時の初期ブランチが `main` になる状態にする。
+- [x] ローカルで `git remote show origin` の `HEAD branch` が `main` になっていることを確認できる状態にする。
+- [x] 変更/判断の根拠を docs/inbox/ のレポートに残している
+- [x] 本チケットの Report 欄にレポートパスが追記されている
 
 ## Current Status
 - ローカルブランチは `main` に一本化済み。

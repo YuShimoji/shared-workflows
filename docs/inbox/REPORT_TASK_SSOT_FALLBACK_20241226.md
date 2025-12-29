@@ -1,9 +1,12 @@
 # SSOT バージョンフォールバック対応レポート
 
 **Report ID**: REPORT_TASK_SSOT_FALLBACK_20241226  
-**Date**: 2024-12-26  
-**Profile**: task  
-**Status**: COMPLETED
+**Timestamp**: 2024-12-26T14:00:00+09:00
+**Actor**: Worker
+**Ticket**: docs/tasks/TASK_002_OnboardingRefStandard.md
+**Type**: Worker
+**Duration**: 1.5h
+**Changes**: prompts/*.txt, scripts/ensure-ssot.js, scripts/sw-doctor.js, docs/CENTRAL_REPO_REF.md
 
 ## 概要
 
@@ -134,11 +137,11 @@ fix: add v1.1 fallback support to ensure-ssot and sw-doctor
 - `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`: クライアントプロジェクト向け利用ガイド
 - `docs/windsurf_workflow/OPEN_HERE.md`: 運用者向け入口ガイド
 
-## 今後の改善提案
+## Risk
+- クライアントプロジェクトのサブモジュールが極端に古い場合、`ensure-ssot.js` 自体が存在しない可能性があり、その場合は手動でのファイルコピーが必要になる。
 
-1. **自動バージョン検出スクリプト**: サブモジュールの実際の SSOT バージョンを検出し、適切なフォールバックパスを自動生成するヘルパースクリプトの追加
-2. **バージョン互換性マトリクス**: 各 SSOT バージョン間の互換性と推奨アップグレードパスをドキュメント化
-3. **CI での検証**: 複数バージョンの SSOT を用いた Kickstart フローの自動テスト
+## Proposals
+- `ensure-ssot.js` を `curl` 等で直接ダウンロードして実行できるワンライナーの提供。
 
 ---
 

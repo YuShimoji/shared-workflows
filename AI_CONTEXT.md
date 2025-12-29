@@ -2,7 +2,7 @@
 
 ## 基本情報
 
-- **最終更新**: 2025-12-29T05:34:14+09:00
+- **最終更新**: 2025-12-29T09:43:48+09:00
 - **更新者**: Cascade
 
 ## レポート設定（推奨）
@@ -17,7 +17,7 @@
 - **Issue**: #0 (Project-wide cleanup & optimization)
 - **ブランチ**: main
 - **関連PR**: なし
-- **進捗**: 80%（SSOTフォールバック完了、一本化設計中、ドキュメント乖離是正中）
+- **進捗**: 90%（SSOTフォールバック完了、一本化設計中、ドキュメント乖離是正中）
 
 ## 次の中断可能点
 
@@ -37,9 +37,12 @@
 
 ## Worker完了ステータス
 
-**Worker完了ステータス**: 
-- worker_ssot_fallback: completed (REPORT_TASK_SSOT_FALLBACK_20241226.md)
-- worker_audit: completed (REPORT_TASK_005_20251226_1345.md)
+- worker_ssot_fallback: completed
+- worker_audit: completed
+
+## Worker完了ステータス
+
+- worker_ssot_fallback: completed
 
 ## Backlog（将来提案）
 
@@ -51,9 +54,7 @@
 
 ### 短期（Next）
 
-- [pending] GitHubのデフォルトブランチを main に統一（origin/HEAD を是正） (ref: docs/tasks/TASK_001_DefaultBranch.md)
-- [pending] 他プロジェクトへの参照方法を標準化（導入手順の最短化） (ref: docs/tasks/TASK_002_OnboardingRefStandard.md)
-- [in_progress] SSOT エントリポイント一本化（latest.md）
+- [pending] プロジェクト監査と技術的負債の整理 (Technical Debt & Unimplemented Features) (ref: docs/tasks/TASK_006_TechDebtAudit.md, Status: OPEN)
 
 ### 中期（Later）
 

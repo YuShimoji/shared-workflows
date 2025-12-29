@@ -84,6 +84,36 @@ function validateHandoverConsistency(handoverPath, anomalies, warnings) {
   if (!hasProposals) warnings.push(`HANDOVER.md に Proposals セクションがありません`);
 }
 
+function parseWorkerStatus(content) {
+  const sectionHeader = '## Worker完了ステータス';
+  const lines = content.split(/\r?\n/);
+  const sectionStart = lines.findIndex(l => l.trim() === sectionHeader);
+  if (sectionStart === -1) return [];
+
+  const workers = [];
+  for (let i = sectionStart + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('##')) break; // Next section starts
+    if (!line.startsWith('- ')) continue;
+
+    const cleanLine = line.substring(2); // Remove "- "
+    // Expected format: "name: status, priority: P, timeout: T"
+    const parts = cleanLine.split(',').map(p => p.trim());
+    const nameStatus = parts[0];
+    if (!nameStatus.includes(':')) continue;
+
+    const [name, status] = nameStatus.split(':').map(s => s.trim());
+    const prioPart = parts.find(p => p.startsWith('priority:'));
+    const prio = prioPart ? prioPart.split(':')[1].trim() : 'critical';
+    const timeoutPart = parts.find(p => p.startsWith('timeout:'));
+    const timeout = timeoutPart ? parseInt(timeoutPart.split(':')[1].trim()) || 30 : 30;
+
+    workers.push({ name, status, prio, timeout });
+  }
+  
+  return workers;
+}
+
 function checkWorkerStatus(aiContextPath, anomalies, warnings) {
   const contextContent = readFileSafe(aiContextPath);
   if (!contextContent) {
@@ -92,24 +122,19 @@ function checkWorkerStatus(aiContextPath, anomalies, warnings) {
   }
   const asyncMode = parseKeyLine(contextContent, 'async_mode');
   const isAsync = asyncMode && asyncMode.toLowerCase() === 'true';
-  const workerLine = parseKeyLine(contextContent, 'Worker完了ステータス');
-  if (!workerLine) {
-    warnings.push('AI_CONTEXT.md に Worker完了ステータス が記載されていません。');
+  
+  const workers = parseWorkerStatus(contextContent);
+  if (workers.length === 0) {
+    warnings.push('AI_CONTEXT.md に Worker完了ステータス が記載されていないか、形式が不正です。');
     return;
   }
-  const workers = workerLine.split(',').map(w => w.trim());
+
   for (const worker of workers) {
-    const parts = worker.split(',');
-    const [nameStatus, priority, timeoutStr] = parts.map(p => p.trim());
-    const [name, status] = nameStatus.split(':').map(s => s.trim());
-    const prio = priority ? priority.split(':')[1].trim() : 'critical';
-    const timeout = timeoutStr ? parseInt(timeoutStr.split(':')[1].trim()) || 30 : 30;
+    const { name, status, prio, timeout } = worker;
     if (status === 'error') {
       anomalies.push(`Worker ${name} がエラー状態です。手動介入が必要です。`);
     } else if (!isAsync && prio === 'critical' && status !== 'completed') {
       anomalies.push(`Critical Worker ${name} が未完了です (ステータス: ${status})。次のステップを中断してください。`);
-    } else if (status === 'pending' && timeout < 0) { // 仮定: タイムアウト計算は別処理
-      anomalies.push(`Worker ${name} がタイムアウトしました。エラー扱いにします。`);
     }
   }
 }
