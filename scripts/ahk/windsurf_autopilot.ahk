@@ -1,18 +1,19 @@
 #Requires AutoHotkey v1.1
 #SingleInstance, Force
 #Persistent
+#Include %A_ScriptDir%\CtlColors.ahk
+
+; 送信モードの安定化
 SendMode, Event
-SetTitleMatchMode, 2
+SetKeyDelay, 40, 40
+SetTitleMatchMode, 2  ; 部分一致に変更し、より確実に捕捉
 SetWorkingDir, %A_ScriptDir%
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 
-#Include CtlColors.ahk
-
 ; =====================================
-; 設定値（ここだけ調整すればOK）
+; 設定値
 ; =====================================
-
 global IntervalMs := 300
 global MinSendIntervalMs := 250
 global TargetExePattern := "^(Windsurf\.exe|Code\.exe|Cursor\.exe)$"
@@ -21,12 +22,12 @@ global EnableOrangeDetection := false
 global OrangeColor := 0xF0883E
 global OrangeColorTolerance := 25
 global SendSequence := "!{Enter}"
-global SendMode := 0                 ; 0 = Always send, 1 = Only when command visible
+global AutoSendMode := 0
 global CommandVisibleTimeoutMs := 4000
-global EnableUserGuard := true        ; ユーザー操作中は送信しない
-global UserIdleThresholdMs := 500    ; ユーザーアイドル時間の閾値
+global EnableUserGuard := true
+global UserIdleThresholdMs := 500
 global LastUserActivityTick := 0
-global UserCooldownMs := 1500        ; ユーザー操作後の待機時間
+global UserCooldownMs := 800
 global LastMouseX := 0
 global LastMouseY := 0
 global PatrolIntervalSec := 5
@@ -37,28 +38,28 @@ global LastPatrolTick := 0
 global LastCleanupTick := 0
 global EnablePatrol := false
 global AutoCloseGitTabs := true
+global EnableFileWatch := false
 
-; GUIカラー定義 ("RRGGBB" 形式)
-global clGui    := "121212"  ; 背景 (深い黒)
-global clBox    := "1E1E1E"  ; ボックス背景 (暗い灰色)
-global clBtn    := "2D2D30"  ; ボタン背景
-global clText   := "808080"  ; ラベル文字 (灰色)
-global clVal    := "FFFFFF"  ; 入力値/強調文字 (純白)
-global clActive := "005A9E"  ; AUTO ON時のアクセント色
-global clOrange := "F0883E"  ; AIパネル検出色
-global clDanger := "D13438"  ; 警告/中断色
-global clWhite  := "FFFFFF"  ; 白色
+; GUIカラー定義 (VS Code Dark)
+global clGui    := "1E1E1E"
+global clBox    := "252526"
+global clText   := "A0A0A0"
+global clVal    := "CCCCCC"
+global clActive := "007ACC"
+global clWhite  := "FFFFFF"
 
 ; =====================================
 ; 状態変数
 ; =====================================
-
 global AutoEnabled := false
+global GuiExpanded := false
 global LastSendTime := 0
+global TargetHwnd := 0
 global CurrentExe := ""
+global SafetyReason := ""
 global LastCommandVisibleTick := 0
 global LastGuiUpdateTick := 0
-global GuiUpdateIntervalMs := 500
+global GuiUpdateIntervalMs := 150
 global InstructionFile := A_ScriptDir "\..\..\docs\inbox\next_instruction.txt"
 global LastInstructionTime := ""
 global PreserveClipboard := true
@@ -66,7 +67,6 @@ global PreserveClipboard := true
 ; =====================================
 ; 管理者実行
 ; =====================================
-
 if not A_IsAdmin
 {
     Run *RunAs "%A_ScriptFullPath%"
@@ -76,195 +76,160 @@ if not A_IsAdmin
 ; =====================================
 ; 設定ファイル読み込み
 ; =====================================
-
 ConfigFile := A_ScriptDir "\windsurf_autopilot.ini"
 LoadConfig()
 
 ; =====================================
-; GUI 作成（WindowSlu 風ダークテーマ）
+; GUI 作成
 ; =====================================
-
-sendModeIndex := SendMode + 1
 LogFile := A_ScriptDir "\windsurf_autopilot_debug.log"
-
-; 起動時のマウス座標を初期化（初回判定の誤作動防止）
 MouseGetPos, LastMouseX, LastMouseY
 LastUserActivityTick := A_TickCount
 
 Gui, +HwndMyGuiHwnd -MaximizeBox +MinimizeBox +AlwaysOnTop +ToolWindow
+Menu, Tray, NoStandard
+Menu, Tray, Add, Show/Hide, TrayToggleGui
+Menu, Tray, Add, Exit, TrayExit
+Menu, Tray, Default, Show/Hide
+Menu, Tray, Tip, Windsurf Autopilot
+
 Gui, Color, %clGui%
-Gui, Font, c%clText% s10 Bold, Segoe UI
+Gui, Font, c%clWhite% s9 Bold, Segoe UI
 
-; 行1: ステータス
-Gui, Add, Text, vStatusText Center w240 +HwndhStatusText, AUTO OFF
+; メインコントロール
+Gui, Add, Button, x10 y8 w100 h24 vBtnToggle gGuiToggle, AUTO OFF
+Gui, Add, Button, x+2 y8 w22 h24 vBtnExpand gToggleExpand, ▼
 
-; ボタン（背景Progress + ラベルText）
-Gui, Add, Progress, x10 y+8 w240 h30 Background%clBtn% -Theme vProgToggle +HwndhProgToggle, 0
-Gui, Add, Text, xp yp wp hp Center BackgroundTrans vBtnToggle +HwndhBtnToggle gGuiToggle +0x200 c%clWhite%, Toggle (F8)
+Gui, Font, c%clText% s8 Normal, Segoe UI
+Gui, Add, Text, xm y+10 vSectionStart, Interval (ms):
+Gui, Add, Edit, vIntervalEdit w60 Number HwndhInterval -E0x200, %IntervalMs%
+Gui, Add, Text, x+8 yp, Min (ms):
+Gui, Add, Edit, vMinSendEdit w60 Number HwndhMinSend -E0x200, %MinSendIntervalMs%
 
-; --- 行2: パラメータ編集 ---
-Gui, Font, c%clText% s9 Normal, Segoe UI
+Gui, Add, Text, xm y+6, Target Exe (regex):
+Gui, Add, Edit, vTargetExeEdit w200 HwndhTargetExe -E0x200, %TargetExePattern%
 
-Gui, Add, Text, xm y+12 +HwndhLab1, Interval (ms):
-Gui, Add, Edit, vIntervalEdit w80 Number -E0x200 Background%clBox% c%clVal%, %IntervalMs%
-Gui, Add, Text, x+10 yp +HwndhLab2, MinSend (ms):
-Gui, Add, Edit, vMinSendEdit w80 Number -E0x200 Background%clBox% c%clVal%, %MinSendIntervalMs%
+Gui, Add, Text, xm y+6, Title:
+Gui, Add, Edit, vTitleKeywordsEdit w200 HwndhTitleKeywords -E0x200, %RequiredTitleKeywords%
 
-Gui, Add, Text, xm y+8 +HwndhLab3, Target Exe (regex):
-Gui, Add, Edit, vTargetExeEdit w260 -E0x200 Background%clBox% c%clVal%, %TargetExePattern%
+Gui, Add, Text, xm y+6, Mode:
+autoSendModeIndex := AutoSendMode + 1
+Gui, Add, DropDownList, vSendModeDDL w200 Choose%autoSendModeIndex% HwndhSendMode -Theme -E0x200, Always|Only when command visible
 
-Gui, Add, Text, xm y+8 +HwndhLab4, Title Keywords (empty=disabled):
-Gui, Add, Edit, vTitleKeywordsEdit w260 -E0x200 Background%clBox% c%clVal%, %RequiredTitleKeywords%
+Gui, Add, Text, xm y+6, Send Keys:
+Gui, Add, Edit, vSendKeysEdit w200 HwndhSendKeys -E0x200, %SendSequence%
 
-Gui, Add, Text, xm y+8 +HwndhLab5, Send Mode:
-Gui, Add, DropDownList, vSendModeDDL w260 Choose%sendModeIndex% -Theme -E0x200 Background%clBox% c%clVal% +HwndhSendModeDDL, Always (interval-based)|Only when command visible (orange)
+Gui, Add, Text, xm y+6, Patrol:
+patrolIndex := EnablePatrol ? 2 : 1
+Gui, Add, DropDownList, vPatrolDDL w200 Choose%patrolIndex% HwndhPatrol -Theme -E0x200, Off|On
 
-Gui, Add, Text, xm y+8 +HwndhLab6, Send Keys (AHK syntax):
-Gui, Add, Edit, vSendKeysEdit w260 -E0x200 Background%clBox% c%clVal%, %SendSequence%
+Gui, Add, Text, xm y+6 vPatrolIntervalLabel, Patrol Int: %PatrolIntervalSec%s
+Gui, Add, Slider, xm y+0 w200 vPatrolIntervalSlider Range1-30 ToolTip gOnPatrolSliderChange -Theme, %PatrolIntervalSec%
 
-Gui, Add, Text, xm y+8 +HwndhLab7, Patrol:
-Gui, Add, DropDownList, vPatrolDDL w260 Choose1 -Theme -E0x200 Background%clBox% c%clVal% +HwndhPatrolDDL, Off|On (Cycle Windsurf Windows)
+Gui, Add, Text, xm y+6 vCleanupIntervalLabel, Cleanup Int: %CleanupIntervalSec%s
+Gui, Add, Slider, xm y+0 w200 vCleanupIntervalSlider Range1-30 ToolTip gOnCleanupSliderChange -Theme, %CleanupIntervalSec%
 
-Gui, Add, Text, xm y+8 +HwndhLab8 vPatrolIntervalLabel, Patrol Interval: %PatrolIntervalSec%s
-Gui, Add, Slider, xm y+2 w260 vPatrolIntervalSlider Range1-30 ToolTip gOnPatrolSliderChange +HwndhPatrolSlider -Theme, %PatrolIntervalSec%
+Gui, Add, Checkbox, xm y+6 vEnableFileWatchCheck Checked%EnableFileWatch% Background%clGui% c%clVal%, File Watch (!{Enter})
 
-Gui, Add, Text, xm y+8 +HwndhLab9 vCleanupIntervalLabel, Cleanup Interval: %CleanupIntervalSec%s
-Gui, Add, Slider, xm y+2 w260 vCleanupIntervalSlider Range1-30 ToolTip gOnCleanupSliderChange +HwndhCleanupSlider -Theme, %CleanupIntervalSec%
+Gui, Add, Button, xm y+8 w80 h22 vBtnApply gApplySettings, Apply
 
-; Applyボタン（背景Progress + ラベルText）
-Gui, Add, Progress, xm y+8 w90 h26 Background%clBtn% -Theme vProgApply +HwndhProgApply, 0
-Gui, Add, Text, xp yp wp hp Center BackgroundTrans vBtnApply +HwndhBtnApply gApplySettings +0x200 c%clWhite%, Apply
+Gui, Font, c%clText% s7, Consolas
+Gui, Add, Text, vInfoText xm y+6 w200 vSectionEnd, 
 
-; 行3: 情報表示
-Gui, Font, c666666 s8, Consolas
-Gui, Add, Text, vInfoText xm y+8 w260 +HwndhInfoText, 
-
-Gui, Margin, 10, 8
-HudX := A_ScreenWidth - 300
+Gui, Margin, 10, 6
+HudX := A_ScreenWidth - 240
 HudY := 40
 Gui, Show, x%HudX% y%HudY% AutoSize, Windsurf Autopilot
 
-; タイトルバーをダークモード化 (Windows 10 build 18985以降は20、それ以前は19)
+; CtlColorsによる着色適用
+CtlColors_Attach(MyGuiHwnd, clGui, clVal)
+CtlColors_Attach(hInterval, clBox, clVal)
+CtlColors_Attach(hMinSend, clBox, clVal)
+CtlColors_Attach(hTargetExe, clBox, clVal)
+CtlColors_Attach(hTitleKeywords, clBox, clVal)
+CtlColors_Attach(hSendMode, clBox, clVal)
+CtlColors_Attach(hSendKeys, clBox, clVal)
+CtlColors_Attach(hPatrol, clBox, clVal)
+CtlColors_Attach(BtnToggle, clBox, clWhite)
+CtlColors_Attach(BtnExpand, clBox, clWhite)
+CtlColors_Attach(BtnApply, clBox, clWhite)
+
+; ダークモード化
 DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", MyGuiHwnd, "Int", 19, "Int*", 1, "Int", 4)
-DllCall("dwmapi\DwmSetWindowAttribute", "Ptr", MyGuiHwnd, "Int", 20, "Int*", 1, "Int", 4)
-
-; =====================================
-; ハンドルの取得と色の適用 (CtlColorsによる補完)
-; =====================================
-
-GuiControlGet, hIntervalEdit, Hwnd, IntervalEdit
-GuiControlGet, hMinSendEdit, Hwnd, MinSendEdit
-GuiControlGet, hTargetExeEdit, Hwnd, TargetExeEdit
-GuiControlGet, hTitleKeywordsEdit, Hwnd, TitleKeywordsEdit
-GuiControlGet, hSendKeysEdit, Hwnd, SendKeysEdit
-
-GuiControlGet, hPatrolDDL, Hwnd, PatrolDDL
-
-; スライダーのハンドル取得
-GuiControlGet, hPatrolSlider, Hwnd, PatrolIntervalSlider
-GuiControlGet, hCleanupSlider, Hwnd, CleanupIntervalSlider
-
-; ボックス類
-CtlColors_Attach(hIntervalEdit, clBox, clVal)
-CtlColors_Attach(hMinSendEdit, clBox, clVal)
-CtlColors_Attach(hTargetExeEdit, clBox, clVal)
-CtlColors_Attach(hTitleKeywordsEdit, clBox, clVal)
-CtlColors_Attach(hSendKeysEdit, clBox, clVal)
-CtlColors_Attach(hSendModeDDL, clBox, clVal)
-CtlColors_Attach(hPatrolDDL, clBox, clVal)
-
-; スライダーも可能な限り着色
-CtlColors_Attach(hPatrolSlider, clGui, clText)
-CtlColors_Attach(hCleanupSlider, clGui, clText)
-
-; ラベル・ステータス
-CtlColors_Attach(hStatusText, clGui, clWhite)
-CtlColors_Attach(hLab1, clGui, clText)
-CtlColors_Attach(hLab2, clGui, clText)
-CtlColors_Attach(hLab3, clGui, clText)
-CtlColors_Attach(hLab4, clGui, clText)
-CtlColors_Attach(hLab5, clGui, clText)
-CtlColors_Attach(hLab6, clGui, clText)
-CtlColors_Attach(hLab7, clGui, clText)
-CtlColors_Attach(hLab8, clGui, clText)
-CtlColors_Attach(hLab9, clGui, clText)
-CtlColors_Attach(hInfoText, clGui, "666666")
-
-; 擬似ボタンのテキスト部分
-CtlColors_Attach(hBtnToggle, clBtn, clWhite)
-CtlColors_Attach(hBtnApply, clBtn, clWhite)
 
 UpdateGui()
-
-; =====================================
-; タイマー開始
-; =====================================
+SetTimer, InitialCollapse, -10
+Gui, +LastFound
+WinSet, ExStyle, +0x80 ; WS_EX_TOOLWINDOW
 
 SetTimer, TimerMainLoop, %IntervalMs%
 SetTimer, TimerFileWatch, 1000
+return
 
 ; =====================================
-; ホットキー / ラベル
+; ホットキー
+; =====================================
+F8::ToggleAuto()
+F9::SetAuto(false)
++Esc::ExitApp
+
+; =====================================
+; ラベル・関数定義
 ; =====================================
 
-; F8: ON/OFF トグル
-F8::
-    ToggleAuto()
-    return
-
-; F9: 強制OFF
-F9::
-    SetAuto(false)
-    return
-
-; Shift+Esc: 終了
-+Esc::
-    ExitApp
-
-; F10: ファイル監視トグル
-F10::
-    global EnableFileWatch
-    EnableFileWatch := !EnableFileWatch
-    LogEvent("TOGGLE", "FileWatch=" (EnableFileWatch ? "ON" : "OFF"))
-    return
-
-; GUI ボタン
 GuiToggle:
+    Critical
     ToggleAuto()
     return
 
-; 設定適用ボタン
+ToggleExpand:
+    Critical
+    GuiExpanded := !GuiExpanded
+    if (GuiExpanded) {
+        GuiControl,, BtnExpand, ▲
+        Gui, Show, AutoSize
+    } else {
+        GuiControl,, BtnExpand, ▼
+        WinGetPos,,, ww, wh, ahk_id %MyGuiHwnd%
+        Gui, Show, w%ww% h42
+    }
+    return
+
+TrayToggleGui:
+    if DllCall("IsWindowVisible", "Ptr", MyGuiHwnd)
+        Gui, Hide
+    else
+        Gui, Show
+    return
+
+TrayExit:
+    ExitApp
+    return
+
+InitialCollapse:
+    GuiExpanded := false
+    GuiControl,, BtnExpand, ▼
+    WinGetPos,,, ww, wh, ahk_id %MyGuiHwnd%
+    Gui, Show, w%ww% h42
+    return
+
 ApplySettings:
+    Critical
     Gui, Submit, NoHide
-    global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
-    global SendMode, SendSequence, ConfigFile, EnableFileWatch, EnablePatrol
-    global PatrolIntervalSec, PatrolIntervalMs, CleanupIntervalSec, CleanupIntervalMs
-    
     if (IntervalEdit >= 50)
         IntervalMs := IntervalEdit
     if (MinSendEdit >= 50)
         MinSendIntervalMs := MinSendEdit
-    if (TargetExeEdit != "")
-        TargetExePattern := TargetExeEdit
-    if (TitleKeywordsEdit != "")
-        RequiredTitleKeywords := TitleKeywordsEdit
-
-    if (SendKeysEdit != "")
-        SendSequence := SendKeysEdit
-
-    if (SendModeDDL != "")
-        SendMode := InStr(SendModeDDL, "Only when") ? 1 : 0
-    
-    if (PatrolDDL != "")
-        EnablePatrol := InStr(PatrolDDL, "On") ? true : false
-    
-    ; スライダー値を即座に反映
+    TargetExePattern := TargetExeEdit
+    RequiredTitleKeywords := TitleKeywordsEdit
+    SendSequence := SendKeysEdit
+    AutoSendMode := InStr(SendModeDDL, "Only when") ? 1 : 0
+    EnablePatrol := InStr(PatrolDDL, "On") ? true : false
     PatrolIntervalSec := PatrolIntervalSlider
     PatrolIntervalMs := PatrolIntervalSec * 1000
-
     CleanupIntervalSec := CleanupIntervalSlider
     CleanupIntervalMs := CleanupIntervalSec * 1000
-    
+    EnableFileWatch := EnableFileWatchCheck
     SaveConfig()
     SetTimer, TimerMainLoop, %IntervalMs%
     UpdateGui()
@@ -274,116 +239,34 @@ OnPatrolSliderChange:
     Gui, Submit, NoHide
     PatrolIntervalSec := PatrolIntervalSlider
     PatrolIntervalMs := PatrolIntervalSec * 1000
-    GuiControl,, PatrolIntervalLabel, Patrol Interval: %PatrolIntervalSec%s
+    GuiControl,, PatrolIntervalLabel, Patrol Int: %PatrolIntervalSec%s
     return
 
 OnCleanupSliderChange:
     Gui, Submit, NoHide
     CleanupIntervalSec := CleanupIntervalSlider
     CleanupIntervalMs := CleanupIntervalSec * 1000
-    GuiControl,, CleanupIntervalLabel, Cleanup Interval: %CleanupIntervalSec%s
+    GuiControl,, CleanupIntervalLabel, Cleanup Int: %CleanupIntervalSec%s
     return
 
-; メインループタイマー
-TimerMainLoop:
-    if (!AutoEnabled)
-        return
-
-    isSafe := IsSafeToSend()
-    if (isSafe)
-    {
-        if (EnablePatrol)
-            PatrolAndSwitch()
-        if (AutoCloseGitTabs)
-            CloseUnwantedTabs()
-        MainLoop(true) ; すでに安全確認済みであることを伝える
-    }
-    else
-    {
-        MainLoop(false)
-    }
-    return
-
-; ファイル監視タイマー
-TimerFileWatch:
-    if (!AutoEnabled || !EnableFileWatch)
-        return
-    if !EnsureTargetActive()
-    {
-        LogEvent("DEBUG_WATCH", "Target Not Active for FileWatch")
-        return
-    }
-    
-    if !FileExist(InstructionFile)
-        return
-    
-    LogEvent("DEBUG_WATCH", "Instruction File Found")
-    
-    FileGetTime, t, %InstructionFile%, M
-    if (t = "")
-        return
-    
-    if (t = LastInstructionTime)
-        return
-    
-    LastInstructionTime := t
-    
-    FileRead, content, %InstructionFile%
-    if (content = "")
-        return
-    
-    if (PreserveClipboard)
-        clipSaved := ClipboardAll
-    
-    Clipboard := content
-    ClipWait, 1
-    
-    Send, ^v
-    Sleep, 40
-    Send, !{Enter}
-    
-    Sleep, 80
-    
-    if (PreserveClipboard)
-        Clipboard := clipSaved
-    
-    FileDelete, %InstructionFile%
-    LogEvent("FILE_WATCH", "Instruction sent, file deleted")
-    return
-
-; ウィンドウを閉じたら終了
-GuiClose:
-    ExitApp
-
-return
-
-; =====================================
-; 関数定義
-; =====================================
-
-ToggleAuto()
-{
+ToggleAuto() {
     global AutoEnabled
     AutoEnabled := !AutoEnabled
     LogEvent("STATE", "AutoEnabled=" (AutoEnabled ? "ON" : "OFF"))
     UpdateGui()
 }
 
-SetAuto(state)
-{
+SetAuto(state) {
     global AutoEnabled
     AutoEnabled := state
     LogEvent("STATE", "AutoEnabled=" (state ? "ON" : "OFF"))
     UpdateGui()
 }
 
-UpdateGui()
-{
-    global AutoEnabled, IntervalMs, MinSendIntervalMs, TargetExePattern, CurrentExe, LastSendTime
-    global SendMode, SendSequence, LastGuiUpdateTick, GuiUpdateIntervalMs, EnablePatrol
-    global clGui, clActive, clText, clBtn, clWhite
-    global hStatusText, hLab1, hLab2, hLab3, hLab4, hLab5, hLab6, hLab7, hLab8, hLab9, hInfoText, hBtnToggle, hProgToggle
-    static lastState := -1
+UpdateGui() {
+    global AutoEnabled, IntervalMs, LastSendTime, TargetHwnd, CurrentExe, SafetyReason
+    global clGui, clActive, clBox, clWhite, BtnToggle, BtnExpand, LastGuiUpdateTick, GuiUpdateIntervalMs
+    static lastState := -1, lastInfo := ""
 
     now := A_TickCount
     if (now - LastGuiUpdateTick < GuiUpdateIntervalMs)
@@ -391,407 +274,348 @@ UpdateGui()
     LastGuiUpdateTick := now
 
     if (AutoEnabled != lastState) {
-        currBg := AutoEnabled ? clActive : clGui
-        Gui, Color, %currBg%
-        
-        ; 状態に合わせてラベルの色を再適用
-        CtlColors_Attach(hStatusText, currBg, clWhite)
-        CtlColors_Attach(hLab1, currBg, clText)
-        CtlColors_Attach(hLab2, currBg, clText)
-        CtlColors_Attach(hLab3, currBg, clText)
-        CtlColors_Attach(hLab4, currBg, clText)
-        CtlColors_Attach(hLab5, currBg, clText)
-        CtlColors_Attach(hLab6, currBg, clText)
-        CtlColors_Attach(hLab7, currBg, clText)
-        CtlColors_Attach(hLab8, currBg, clText)
-        CtlColors_Attach(hLab9, currBg, clText)
-        CtlColors_Attach(hInfoText, currBg, "666666")
-        
-        ; ボタンの状態更新
-        btnBg := AutoEnabled ? "0078D4" : clBtn
-        GuiControl, +Background%btnBg%, ProgToggle
-        status := AutoEnabled ? "AUTO ON" : "AUTO OFF"
-        GuiControl,, BtnToggle, %status%
-        
-        ; 強制的に再描画
-        Gui, +LastFound
-        WinSet, Redraw
-        
+        activeBtnColor := AutoEnabled ? clActive : clBox
+        CtlColors_Attach(BtnToggle, activeBtnColor, clWhite)
+        GuiControl,, BtnToggle, % (AutoEnabled ? "AUTO ON" : "AUTO OFF")
         lastState := AutoEnabled
     }
 
-    elapsed := (LastSendTime = 0) ? "N/A" : (A_TickCount - LastSendTime) " ms"
-    modeLabel := (SendMode = 0) ? "Always" : "CmdOnly"
-    patrolStatus := EnablePatrol ? " [Patrol:ON]" : ""
-    info := "Mode:" modeLabel patrolStatus "  Keys:" SendSequence "  Interval:" IntervalMs "  MinSend:" MinSendIntervalMs "  Exe:" (CurrentExe = "" ? "-" : CurrentExe) "  LastSend:" elapsed
-    GuiControl,, InfoText, %info%
+    elapsed := (LastSendTime = 0) ? "N/A" : (A_TickCount - LastSendTime) "ms"
+    stateInfo := SafetyReason != "" ? "BLOCKED: " SafetyReason : "Running"
+    info := stateInfo "`nLast: " elapsed " / Target: " CurrentExe
+    
+    if (info != lastInfo) {
+        GuiControl,, InfoText, %info%
+        lastInfo := info
+    }
 }
 
-MainLoop(isAlreadySafe := false)
-{
-    global AutoEnabled, MinSendIntervalMs, LastSendTime, EnableOrangeDetection
-    global SendMode, LastCommandVisibleTick, CommandVisibleTimeoutMs
-    global SendSequence, EnableUserGuard, CurrentExe
-
-    if (!AutoEnabled)
-        return
-
-    if !EnsureTargetActive()
-    {
-        LogEvent("DEBUG_MAIN", "Target Not Active: " (CurrentExe = "" ? "None Found" : CurrentExe))
+TimerMainLoop:
+    if (!AutoEnabled) {
+        SafetyReason := ""
         return
     }
 
-    ; --- コントロール乗っ取り防止 ---
-    if (!isAlreadySafe && !IsSafeToSend())
-    {
+    ; 1. ユーザー操作チェック (安全性)
+    if (!CheckSafety()) {
+        UpdateGui()
         return
     }
+    
+    ; ターゲットの特定
+    if (!UpdateTarget()) {
+        if (SafetyReason != "No Target") {
+            SafetyReason := "No Target"
+            LogEvent("DEBUG", "Target not found. Pattern: " TargetExePattern " Title: " RequiredTitleKeywords)
+        }
+        UpdateGui()
+        return
+    }
+    SafetyReason := ""
 
+    ; 3. インターバル確認
     now := A_TickCount
-    elapsedSinceLast := now - LastSendTime
-    if (elapsedSinceLast < MinSendIntervalMs)
+    if (now - LastSendTime < MinSendIntervalMs) {
+        UpdateGui()
         return
-
-    orangeFound := false
-    if (SendMode = 1 || EnableOrangeDetection)
-    {
-        if (FindOrangeInWindow(orangeX, orangeY))
-        {
-            orangeFound := true
-            LastCommandVisibleTick := now
-        }
     }
 
-    if (SendMode = 1)
-    {
-        if (!orangeFound)
-        {
-            if (!LastCommandVisibleTick)
-                return
-            if (now - LastCommandVisibleTick > CommandVisibleTimeoutMs)
-                return
-        }
-    }
-    else if (EnableOrangeDetection)
-    {
-        if (!orangeFound)
+    ; 4. オレンジ色判定 (Mode 1 の場合)
+    if (AutoSendMode = 1 && !CheckOrange()) {
+        if (now - LastCommandVisibleTick > CommandVisibleTimeoutMs) {
+            if (SafetyReason != "No Command (Orange)") {
+                SafetyReason := "No Command (Orange)"
+                LogEvent("DEBUG", "Orange not found in window.")
+            }
+            UpdateGui()
             return
+        }
     }
 
-    ; 送信直前の最終セーフティ
-    safe := IsSafeToSend()
-    if (!safe)
-    {
-        LogEvent("DEBUG_SEND", "Blocked by Final Safety Check")
-        return
+    ; 5. 送信実行
+    LogEvent("DEBUG", "Attempting Send to HWND: " TargetHwnd " (Exe: " CurrentExe ")")
+    PerformSend()
+    return
+
+CheckSafety() {
+    global LastUserActivityTick, UserCooldownMs, LastMouseX, LastMouseY, EnableUserGuard, SafetyReason, MyGuiHwnd
+    if (!EnableUserGuard)
+        return true
+
+    ; マウス移動の検知 (閾値 30px)
+    MouseGetPos, mx, my
+    if (Abs(mx - LastMouseX) > 30 || Abs(my - LastMouseY) > 30) {
+        LastMouseX := mx, LastMouseY := my, LastUserActivityTick := A_TickCount
+        SafetyReason := "Mouse Move"
+        ToolTip, %SafetyReason%
+        SetTimer, RemoveToolTip, -1000
+        return false
+    }
+    
+    ; スクリプト自体のGUIがアクティブな間は、一部の判定をスキップ（自己ロック回避）
+    activeHwnd := WinActive("A")
+    if (activeHwnd = MyGuiHwnd) {
+        SafetyReason := "GUI Operating"
+        ; ToolTip は出さない（操作の邪魔になるため）
+        return false
     }
 
-    Send, %SendSequence%
-    LastSendTime := now
-    LogEvent("SEND", "Interval=" elapsedSinceLast "ms Mode=" (SendMode = 0 ? "Always" : "CmdOnly") " Keys=" SendSequence " Exe=" CurrentExe)
+    ; 物理キーボード/マウス入力 (閾値 50ms)
+    if (A_TimeIdlePhysical < 50) {
+        LastUserActivityTick := A_TickCount
+        SafetyReason := "User Physical Input"
+        ToolTip, %SafetyReason%
+        SetTimer, RemoveToolTip, -1000
+        return false
+    }
+
+    ; マウスボタン（物理状態）
+    if (GetKeyState("LButton", "P") || GetKeyState("RButton", "P") || GetKeyState("MButton", "P")) {
+        SafetyReason := "Mouse Button"
+        ToolTip, %SafetyReason%
+        SetTimer, RemoveToolTip, -1000
+        return false
+    }
+
+    ; 修飾キー / Esc（物理状態）
+    if (GetKeyState("Shift", "P") || GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P") || GetKeyState("Esc", "P")) {
+        SafetyReason := "Modifier Key"
+        ToolTip, %SafetyReason%
+        SetTimer, RemoveToolTip, -1000
+        return false
+    }
+    
+    ; 入力後のクールダウン (200ms: 送信間隔300msより短く設定)
+    if (A_TickCount - LastUserActivityTick < 200) {
+        SafetyReason := "Cooldown"
+        return false
+    }
+
+    return true
 }
 
-FindOrangeInWindow(ByRef orangeX, ByRef orangeY)
-{
-    global OrangeColor, OrangeColorTolerance
+RemoveToolTip:
+    ToolTip
+    return
 
-    WinGetPos, wx, wy, ww, wh, A
-
-    if (ww = 0 || wh = 0)
-        return false
-
-    ; 検索範囲（ウィンドウの 20-100%）
-    searchX := wx + (ww * 0.2)
-    searchY := wy + (wh * 0.2)
-    searchW := ww * 0.8
-    searchH := wh * 0.8
-
-    if (searchW < 400)
-        searchW := 400
-    if (searchH < 300)
-        searchH := 300
-
-    PixelSearch, foundX, foundY, searchX, searchY, searchX + searchW, searchY + searchH, OrangeColor, OrangeColorTolerance, RGB
-
-    if (!ErrorLevel)
-    {
-        orangeX := foundX
-        orangeY := foundY
-        return true
+UpdateTarget() {
+    global TargetHwnd, TargetExePattern, RequiredTitleKeywords, CurrentExe
+    
+    ; 1. 現在アクティブなウィンドウがターゲット候補か確認 (最優先)
+    activeId := WinActive("A")
+    if (activeId) {
+        WinGet, activeExe, ProcessName, ahk_id %activeId%
+        ; 大文字小文字を無視して比較
+        if (RegExMatch(activeExe, "i)Windsurf\.exe|Code\.exe|Cursor\.exe")) {
+            WinGetTitle, activeTitle, ahk_id %activeId%
+            if (RequiredTitleKeywords = "" || InStr(activeTitle, RequiredTitleKeywords)) {
+                TargetHwnd := activeId
+                CurrentExe := activeExe
+                return true
+            }
+        }
     }
 
+    ; 2. 既存のターゲットが有効（存在かつ可視）か確認
+    if (TargetHwnd && WinExist("ahk_id " TargetHwnd)) {
+        WinGet, style, Style, ahk_id %TargetHwnd%
+        if (style & 0x10000000) ; WS_VISIBLE
+            return true
+    }
+
+    ; 3. 新規検索 (プロセス名で優先順位付け)
+    processList := ["Windsurf.exe", "Code.exe", "Cursor.exe"]
+    for index, exeName in processList {
+        if WinExist("ahk_exe " exeName) {
+            matchId := WinExist("ahk_exe " exeName)
+            WinGetTitle, title, ahk_id %matchId%
+            if (RequiredTitleKeywords = "" || InStr(title, RequiredTitleKeywords)) {
+                TargetHwnd := matchId
+                CurrentExe := exeName
+                return true
+            }
+        }
+    }
+    
+    TargetHwnd := 0
+    CurrentExe := ""
     return false
 }
 
-AutoStop() {
-    global AutoEnabled
-    AutoEnabled := false
-    UpdateGui()
-}
-
-AutoReset() {
-    global AutoEnabled
-    AutoEnabled := false
-    UpdateGui()
-}
-
-LoadConfig()
-{
-    global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
-    global SendMode, SendSequence, ConfigFile, EnablePatrol, AutoCloseGitTabs
-    global PatrolIntervalSec, PatrolIntervalMs, CleanupIntervalSec, CleanupIntervalMs
+PerformSend() {
+    global TargetHwnd, SendSequence, LastSendTime, LastUserActivityTick, SafetyReason
     
-    if !FileExist(ConfigFile)
+    ; 送信直前にターゲットがまだ存在するか最終確認
+    if (!WinExist("ahk_id " TargetHwnd)) {
+        SafetyReason := "Target Lost"
+        return
+    }
+
+    ; 最小化されている場合は復帰させる
+    WinGet, minMax, MinMax, ahk_id %TargetHwnd%
+    if (minMax = -1) {
+        WinRestore, ahk_id %TargetHwnd%
+        WinWait, ahk_id %TargetHwnd%,, 0.5
+    }
+
+    ; アクティブ化
+    if (!WinActive("ahk_id " TargetHwnd)) {
+        WinActivate, ahk_id %TargetHwnd%
+        WinWaitActive, ahk_id %TargetHwnd%,, 1.0  ; 待機時間を1秒に延長
+        if (ErrorLevel) {
+            SafetyReason := "Activate Failed"
+            return
+        }
+    }
+
+    ; 送信前の安全なディレイ
+    Sleep, 100
+
+    ; 送信 (SendEvent は冒頭で定義済み)
+    ; 修飾キーの強制解除
+    Send, {ShiftUp}{CtrlUp}{AltUp}{LWinUp}{RWinUp}
+    Sleep, 50
+    
+    ; コマンド送信
+    Send, %SendSequence%
+    
+    LastSendTime := A_TickCount
+    ; 自身の送信によるPhysical Input検知を回避するため、ActivityTickを更新
+    LastUserActivityTick := A_TickCount
+    
+    LogEvent("SEND_SUCCESS", "Keys=" SendSequence " HWND=" TargetHwnd)
+    UpdateGui()
+    ExecuteOptions()
+}
+
+CheckOrange() {
+    global OrangeColor, OrangeColorTolerance, LastCommandVisibleTick
+    WinGetPos, wx, wy, ww, wh, A
+    if (ww = 0)
+        return false
+    searchX := wx + (ww * 0.2), searchY := wy + (wh * 0.2)
+    searchW := ww * 0.8, searchH := wh * 0.8
+    PixelSearch,,, searchX, searchY, searchX + searchW, searchY + searchH, OrangeColor, OrangeColorTolerance, RGB
+    if (!ErrorLevel) {
+        LastCommandVisibleTick := A_TickCount
+        return true
+    }
+    return false
+}
+
+ExecuteOptions() {
+    global EnablePatrol, AutoCloseGitTabs
+    if (EnablePatrol)
+        DoPatrol()
+    if (AutoCloseGitTabs)
+        DoCleanup()
+}
+
+DoPatrol() {
+    global LastPatrolTick, PatrolIntervalMs, RequiredTitleKeywords, TargetHwnd
+    if (A_TickCount - LastPatrolTick < PatrolIntervalMs)
+        return
+    LastPatrolTick := A_TickCount
+    
+    WinGet, idList, List, ahk_exe Windsurf.exe
+    if (idList < 2)
+        return
+        
+    ; 次のウィンドウを探してアクティブ化
+    activeId := WinActive("A")
+    Loop, %idList% {
+        thisId := idList%A_Index%
+        if (thisId = activeId)
+            continue
+        WinGetTitle, title, ahk_id %thisId%
+        if (RequiredTitleKeywords != "" && !InStr(title, RequiredTitleKeywords))
+            continue
+        WinActivate, ahk_id %thisId%
+        break
+    }
+}
+
+DoCleanup() {
+    global LastCleanupTick, CleanupIntervalMs
+    if (A_TickCount - LastCleanupTick < CleanupIntervalMs)
+        return
+    LastCleanupTick := A_TickCount
+    
+    WinGet, idList, List, ahk_exe Windsurf.exe
+    Loop, %idList% {
+        thisId := idList%A_Index%
+        WinGetTitle, title, ahk_id %thisId%
+        if (RegExMatch(title, "COMMIT_EDITMSG|MERGE_MSG|SQUASH_MSG")) {
+            WinActivate, ahk_id %thisId%
+            WinWaitActive, ahk_id %thisId%,, 0.5
+            if (!ErrorLevel)
+                Send, ^w
+        }
+    }
+}
+
+TimerFileWatch:
+    if (!AutoEnabled || !EnableFileWatch || !FileExist(InstructionFile))
+        return
+    if (!TargetHwnd || !WinExist("ahk_id " TargetHwnd))
+        return
+    FileGetTime, t, %InstructionFile%, M
+    if (t = "" || t = LastInstructionTime)
+        return
+    LastInstructionTime := t
+    FileRead, content, %InstructionFile%
+    if (content = "")
         return
     
-    IniRead, val, %ConfigFile%, Settings, IntervalMs
-    if (val != "ERROR" && val >= 50)
-        IntervalMs := val
-    
-    IniRead, val, %ConfigFile%, Settings, MinSendIntervalMs
-    if (val != "ERROR" && val >= 50)
-        MinSendIntervalMs := val
-    
-    IniRead, val, %ConfigFile%, Settings, TargetExePattern
-    if (val != "ERROR" && val != "")
-        TargetExePattern := val
-    
-    IniRead, val, %ConfigFile%, Settings, RequiredTitleKeywords
-    if (val != "ERROR")
-        RequiredTitleKeywords := val
-    
-    IniRead, val, %ConfigFile%, Settings, SendMode
-    if (val != "ERROR" && (val = 0 || val = 1))
-        SendMode := val
-    
-    IniRead, val, %ConfigFile%, Settings, SendSequence
-    if (val != "ERROR" && val != "")
-        SendSequence := val
-
-    IniRead, val, %ConfigFile%, Settings, EnablePatrol
-    if (val != "ERROR")
-        EnablePatrol := (val = "1" || val = "true") ? true : false
-
-    IniRead, val, %ConfigFile%, Settings, PatrolIntervalSec
-    if (val != "ERROR" && val >= 1)
-    {
-        PatrolIntervalSec := val
-        PatrolIntervalMs := PatrolIntervalSec * 1000
+    clipSaved := ClipboardAll
+    Clipboard := content
+    ClipWait, 1
+    WinActivate, ahk_id %TargetHwnd%
+    WinWaitActive, ahk_id %TargetHwnd%,, 1
+    if (!ErrorLevel) {
+        Send, ^v
+        Sleep, 100
+        Send, !{Enter}
     }
+    Clipboard := clipSaved
+    FileDelete, %InstructionFile%
+    return
 
-    IniRead, val, %ConfigFile%, Settings, CleanupIntervalSec
-    if (val != "ERROR" && val >= 1)
-    {
-        CleanupIntervalSec := val
-        CleanupIntervalMs := CleanupIntervalSec * 1000
-    }
-
-    IniRead, val, %ConfigFile%, Settings, AutoCloseGitTabs
-    if (val != "ERROR")
-        AutoCloseGitTabs := (val = "1" || val = "true") ? true : false
+LogEvent(type, details) {
+    global LogFile
+    FileAppend, % A_Now " [" type "] " details "`n", %LogFile%
 }
 
-SaveConfig()
-{
-    global IntervalMs, MinSendIntervalMs, TargetExePattern, RequiredTitleKeywords
-    global SendMode, SendSequence, ConfigFile, EnablePatrol, AutoCloseGitTabs
-    global PatrolIntervalSec, CleanupIntervalSec
-    
+LoadConfig() {
+    global
+    if !FileExist(ConfigFile)
+        return
+    IniRead, IntervalMs, %ConfigFile%, Settings, IntervalMs, 300
+    IniRead, MinSendIntervalMs, %ConfigFile%, Settings, MinSendIntervalMs, 250
+    IniRead, TargetExePattern, %ConfigFile%, Settings, TargetExePattern, ^(Windsurf\.exe|Code\.exe|Cursor\.exe)$
+    IniRead, RequiredTitleKeywords, %ConfigFile%, Settings, RequiredTitleKeywords, Windsurf
+    IniRead, AutoSendMode, %ConfigFile%, Settings, AutoSendMode, 0
+    IniRead, SendSequence, %ConfigFile%, Settings, SendSequence, !{Enter}
+    IniRead, EnablePatrol, %ConfigFile%, Settings, EnablePatrol, 0
+    IniRead, PatrolIntervalSec, %ConfigFile%, Settings, PatrolIntervalSec, 5
+    PatrolIntervalMs := PatrolIntervalSec * 1000
+    IniRead, CleanupIntervalSec, %ConfigFile%, Settings, CleanupIntervalSec, 5
+    CleanupIntervalMs := CleanupIntervalSec * 1000
+    IniRead, AutoCloseGitTabs, %ConfigFile%, Settings, AutoCloseGitTabs, 1
+    IniRead, EnableFileWatch, %ConfigFile%, Settings, EnableFileWatch, 0
+}
+
+SaveConfig() {
+    global
     IniWrite, %IntervalMs%, %ConfigFile%, Settings, IntervalMs
     IniWrite, %MinSendIntervalMs%, %ConfigFile%, Settings, MinSendIntervalMs
     IniWrite, %TargetExePattern%, %ConfigFile%, Settings, TargetExePattern
     IniWrite, %RequiredTitleKeywords%, %ConfigFile%, Settings, RequiredTitleKeywords
-    IniWrite, %SendMode%, %ConfigFile%, Settings, SendMode
+    IniWrite, %AutoSendMode%, %ConfigFile%, Settings, AutoSendMode
     IniWrite, %SendSequence%, %ConfigFile%, Settings, SendSequence
     IniWrite, % (EnablePatrol ? 1 : 0), %ConfigFile%, Settings, EnablePatrol
     IniWrite, %PatrolIntervalSec%, %ConfigFile%, Settings, PatrolIntervalSec
     IniWrite, %CleanupIntervalSec%, %ConfigFile%, Settings, CleanupIntervalSec
     IniWrite, % (AutoCloseGitTabs ? 1 : 0), %ConfigFile%, Settings, AutoCloseGitTabs
-}
-
-LogEvent(eventType, details)
-{
-    global LogFile
-    timestamp := A_Now
-    line := timestamp " [" eventType "] " details "`n"
-    FileAppend, %line%, %LogFile%
-}
-
-PatrolAndSwitch()
-{
-    global LastPatrolTick, PatrolIntervalMs, RequiredTitleKeywords
-
-    now := A_TickCount
-    if (now - LastPatrolTick < PatrolIntervalMs)
-        return
-    LastPatrolTick := now
-
-    if (!IsSafeToSend())
-        return
-
-    ; Windsurfの別ウィンドウを探してアクティブにする
-    WinGet, idList, List, ahk_exe Windsurf.exe
-    if (idList < 2)
-        return
-
-    WinGet, currentID, ID, A
-    
-    Loop, %idList%
-    {
-        thisID := idList%A_Index%
-        if (thisID = currentID)
-            continue
-            
-        WinGetTitle, title, ahk_id %thisID%
-        if (RequiredTitleKeywords != "" && !InStr(title, RequiredTitleKeywords))
-            continue
-            
-        WinActivate, ahk_id %thisID%
-        LogEvent("PATROL", "Switched to window: " title)
-        break
-    }
-}
-
-CloseUnwantedTabs()
-{
-    global LastCleanupTick, CleanupIntervalMs
-    now := A_TickCount
-    if (now - LastCleanupTick < CleanupIntervalMs)
-        return
-    LastCleanupTick := now
-
-    if (!IsSafeToSend())
-        return
-
-    unwanted := "COMMIT_EDITMSG|MERGE_MSG|SQUASH_MSG"
-    WinGet, idList, List, ahk_exe Windsurf.exe
-    Loop, %idList%
-    {
-        thisID := idList%A_Index%
-        WinGetTitle, title, ahk_id %thisID%
-        if (RegExMatch(title, unwanted))
-        {
-            WinActivate, ahk_id %thisID%
-            Sleep, 100
-            Send, ^w
-            LogEvent("CLEANUP", "Closed unwanted tab: " title)
-        }
-    }
-}
-
-EnsureTargetActive()
-{
-    global TargetExePattern, RequiredTitleKeywords, CurrentExe
-
-    WinGet, id, ID, A
-    if (id != "")
-    {
-        WinGet, exe, ProcessName, ahk_id %id%
-        WinGetTitle, title, ahk_id %id%
-        CurrentExe := exe
-        
-        if (RegExMatch(exe, TargetExePattern))
-        {
-            if (RequiredTitleKeywords = "")
-                return true
-            if (InStr(title, RequiredTitleKeywords))
-                return true
-        }
-    }
-
-    if WinExist("ahk_exe Windsurf.exe")
-    {
-        CurrentExe := "Windsurf.exe"
-        WinActivate
-        Sleep, 50 ; アクティブ化の安定待ち
-        return true
-    }
-    if WinExist("ahk_exe Code.exe")
-    {
-        CurrentExe := "Code.exe"
-        WinActivate
-        Sleep, 50
-        return true
-    }
-    if WinExist("ahk_exe Cursor.exe")
-    {
-        CurrentExe := "Cursor.exe"
-        WinActivate
-        Sleep, 50
-        return true
-    }
-
-    LogEvent("DEBUG_ACTIVE", "No matching window found")
-    CurrentExe := ""
-    return false
-}
-
-IsSafeToSend()
-{
-    global UserIdleThresholdMs, LastUserActivityTick, UserCooldownMs
-    global LastMouseX, LastMouseY, EnableUserGuard
-    static lastReason := ""
-    static lastLogTick := 0
-
-    if (!EnableUserGuard)
-        return true
-
-    reason := ""
-    
-    ; 1. マウス移動の検知（微小な揺らぎは許容）
-    MouseGetPos, mx, my
-    diffX := Abs(mx - LastMouseX)
-    diffY := Abs(my - LastMouseY)
-    if (diffX > 10 || diffY > 10) ; 閾値を10pxに緩和
-    {
-        LastMouseX := mx
-        LastMouseY := my
-        LastUserActivityTick := A_TickCount
-        reason := "Mouse Move: diffX=" diffX " diffY=" diffY
-    }
-    else if (A_TimeIdlePhysical < UserIdleThresholdMs)
-    {
-        ; 2. 物理的なアイドル時間を確認 (OSレベル)
-        LastUserActivityTick := A_TickCount
-        reason := "Physical Idle: " A_TimeIdlePhysical "ms"
-    }
-    else if (A_TickCount - LastUserActivityTick < UserCooldownMs)
-    {
-        ; 3. ユーザー操作直後のクールダウン時間
-        reason := "Cooldown: " (A_TickCount - LastUserActivityTick) "ms"
-    }
-    else if (GetKeyState("LButton", "P") || GetKeyState("RButton", "P") || GetKeyState("MButton", "P"))
-    {
-        ; 4. マウスボタンの押し下げ状態 (物理的)
-        LastUserActivityTick := A_TickCount
-        reason := "Mouse Button"
-    }
-    else if (GetKeyState("Shift", "P") || GetKeyState("Ctrl", "P") || GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
-    {
-        ; 5. 修飾キーの押し下げ状態 (物理的)
-        LastUserActivityTick := A_TickCount
-        reason := "Key Down"
-    }
-    else if (A_Cursor = "Wait" || A_Cursor = "AppStarting" || A_Cursor = "SizeAll")
-    {
-        ; 6. カーソル形状の監視
-        LastUserActivityTick := A_TickCount
-        reason := "Cursor Shape: " A_Cursor
-    }
-
-    if (reason != "")
-    {
-        now := A_TickCount
-        if (reason != lastReason || now - lastLogTick > 3000) ; 理由が変わったか3秒経過でログ出力
-        {
-            LogEvent("DEBUG_SAFETY", "Blocked by " reason)
-            lastReason := reason
-            lastLogTick := now
-        }
-        return false
-    }
-
-    lastReason := ""
-    return true
+    IniWrite, % (EnableFileWatch ? 1 : 0), %ConfigFile%, Settings, EnableFileWatch
 }

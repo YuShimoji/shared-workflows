@@ -39,10 +39,7 @@
 
 - worker_ssot_fallback: completed
 - worker_audit: completed
-
-## Worker完了ステータス
-
-- worker_ssot_fallback: completed
+- worker_onboarding_std: completed
 
 ## Backlog（将来提案）
 
