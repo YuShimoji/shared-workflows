@@ -5,8 +5,7 @@ Tier: 1
 Branch: main
 Owner: Orchestrator
 Created: 2025-12-20T10:05+09:00
-Report: docs/inbox/REPORT_ORCH_20251226_1332.md
-
+Report: docs/reports/REPORT_ORCH_20251226_1332.md
 ## DoD
 - [x] GitHub 側のデフォルトブランチを `main` に統一し、clone 時の初期ブランチが `main` になる状態にする。
 - [x] ローカルで `git remote show origin` の `HEAD branch` が `main` になっていることを確認できる状態にする。

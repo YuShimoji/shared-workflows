@@ -80,6 +80,48 @@ function moveReports(inboxDir, reportsDir) {
   return movedCount;
 }
 
+function updateTaskReferences(docsDir) {
+  const tasksDir = path.join(docsDir, 'tasks');
+  const reportsDir = path.join(docsDir, 'reports');
+  
+  if (!fs.existsSync(tasksDir)) return 0;
+
+  const taskFiles = fs.readdirSync(tasksDir).filter(f => /^TASK_.*\.md$/i.test(f));
+  let updatedCount = 0;
+
+  for (const taskFile of taskFiles) {
+    const taskPath = path.join(tasksDir, taskFile);
+    let content = readFileSafe(taskPath);
+    if (!content) continue;
+
+    // Regex to capture "Report: docs/inbox/REPORT_..."
+    // We strictly match the prefix to avoid false positives
+    const reportLineRegex = /^(Report\s*:\s*)(docs\/inbox\/(REPORT_.*\.md))\s*$/m;
+    const match = content.match(reportLineRegex);
+
+    if (match) {
+      const prefix = match[1];
+      const inboxPathRel = match[2];
+      const reportName = match[3];
+      
+      const inboxPathAbs = path.join(docsDir, 'inbox', reportName);
+      const reportsPathAbs = path.join(docsDir, 'reports', reportName);
+
+      // Update if:
+      // 1. File is NOT in inbox (already moved or missing)
+      // 2. File IS in reports (exists)
+      if (!fs.existsSync(inboxPathAbs) && fs.existsSync(reportsPathAbs)) {
+        const newPathRel = `docs/reports/${reportName}`;
+        content = content.replace(reportLineRegex, `${prefix}${newPathRel}`);
+        writeFileSafe(taskPath, content);
+        console.log(`Updated reference in ${taskFile}: ${inboxPathRel} -> ${newPathRel}`);
+        updatedCount++;
+      }
+    }
+  }
+  return updatedCount;
+}
+
 function updateAiContext(root, workerName) {
   if (!workerName) return;
 
@@ -163,6 +205,12 @@ function main() {
     if (!dryRun) {
       const moved = moveReports(inboxDir, reportsDir);
       console.log(`\nArchived ${moved} reports.`);
+
+      // 1.5 Update Task References (Self-healing)
+      const updatedTasks = updateTaskReferences(docsDir);
+      if (updatedTasks > 0) {
+        console.log(`Updated references in ${updatedTasks} task files.`);
+      }
     }
 
     // 2. Update AI Context

@@ -5,8 +5,7 @@ Tier: 1
 Branch: main
 Owner: Orchestrator
 Created: 2025-12-22T02:59+09:00
-Report: docs/inbox/REPORT_TASK_005_20251226_1345.md
-
+Report: docs/reports/REPORT_TASK_005_20251226_1345.md
 ## Objective
 
 - docs/inbox/ の REPORT_* と docs/HANDOVER.md（Latest Orchestrator Report / Progress 欄）の内容を突き合わせ、欠損・重複・未統合レポートを洗い出す。
