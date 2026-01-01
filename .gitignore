@@ -2,3 +2,8 @@ ADAPTATION_HINT.md
 CREATIVITY_HINT.md
 REPORT_HINT.md
 server.log
+/.cursorrules
+/.cursor/MISSION_LOG.md
+docs/inbox/REPORT_*.md
+scripts/ahk/windsurf_autopilot.ini
+scripts/ahk/windsurf_autopilot_fixed.ahk

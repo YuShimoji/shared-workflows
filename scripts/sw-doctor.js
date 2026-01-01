@@ -246,6 +246,81 @@ function checkScripts(projectRoot, swRoot, options = {}) {
   return { issues, warnings, results };
 }
 
+function checkWorkflowAssets(projectRoot, swRoot, options = {}) {
+  const quiet = options.quiet === true;
+  if (!quiet) {
+    console.log('\n=== Workflow Assets (Driver/Rules) ===\n');
+  }
+
+  const issues = [];
+  const warnings = [];
+  const results = [];
+
+  // In shared-workflows (submodule) we expect these to exist to support the new architecture.
+  const expectedInSw = [
+    'prompts/every_time/ORCHESTRATOR_DRIVER.txt',
+    'prompts/orchestrator/modules/00_core.md',
+    'scripts/apply-cursor-rules.ps1',
+    'templates/.cursorrules',
+    'templates/.cursor/rules.md',
+  ];
+
+  if (swRoot) {
+    for (const rel of expectedInSw) {
+      const p = path.join(swRoot, rel);
+      if (fs.existsSync(p)) {
+        results.push(createCheckResult('workflow.sw-asset', 'OK', `shared-workflows asset OK: ${rel}`, { path: p }));
+      } else {
+        const msg = `shared-workflows asset missing (likely outdated submodule): ${rel}`;
+        warnings.push(msg);
+        results.push(createCheckResult('workflow.sw-asset', 'WARN', msg, { path: p }));
+      }
+    }
+  } else {
+    const msg = 'shared-workflows not found; cannot verify Driver/modules/assets in submodule.';
+    warnings.push(msg);
+    results.push(createCheckResult('workflow.sw-asset', 'WARN', msg));
+  }
+
+  // In the consumer project root, recommend rules files for stability (non-fatal).
+  const recommendedInProject = [
+    '.cursorrules',
+    '.cursor/rules.md',
+  ];
+  for (const rel of recommendedInProject) {
+    const p = path.join(projectRoot, rel);
+    if (fs.existsSync(p)) {
+      results.push(createCheckResult('workflow.project-rules', 'OK', `recommended rules file present: ${rel}`, { path: p }));
+    } else {
+      const msg = `recommended rules file missing: ${rel} (run apply-cursor-rules.ps1 to improve stability)`;
+      warnings.push(msg);
+      results.push(createCheckResult('workflow.project-rules', 'WARN', msg, { path: p }));
+    }
+  }
+
+  // “Long work stop” proxy: stale MISSION_LOG when IN_PROGRESS.
+  const missionLogPath = path.join(projectRoot, '.cursor', 'MISSION_LOG.md');
+  if (fs.existsSync(missionLogPath)) {
+    const stat = fs.statSync(missionLogPath);
+    const ageMinutes = (Date.now() - stat.mtimeMs) / 60000;
+    const content = readFileSafe(missionLogPath) || '';
+    const looksInProgress = /IN_PROGRESS/i.test(content);
+    if (looksInProgress && ageMinutes > 60) {
+      const msg = `MISSION_LOG.md is stale (${Math.round(ageMinutes)} min) while IN_PROGRESS; possible context loss/stuck session`;
+      warnings.push(msg);
+      results.push(createCheckResult('workflow.mission-log', 'WARN', msg, { path: missionLogPath, ageMinutes: Math.round(ageMinutes) }));
+    } else {
+      results.push(createCheckResult('workflow.mission-log', 'OK', 'MISSION_LOG.md present', { path: missionLogPath, ageMinutes: Math.round(ageMinutes) }));
+    }
+  } else {
+    const msg = 'MISSION_LOG.md not found (optional but recommended for long tasks stability)';
+    warnings.push(msg);
+    results.push(createCheckResult('workflow.mission-log', 'WARN', msg, { path: missionLogPath }));
+  }
+
+  return { issues, warnings, results };
+}
+
 function runAudit(projectRoot, swRoot, options = {}) {
   const quiet = options.quiet === true;
   if (!quiet) {
@@ -539,6 +614,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
   const envCheck = checkEnvironment(projectRoot, { quiet });
   const ssotContentCheck = checkSSOTContent(projectRoot, { quiet });
   const scriptCheck = checkScripts(projectRoot, envCheck.swRoot, { quiet });
+  const workflowCheck = checkWorkflowAssets(projectRoot, envCheck.swRoot, { quiet });
   
   let auditResult = { issues: [], warnings: [], results: [] };
   let devCheckResult = { issues: [], warnings: [], results: [] };
@@ -565,6 +641,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
     ...envCheck.results,
     ...ssotContentCheck.results,
     ...scriptCheck.results,
+    ...workflowCheck.results,
     ...auditResult.results,
     ...devCheckResult.results,
     ...reportValidationResult.results,
@@ -582,6 +659,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
       environment: envCheck.results,
       ssotContent: ssotContentCheck.results,
       scripts: scriptCheck.results,
+      workflow: workflowCheck.results,
       audit: auditResult.results,
       devCheck: devCheckResult.results,
       reportValidation: reportValidationResult.results,

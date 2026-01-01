@@ -13,7 +13,23 @@
 プロジェクトルートに `.cursorrules` ファイルを作成し、このファイルの内容をコピーしてください:
 
 ```bash
+# 消費側プロジェクト（.shared-workflows がある場合）
 cp .shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt .cursorrules
+
+# shared-workflows リポジトリ直下で試す場合
+cp prompts/global/WINDSURF_GLOBAL_RULES.txt .cursorrules
+```
+
+PowerShell:
+```powershell
+Copy-Item .shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt .cursorrules -Force
+Copy-Item prompts/global/WINDSURF_GLOBAL_RULES.txt .cursorrules -Force
+```
+
+推奨（取りこぼし対策）: `.cursor/rules.md` も配置する:
+```bash
+mkdir -p .cursor && cp .shared-workflows/templates/.cursor/rules.md .cursor/rules.md
+mkdir -p .cursor && cp templates/.cursor/rules.md .cursor/rules.md
 ```
 
 または、以下の内容を `.cursorrules` に直接記載してください。

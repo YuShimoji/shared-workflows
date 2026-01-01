@@ -29,7 +29,10 @@ function extractSection(content, header) {
 }
 
 function ensureOrchestratorSections(reportContent) {
-  const requiredHeaders = [
+  // Orchestrator report formats:
+  // - Legacy: State/Strategy/Tickets/Next/Proposals/Outlook/Verification/Integration Notes
+  // - Current (Driver-based): 現状/次のアクション/ガイド/メタプロンプト再投入条件/改善提案（New Feature Proposal）(+ Verification/Integration Notes)
+  const legacyRequired = [
     'State',
     'Strategy',
     'Tickets',
@@ -39,18 +42,47 @@ function ensureOrchestratorSections(reportContent) {
     'Verification',
     'Integration Notes'
   ];
+
+  const currentRequired = [
+    '現状',
+    '次のアクション',
+    'ガイド',
+    'メタプロンプト再投入条件',
+    '改善提案（New Feature Proposal）',
+    'Verification',
+    'Integration Notes'
+  ];
+
   const errors = [];
   const warnings = [];
 
-  for (const header of requiredHeaders) {
-    const section = extractSection(reportContent, header);
-    if (!section) {
-      errors.push(`Orchestratorレポートに必須セクション '${header}' がありません`);
-    } else if (!section.replace(/[-*\s]/g, '').length) {
-      warnings.push(`Orchestratorレポートの '${header}' セクションが空です`);
+  function hasAll(headers) {
+    return headers.every(h => extractSection(reportContent, h));
+  }
+
+  // Prefer current format; fallback to legacy for backward compatibility
+  const usesCurrent = hasAll(currentRequired);
+  const usesLegacy = hasAll(legacyRequired);
+
+  const requiredHeaders = usesCurrent ? currentRequired : legacyRequired;
+  if (!usesCurrent && !usesLegacy) {
+    // Provide targeted missing list for current format (since it is the recommended one)
+    const missingCurrent = currentRequired.filter(h => !extractSection(reportContent, h));
+    errors.push(
+      `Orchestratorレポートの形式が不正です。推奨フォーマット（現状/次のアクション/ガイド/メタプロンプト再投入条件/改善提案 + Verification/Integration Notes）が不足しています: ${missingCurrent.join(', ')}`
+    );
+  } else {
+    for (const header of requiredHeaders) {
+      const section = extractSection(reportContent, header);
+      if (!section) {
+        errors.push(`Orchestratorレポートに必須セクション '${header}' がありません`);
+      } else if (!section.replace(/[-*\s]/g, '').length) {
+        warnings.push(`Orchestratorレポートの '${header}' セクションが空です`);
+      }
     }
   }
 
+  // Legacy-only: Outlook checks
   const outlookSection = extractSection(reportContent, 'Outlook');
   if (outlookSection) {
     const hasShort = /Short-term/i.test(outlookSection);
@@ -61,6 +93,7 @@ function ensureOrchestratorSections(reportContent) {
     }
   }
 
+  // Legacy-only: Tickets checks
   const ticketsSection = extractSection(reportContent, 'Tickets');
   if (ticketsSection && !/- /.test(ticketsSection)) {
     warnings.push('Tickets セクションに箇条書きがありません（完了内容や最後の作業を記述してください）');

@@ -34,9 +34,31 @@ Global Rules（エディタごとの統一）:
 - **Windsurf**: Windsurf Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼り付け
 - **Cursor**: プロジェクトルートに `.cursorrules` を作成:
   ```bash
+  # 消費側プロジェクト（.shared-workflows がある）:
   cp .shared-workflows/templates/.cursorrules .cursorrules
+
+  # shared-workflows リポジトリ直下で試す場合:
+  cp templates/.cursorrules .cursorrules
   ```
   または `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` の内容を `.cursorrules` にコピー
+
+  追加（推奨）: `.cursor/rules.md` も配置すると Cursor の取りこぼしが減る:
+  ```bash
+  # 消費側プロジェクト:
+  mkdir -p .cursor && cp .shared-workflows/templates/.cursor/rules.md .cursor/rules.md
+
+  # shared-workflows リポジトリ直下:
+  mkdir -p .cursor && cp templates/.cursor/rules.md .cursor/rules.md
+  ```
+
+  PowerShell（推奨: スクリプトで一括適用）:
+  ```powershell
+  # 消費側プロジェクト（.shared-workflows がある）
+  pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
+
+  # shared-workflows リポジトリ直下で試す
+  pwsh -NoProfile -File scripts/apply-cursor-rules.ps1 -ProjectRoot .
+  ```
 
 参照するもの（コピペは原則しない）:
 

@@ -1,7 +1,7 @@
 module.exports = {
   'shared-orch-bootstrap': {
     description: 'Bootstrap profile: check SSOT files and basic structure only',
-    checks: ['env.sw-root', 'env.required-dir', 'env.required-file'],
+    checks: ['env.sw-root', 'env.required-dir', 'env.required-file', 'workflow.*'],
     severityPolicy: {
       ERROR: 'fail',
       WARN: 'warn',
@@ -14,7 +14,7 @@ module.exports = {
   },
   'shared-orch-doctor': {
     description: 'Doctor profile: full environment + audit + dev-check',
-    checks: ['env.*', 'script.*', 'audit.*', 'dev-check.*'],
+    checks: ['env.*', 'script.*', 'workflow.*', 'audit.*', 'dev-check.*'],
     severityPolicy: {
       ERROR: 'fail',
       WARN: 'warn',
