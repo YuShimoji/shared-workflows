@@ -48,7 +48,7 @@
 - コピペ用プロンプト集: `prompts/`
 - Windsurf Global Rules（端末統一）: `prompts/global/WINDSURF_GLOBAL_RULES.txt`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- Orchestrator起動（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
+- Orchestrator起動/再開（毎回コピペ / 1つに統一）: `prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 - Orchestrator起動（参照）: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
 - Worker生成テンプレ（参照）: `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 - チケット雛形: `templates/TASK_TICKET_TEMPLATE.md`

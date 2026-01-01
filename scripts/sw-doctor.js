@@ -513,6 +513,14 @@ function suggestRepairs(allIssues, allWarnings) {
     for (const warning of allWarnings) {
       console.log(`  - ${warning}`);
     }
+
+    const mentionsOutdatedSw = allWarnings.some(w => /outdated submodule|shared-workflows asset missing/i.test(w));
+    if (mentionsOutdatedSw) {
+      console.log('\nRecommended Actions (shared-workflows update):');
+      console.log('  - Parent repo (recommended): git submodule sync --recursive && git submodule update --init --recursive --remote');
+      console.log('  - Or inside submodule (fallback): git -C .shared-workflows checkout main && git -C .shared-workflows pull --ff-only');
+      console.log('  - Optional check: node .shared-workflows/scripts/sw-update-check.js');
+    }
   }
 }
 

@@ -46,11 +46,23 @@ git commit -m "Initial commit"
 
 ## テスト実行
 
+### Test 0: Cursor ルール適用（推奨）
+
+```powershell
+cd C:\temp\test-project
+pwsh -NoProfile -File "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\apply-cursor-rules.ps1" -ProjectRoot .
+Test-Path .cursorrules
+Test-Path .cursor/rules.md
+```
+
+**期待結果:**
+- `.cursorrules=True`, `.cursor/rules.md=True`
+
 ### Test 1: sw-doctor.js の動作確認
 ```powershell
 # PowerShell
 cd C:\temp\test-project
-node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\sw-doctor.js"
+node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\sw-doctor.js" --profile shared-orch-bootstrap --format text
 ```
 
 **期待結果:**
@@ -137,7 +149,7 @@ node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\
 ### 完全なワークフロー（本番環境での使用）
 1. **初期化フェーズ**
    ```powershell
-   node scripts/sw-doctor.js
+   node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
    ```
 
 2. **監査フェーズ**
@@ -157,6 +169,9 @@ node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\
    ```powershell
    node scripts/report-validator.js docs/HANDOVER.md REPORT_CONFIG.yml .
    ```
+
+5. **Orchestrator 運用開始（毎回）**
+   - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を貼る（毎回これだけ）
 
 ## 成功基準
 - [ ] sw-doctor.js が環境チェックを完了

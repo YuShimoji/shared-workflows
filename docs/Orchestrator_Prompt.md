@@ -104,7 +104,7 @@
 - MISSION_LOG.md の最新状態を含める
 
 ### Phase 6: Orchestrator Report
-- チャット出力（4セクション形式）
+- チャット出力（固定5セクション）
 - レポート保存と検証
 - **改善提案セクションを追加**
 
@@ -114,7 +114,7 @@
    - `prompts/first_time/PROJECT_KICKSTART.txt` を貼り付ける
 
 2. **毎回の Orchestrator 起動時:**
-   - `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を貼り付ける
+   - `prompts/every_time/ORCHESTRATOR_DRIVER.txt` を貼り付ける（**毎回これだけ**）
 
 3. **MISSION_LOG.md の確認:**
    - 作業開始時に `.cursor/MISSION_LOG.md` を読み込む

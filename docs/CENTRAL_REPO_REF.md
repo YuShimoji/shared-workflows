@@ -33,7 +33,7 @@ AI は常に `latest.md` をエントリポイントとして参照してくだ�
 | `docs/windsurf_workflow/OPEN_HERE.md` | 運用者の入口（どのフォルダを開く / どれをコピペする） |
 | `prompts/` | コピペ用プロンプト集（貼るだけ） |
 | `prompts/global/WINDSURF_GLOBAL_RULES.txt` | Windsurf Global Rules（端末ごとの統一 / コピペ用） |
-| `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | Orchestrator起動（毎回コピペ） |
+| `prompts/every_time/ORCHESTRATOR_DRIVER.txt` | Orchestrator起動/再開（毎回コピペ / **1つに統一**） |
 | `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` | Orchestrator起動（参照） |
 | `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md` | オーケストレーション・プロトコル |
 | `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` | Worker起動プロンプト生成テンプレ（参照用） |

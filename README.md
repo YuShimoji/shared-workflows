@@ -21,7 +21,7 @@
 - `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（参照）
 - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
 - `prompts/first_time/PROJECT_KICKSTART.txt` - 初回セットアップ用プロンプト（コピペ用）
-- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` - Orchestrator起動用（毎回コピペ用）
+- `prompts/every_time/ORCHESTRATOR_DRIVER.txt` - Orchestrator起動/再開（毎回コピペ用 / **1つに統一**）
 - `prompts/global/WINDSURF_GLOBAL_RULES.txt` - Windsurf Global Rules（端末ごとの統一 / コピペ用）
 - `prompts/role/ROLE_PROMPT_*.txt` - 役割別プロンプト（コピペ用 / 参考・フォールバック）
 - `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形（Orchestratorがチケット発行時に使用）
@@ -59,7 +59,7 @@
 
 - 初回のみ `prompts/first_time/PROJECT_KICKSTART.txt` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
 - 運用者の入口（参照。どのフォルダを開く/どれをコピペする）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
-- 毎回 `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を Orchestrator スレッドに貼る
+- 毎回 `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を Orchestrator スレッドに貼る（**これだけ**）
 - Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
   - 生成ベース（参照用テンプレ）: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 
