@@ -1,6 +1,6 @@
 # Task: プロジェクト監査と技術的負債の整理 (Technical Debt & Unimplemented Features)
 
-Status: OPEN
+Status: IN_PROGRESS
 Tier: 1
 Branch: main
 Owner: Orchestrator

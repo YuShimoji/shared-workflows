@@ -17,19 +17,26 @@
 
 - `.shared-workflows/prompts/`
 
-毎回コピペするもの:
+毎回コピペするもの（**1つに統一**）:
 
-- **Orchestrator起動（毎回）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
-- **Orchestrator再開（途中からの残作業整理）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_RESUME.txt`
+- **Orchestrator起動/再開（毎回これだけ）**: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 
 初回だけコピペするもの（環境が未整備の場合）:
 
 - **Kickstart（初回）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
 - **Kickstart再開（セットアップが途中で止まった場合）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART_RESUME.txt`
 
-Windsurf Global Rules（端末ごとの統一）:
+補足:
+- 以前の `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` と `ORCHESTRATOR_RESUME.txt` は互換ラッパー（Deprecated）。貼っても Driver へ誘導される。
 
-- **貼り付け用**: `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`
+Global Rules（エディタごとの統一）:
+
+- **Windsurf**: Windsurf Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼り付け
+- **Cursor**: プロジェクトルートに `.cursorrules` を作成:
+  ```bash
+  cp .shared-workflows/templates/.cursorrules .cursorrules
+  ```
+  または `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` の内容を `.cursorrules` にコピー
 
 参照するもの（コピペは原則しない）:
 

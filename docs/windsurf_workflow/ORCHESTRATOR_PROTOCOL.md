@@ -13,8 +13,7 @@
 | 初回セットアップ（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` | 初回（セットアップ/立て直し） |
 | 初回セットアップの再開（コピペ） | `.shared-workflows/prompts/first_time/PROJECT_KICKSTART_RESUME.txt` | 必要時（Kickstartが途中で止まったとき） |
 | 運用者の入口（参照） | OPEN HERE | 参照（迷った時） |
-| オーケストレーション（コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` | 毎回（Orchestratorスレッド起動時） |
-| オーケストレーション（途中からの再開・残作業整理、コピペ） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_RESUME.txt` | 必要時（Orchestratorが途中で途切れたとき） |
+| オーケストレーション（コピペ / **1つに統一**） | `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` | 毎回（Orchestratorスレッド起動/再開） |
 | オーケストレーション手順 | Orchestrator Protocol | 参照（手順書） |
 | 作業実行 | Worker Prompt（Orchestratorが動的生成） | 毎回（各スレッド起動時） |
 | Worker生成テンプレ（参照） | Worker Prompt Template | 参照（生成ベース） |
@@ -177,35 +176,29 @@ Worker 起動前に以下を実行し、結果に従う（原則は GO。NO-GO �
 
 ---
 
-## Phase 4: 出力
+## 運用の入口（重要）
 
-チャットには以下のみ出力:
+Orchestrator は「巨大メタプロンプト1本」運用を廃止し、**薄いDriver + フェーズモジュール**方式へ移行する。
 
-## Phase 6: Orchestrator Report（チャット出力）
+- **チャットに貼るもの（毎回これだけ）**: `prompts/every_time/ORCHESTRATOR_DRIVER.txt`
+- Driver が参照するモジュール: `prompts/orchestrator/modules/`
+- 状態SSOT: `.cursor/MISSION_LOG.md`
 
-State: [進捗要約。2行以内]
+このドキュメント（ORCHESTRATOR_PROTOCOL）は「手順の解説」であり、Driver/Modules が実行規約のSSOT。
 
-Strategy:
-- Workers: [数]
-- Reason: [1文]
+---
 
-Tickets:
-- TASK_001_xxx: [概要]
-- TASK_002_xxx: [概要]
+## 出力（チャット）
 
-- Next: <ユーザーの次アクション>
-- Proposals: <将来提案（バックログ候補）>
-- Outlook:
-  - Short-term: <直近1セッションで着手する内容>
-  - Mid-term: <今後数セッションで扱う内容>
-  - Long-term: <中長期のゴールや布石>
+チャット出力は **固定5セクションのみ**（順番厳守、追加セクション禁止）:
 
-### 完了状態（残タスク0）の追加要件
-- State で完了サマリを提示（総タスク数/完了数/統合済みレポート等）。
-- Tickets ヘッダーは必ず残し、空の場合は「全タスク完了。最後に行った作業: ...」と記載。
-- Next では 1 件以上のフォローアップ提案（例: レトロ実施、バックログ作成、監査）を提示。
-- Proposals に今後の改善案や次回チケット候補を最低1件含める。
-- Outlook では Short/Mid/Long を必須とし、完了後でも次に観測すべき指標や必要なら起票するチケット案を記載する。
+1. `## 現状`
+2. `## 次のアクション`
+3. `## ガイド`
+4. `## メタプロンプト再投入条件`
+5. `## 改善提案（New Feature Proposal）`
+
+「改善提案」が欠落した場合は未完了として扱い、やり直す。
 
 ---
 
@@ -332,9 +325,10 @@ Worker Prompt の生成ベース（テンプレ）は以下:
 
 ---
 
-## Phase 6: Orchestrator Report（チャット出力）
+## レポート保存（ファイル）
 
-チャット回答は **固定4セクション**（順番厳守）で出力する。
+- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` を基準とし、`docs/inbox/REPORT_ORCH_<ISO8601>.md` に保存する
+- 保存後、`report-validator.js` で検証し、ログをレポートに残す
 
 **重要**: 報告の前に必ず `node scripts/finalize-phase.js` を実行し、Inboxの整理とコミットを完了させること。
 
@@ -395,7 +389,7 @@ docs/
 
 | 操作 | コマンド/ファイル |
 | --- | --- |
-| 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`） |
+| 作業開始 | `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を投入（推奨。無ければ `prompts/every_time/ORCHESTRATOR_DRIVER.txt`） |
 | Worker起動 | Orchestrator が生成した Worker 用プロンプトを投入 |
 | 進捗確認 | docs/HANDOVER.md 参照 |
 | 未完了タスク | `node scripts/todo-sync.js --skip-todo-list`（UI todo 同期が不要な場合） |
@@ -407,5 +401,5 @@ docs/
 
 - 中央ルール（SSOT / latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - 中央リポジトリ参照: `.shared-workflows/docs/CENTRAL_REPO_REF.md`（推奨。無ければ `docs/CENTRAL_REPO_REF.md`）
-- コピペ用メタプロンプト: `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（推奨。無ければ `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`）
+- コピペ用Driver: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`（推奨。無ければ `prompts/every_time/ORCHESTRATOR_DRIVER.txt`）
 - レポート設定: `.shared-workflows/REPORT_CONFIG.yml`（推奨。無ければ `REPORT_CONFIG.yml`）

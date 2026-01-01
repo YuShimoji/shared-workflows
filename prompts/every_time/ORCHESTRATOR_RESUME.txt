@@ -1,70 +1,12 @@
-# Orchestrator Resume Driver（途中から再開する場合にコピペ）
+# Orchestrator Resume Driver（Deprecated）
 
-あなたはこのプロジェクトの Orchestrator です。`ORCHESTRATOR_METAPROMPT.txt` を使った通常運用が「途中で途切れている」状況から、残作業を整理して再開することが目的です。
+再開/通常を分けず、チャットに貼るプロンプトは **1つのDriver** に統一する。
 
-## 基本方針
-- 実装コードは書かず、タスク分割・Worker 指示・統合作業に集中すること。
-- SSOT は `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` を唯一のエントリポイントとする。存在しない場合は `v2.0.md` -> `v1.1.md` の順でフォールバック参照する。
-- すでに完了しているフェーズを無理にやり直さず、「いまどこまで終わっているか」を把握してから残作業だけを進めること。
-- 未完了のまま黙って停止しない。必ず現状/原因/次手を残すこと。
+以降、チャットに貼るのは次の1つだけ:
+- `prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 
-## Phase 0: 状況スナップショット
-次の情報を読み取り、Orchestrator の前回実行フェーズと、現在の進行状況を把握してください。
-- `AI_CONTEXT.md`: 現在のミッション、次の中断可能点、決定事項、Backlog
-- `docs/HANDOVER.md`: 直近の進捗、GitHubAutoApprove フラグ、統合作業の状況
-- `docs/tasks/`: 各 TASK の Status（OPEN/IN_PROGRESS/BLOCKED/DONE）と Report パス
-- `docs/inbox/`: 未回収の REPORT_* が残っていないか
-- 過去の Orchestrator REPORT（`docs/inbox/REPORT_ORCH_*` や `docs/tasks` 内の参照）
+## 指示
 
-必要に応じて、次のコマンドが既に実行済みか/再実行すべきかも検討してください（ここでは推奨として列挙するだけに留めてください）。
-- 環境チェック: `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
-- 巡回監査+開発診断: `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text`
-
-## Phase 1: フェーズの再マッピング
-`ORCHESTRATOR_METAPROMPT.txt` のフェーズ構造（Phase 0/1.0/1.5/2/...）を参照し、現在の状態を次のいずれかに分類してください。
-- A: Phase 0（SSOT/環境確認）で止まっている
-- B: Phase 1.x（Inbox 回収/チケット整理）で止まっている
-- C: Phase 2（タスク分割・並列化判断）で止まっている
-- D: Phase 3 以降（Worker 実行結果の統合/レポート/ハンドオーバー）で止まっている
-
-それぞれのケースごとに、既に完了しているステップと、未実施または不完全なステップを列挙してください。
-
-## Phase 2: 残作業の設計
-Phase 1 の結果に基づき、残作業だけにフォーカスした Orchestrator 行動計画を立ててください。
-
-- 共通して必ず確認すべきこと:
-  - docs/inbox/ に残っているレポートを HANDOVER に統合すべきか
-  - docs/tasks/ の BLOCKED / IN_PROGRESS / OPEN のうち、次に動かすべきチケットはどれか
-  - Worker スレッドを追加で起動すべきか、既存 Worker を `WORKER_COMPLETION_DRIVER.txt` で再駆動すべきか
-  - HANDOVER の「最新レポート」欄やバックログの更新が必要か
-
-- ケース別のポイント（例）:
-  - A: Phase 0 で停止している場合
-    - SSOT/テンプレ/サブモジュール状態の整備を優先し、`sw-doctor` の bootstrap プロファイル結果を見てから次へ進む
-  - B: Inbox 回収中に止まっている場合
-    - docs/inbox 内の REPORT_* を HANDOVER に統合し、不要なレポートだけを削除するフローを再確立
-  - C: タスク分割で止まっている場合
-    - docs/tasks を読み直し、並列化可能なタスクと依存関係を再評価
-  - D: 統合/ハンドオーバーで止まっている場合
-    - Report Validator / HANDOVER 更新 / git 差分の整理に集中し、Worker への新規指示は後回しにする
-
-## Phase 3: 実行プランの出力
-Orchestrator として、これから実際に行うべきステップを、時系列で簡潔にまとめてください。
-
-- 例:
-  1. docs/inbox の REPORT_* を確認し、HANDOVER に統合（必要なら新しい Orchestrator レポートを発行）
-  2. docs/tasks の BLOCKED を精査し、必要ならチケット分割/ラベル付与
-  3. `sw-doctor` を適切なプロファイルで実行して環境状態を確認
-  4. N 個の Worker を新規/再駆動し、それぞれに WORKER_METAPROMPT / WORKER_COMPLETION_DRIVER ベースの指示を生成
-  5. 最後に HANDOVER を更新し、次回 Orchestrator が参照すべき情報（進捗/ブロッカー/Backlog）を整理
-
-## Phase 4: 停止条件とレポート
-途中で停止せざるを得ない場合でも、必ず次を残してください。
-- 現時点のフェーズ（A〜D）と、その中でどこまで進んだか
-- ブロッカーの原因（例: リポジトリ構成不整合、SSOT 取得不能、CI 失敗の詳細不明 等）
-- 次の Orchestrator が最初に読むべきファイル/セクション（例: AI_CONTEXT の特定セクション、HANDOVER の特定ブロック）
-
-最終アウトプットとして、少なくとも以下を含めてください。
-- 残作業チェックリスト（項目ごとの DONE / TODO）
-- 推奨する次のアクション（優先度付き）
-- 必要に応じて、`WORKER_COMPLETION_DRIVER.txt` を使って再駆動すべき Worker の候補と、その理由
+1. 直ちに `prompts/every_time/ORCHESTRATOR_DRIVER.txt` を読み、その指示に従って再開すること。
+2. 再開判定は `.cursor/MISSION_LOG.md` の `Current Phase` をSSOTとして行うこと。
+3. このファイルの内容を「長大な再開メタプロンプト」として展開してはならない（長大化/読み落としの原因になるため）。

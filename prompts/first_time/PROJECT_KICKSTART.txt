@@ -1,99 +1,164 @@
-あなたはこのプロジェクトのセットアップ担当です。
+<instruction>
+あなたはこのプロジェクトのセットアップ担当です。プロジェクトの初期セットアップを完遂し、以降の Orchestrator/Worker が自律的に動作できる環境を構築してください。
+</instruction>
+
+<context>
+<global_rules>
 まず `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt`（Submoduleが無い場合は `prompts/global/WINDSURF_GLOBAL_RULES.txt`）を確認し、言語/書式ルールに従ってください。該当ファイルをまだ取得できない場合でも、次を厳守すること:
 - 返信は必ず日本語（英語・他言語は禁止）
 - 絵文字や過度な装飾は使用しない
+</global_rules>
 
+<ssot_reference>
 最優先で読むもの（SSOT 参照）:
 - サブモジュールがある場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
 - サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - プロジェクトルートの AI_CONTEXT.md（無ければ作成）
 - **重要**: `latest.md` が存在しない場合は、`.shared-workflows/docs/` または `docs/` 配下にある `v2.0.md` や `v1.1.md` をフォールバックとして探し、最初に見つかったものを基準ルールとして扱う。
+</ssot_reference>
 
-目的:
-- shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
+<mission_log>
+作業開始時に `.cursor/MISSION_LOG.md` を作成し、以下の情報を記録してください:
+- Mission ID: KICKSTART_<ISO8601>
+- 開始時刻: <現在時刻>
+- 現在のフェーズ: Phase 0: Bootstrap
+- ステータス: IN_PROGRESS
 
+各フェーズ完了時に MISSION_LOG.md を更新し、進捗を記録してください。
+</mission_log>
+</context>
+
+<objective>
+shared-workflows を Submodule として `.shared-workflows/` に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする（導入できない場合は `docs/` 配下の既存ファイルを参照する）。
+</objective>
+
+<error_handling>
 失敗時の復旧優先ルール（最重要）:
 - どれか1つのチェックやコマンドが失敗しても、そこで停止しない。
 - 失敗した対象について「存在確認（ファイル/ディレクトリ）」→「代替確認コマンド」→「復旧コマンド」→「再実行」の順に進める。
 - 状態確認に `sparse-checkout` 用のファイル（例: `.git/modules/.shared-workflows/info/sparse-checkout`）を前提にしない（未設定なら存在しないのが正常）。
 - 復旧できない場合でも、最後に必ず「何が無い/壊れているか」「試したコマンド」「次に必要な入力」を短く残して止まる。
+- MISSION_LOG.md にエラー内容と復旧試行ログを記録する。
+</error_handling>
 
-前提:
-- shared-workflows が明示している外部通信コマンド（git submodule add/update, git fetch/pull/push, scripts/ensure-ssot.js 等）は WINDSURF_GLOBAL_RULES に基づき **事前承認済み**。必要になったら即実行して差し支えない（GitHubAutoApprove が false でも同様）。
+<preconditions>
+shared-workflows が明示している外部通信コマンド（git submodule add/update, git fetch/pull/push, scripts/ensure-ssot.js 等）は WINDSURF_GLOBAL_RULES に基づき **事前承認済み**。必要になったら即実行して差し支えない（GitHubAutoApprove が false でも同様）。
+</preconditions>
 
-やること:
-1) 現状確認
-- .shared-workflows/ が存在するか確認
-- git status -sb で作業ツリー確認
-- docs/inbox/ が `.gitkeep` のみに保たれているか、docs/tasks/ の DONE がレポートと紐づくかをざっくり確認し、異常があれば「セットアップ完了後の最優先修復項目」としてメモする
-  - PowerShell 例: `Get-ChildItem -Force docs/inbox` / `Get-ChildItem -Force docs/tasks`
+<workflow>
+<phase name="Phase 0: Bootstrap & 現状確認">
+<step>
+1. `.cursor/MISSION_LOG.md` を作成（`.cursor/MISSION_LOG_TEMPLATE.md` をベースに）
+2. `.shared-workflows/` が存在するか確認（`Test-Path .shared-workflows` または `ls -d .shared-workflows`）
+3. `git status -sb` で作業ツリー確認
+4. `docs/inbox/` が `.gitkeep` のみに保たれているか確認（`Get-ChildItem -Force docs/inbox` または `ls -a docs/inbox`）
+5. `docs/tasks/` の DONE がレポートと紐づくかをざっくり確認（異常があれば「セットアップ完了後の最優先修復項目」として MISSION_LOG.md に記録）
+</step>
+</phase>
 
-2) Submodule 導入（未導入の場合）
-- 推奨パスは `.shared-workflows`
-- リポジトリ: https://github.com/YuShimoji/shared-workflows.git
-- （導入しない場合は、このステップをスキップして `docs/` 配下のテンプレをそのまま参照する）
-- 導入後は以下を即実行し、必要ファイル（`docs/Windsurf_AI_Collab_Rules_latest.md` / `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` / `scripts/ensure-ssot.js` 等）が `.shared-workflows/` に揃っていることを確認する:
-  - `git submodule sync --recursive`
-  - `git submodule update --init --recursive --remote`
-- shared-workflows の状態確認は、次で行う（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
-  - `git submodule status --recursive`
-  - `git -C .shared-workflows status -sb`
-  - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
-  - `git -C .shared-workflows rev-parse HEAD`
-- `.shared-workflows/scripts/ensure-ssot.js` が存在しない場合は、以下の順で補完する（SSOT をプレースホルダで自作しない）:
-  1. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`
-  2. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root .`
-  3. どれも実行できない場合はここで停止し、「不足物」「試したコマンド」「次に必要な入力」を docs/inbox/REPORT_TASK_SETUP_*.md に記録する
-- Submodule のワークツリーが欠損/壊れている場合は、**止まらずに再取得**する:
-  1. `git submodule deinit -f .shared-workflows`
-  2. `git rm -f .shared-workflows`（コミット不要）
-  3. `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
-  4. `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
+<phase name="Phase 1: Submodule 導入（未導入の場合）">
+<step>
+1. `.shared-workflows/` が存在しない場合のみ実行:
+   - 推奨パス: `.shared-workflows`
+   - リポジトリ: https://github.com/YuShimoji/shared-workflows.git
+   - コマンド: `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+   - （導入しない場合は、このステップをスキップして `docs/` 配下のテンプレをそのまま参照する）
 
-3) 運用ストレージ（プロジェクト側）の最小セットを作成
-- プロジェクトルート: AI_CONTEXT.md
-- プロジェクトルート（任意）: ORCHESTRATION_PROMPT.md
-- `docs/HANDOVER.md`
-- `docs/tasks/`（空でもよい）
-- `docs/inbox/`（空でもよい）
+2. 導入後は以下を即実行し、必要ファイルが揃っていることを確認:
+   - `git submodule sync --recursive`
+   - `git submodule update --init --recursive --remote`
+
+3. shared-workflows の状態確認（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
+   - `git submodule status --recursive`
+   - `git -C .shared-workflows status -sb`
+   - `git -C .shared-workflows rev-parse --abbrev-ref HEAD`
+   - `git -C .shared-workflows rev-parse HEAD`
+
+4. `.shared-workflows/scripts/ensure-ssot.js` が存在しない場合は、以下の順で補完（SSOT をプレースホルダで自作しない）:
+   - 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .`
+   - プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root .`
+   - どれも実行できない場合はここで停止し、「不足物」「試したコマンド」「次に必要な入力」を docs/inbox/REPORT_TASK_SETUP_*.md に記録
+
+5. Submodule のワークツリーが欠損/壊れている場合は、**止まらずに再取得**:
+   - `git submodule deinit -f .shared-workflows`
+   - `git rm -f .shared-workflows`（コミット不要）
+   - `git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows`
+   - `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
+</step>
+</phase>
+
+<phase name="Phase 2: 運用ストレージ作成">
+<step>
+1. プロジェクトルート: AI_CONTEXT.md（存在確認: `Test-Path AI_CONTEXT.md` または `ls AI_CONTEXT.md`）
+2. プロジェクトルート（任意）: ORCHESTRATION_PROMPT.md
+3. `docs/HANDOVER.md`（存在確認: `Test-Path docs/HANDOVER.md`）
+4. `docs/tasks/`（空でもよい、存在確認: `Test-Path docs/tasks`）
+5. `docs/inbox/`（空でもよい、存在確認: `Test-Path docs/inbox`）
 
 空ディレクトリをGit管理したい場合は、次を作る（任意）:
 - docs/tasks/.gitkeep
 - docs/inbox/.gitkeep
+</step>
+</phase>
 
-4) テンプレ配置（必要な場合のみ）
-- サブモジュール導入時: `.shared-workflows/templates/AI_CONTEXT.md` などからコピー
-- サブモジュール未導入時: `templates/AI_CONTEXT.md` 等のローカルファイルをコピーして初期化
+<phase name="Phase 3: テンプレ配置（必要な場合のみ）">
+<step>
+1. サブモジュール導入時: `.shared-workflows/templates/AI_CONTEXT.md` などからコピー（存在確認してから）
+2. サブモジュール未導入時: `templates/AI_CONTEXT.md` 等のローカルファイルをコピーして初期化（存在確認してから）
+</step>
+</phase>
 
-5) 参照の固定化（重要）
-- SW_ROOT（shared-workflows配置）は `.shared-workflows/` を既定とし、無い場合は `docs/` 直下をフォールバックとして利用する。CLI/スクリプト類は自動で SW_ROOT を判定するが、特殊環境では `SW_ROOT` 環境変数で明示指定できる。
-- REPORT_CONFIG.yml は以下のいずれかを満たすこと:
-  - SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md` または `v2.0.md` または `v1.1.md` のいずれか）が存在しない場合は、以下の順に **自動補完** する（ただし SSOT をプレースホルダで自作しない）。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
-  1. `.shared-workflows/scripts/ensure-ssot.js` が存在する場合: `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
-     - PowerShell 例: `Test-Path .shared-workflows/scripts/ensure-ssot.js`
-  2. 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
-  3. プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
-  4. 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（**既存ファイルが無ければ `REPORT_TASK_SETUP_shared-workflows.md` などの新規ファイルを1つ作成し、存在しないパスを推測して何度も読み直さない**）
-- SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（旧環境では v2.0/v1.1 を latest として扱うよう ensure-ssot.js で補完する）
-- 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
-- オーケストレーション（毎回コピペ）: `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
-- オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
-- CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
-  - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を丸ごと `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行、(4) それでも復旧できない場合のみサブモジュール再追加（前述手順）を実施。
-  - 必須スクリプト（例: report-validator.js）が .shared-workflows/scripts/ にない場合、親リポジトリの scripts/ にコピーして運用する
-- `AI_CONTEXT.md` に `## タスク管理（短期/中期/長期）` や `### 短期（Next）` が欠けていても、**手動でテンプレを戻さず** `node scripts/todo-sync.js --dry-run` を実行して自動整形させる。スクリプトが見出しを追加できない場合のみ差分を記録し、原因を調査する。
-- セットアップ完了後は **当日のうちに一度 `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text` を実行し、Complete Gate（後述のメタプロンプト項目）に必要なファイル/テンプレが揃っているか確認** してから引き継ぐ。エラーが出た場合は復旧コマンドと結果を docs/inbox/REPORT_TASK_*** に必ず記録する。
+<phase name="Phase 4: 参照の固定化（重要）">
+<step>
+1. SW_ROOT（shared-workflows配置）は `.shared-workflows/` を既定とし、無い場合は `docs/` 直下をフォールバックとして利用する。CLI/スクリプト類は自動で SW_ROOT を判定するが、特殊環境では `SW_ROOT` 環境変数で明示指定できる。
 
-運用フラグ（重要）:
-- GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に
-  - GitHubAutoApprove: true
-  を記載して判断根拠を固定する（未記載なら Orchestrator が1回だけ確認して追記する）。
+2. SSOT（`docs/Windsurf_AI_Collab_Rules_latest.md` または `v2.0.md` または `v1.1.md` のいずれか）が存在しない場合は、以下の順に **自動補完** する（ただし SSOT をプレースホルダで自作しない）。**各ステップは最大1回のみ試行し、失敗したら次へ進む（無限リトライ禁止）**:
+   - `.shared-workflows/scripts/ensure-ssot.js` が存在する場合: `node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`（存在確認: `Test-Path .shared-workflows/scripts/ensure-ssot.js`）
+   - 共有クローンがある場合: `node ../shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail`
+   - プロジェクト側 `scripts/` に `ensure-ssot.js` がある場合: `node scripts/ensure-ssot.js --project-root . --no-fail`
+   - 上記が全て不可能/失敗で SSOT が揃わない場合はここで停止し、docs/inbox/REPORT_TASK_SETUP_*.md に事実と試行ログを残す（**既存ファイルが無ければ `REPORT_TASK_SETUP_shared-workflows.md` などの新規ファイルを1つ作成し、存在しないパスを推測して何度も読み直さない**）
 
-6) 変更をコミット
-- セットアップ差分（submodule追加、ファイル追加）をコミットして共有可能にする（必要なら push）
+3. 参照パスの固定化（**存在確認してから参照**）:
+   - SSOT（latest）: `docs/Windsurf_AI_Collab_Rules_latest.md`（旧環境では v2.0/v1.1 を latest として扱うよう ensure-ssot.js で補完する）
+   - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`（存在確認: `Test-Path docs/windsurf_workflow/OPEN_HERE.md` または `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`）
+   - オーケストレーション（毎回コピペ / 1つに統一）: `prompts/every_time/ORCHESTRATOR_DRIVER.txt`（存在確認してから）
+   - オーケストレーション手順（参照）: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`（存在確認してから）
+   - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
 
+4. CLI類（`report-orch-cli.js` / `report-validator.js` / `todo-sync.js` 等）が `.shared-workflows/scripts/` に存在するか確認し、`node .shared-workflows/scripts/<name>` で実行できる状態を保証する。Submoduleが無い場合は `scripts/` 直下へコピーして同名コマンドを利用する。
+   - 見つからない/壊れている場合は **停止せず** 次を順番に行う: (1) `.shared-workflows/` で `git submodule sync --recursive` → `git submodule update --init --recursive --remote`、(2) `.shared-workflows/scripts/` から目的スクリプトと依存ディレクトリ（例: `scripts/utils/`）を丸ごと `scripts/` にコピーし `node scripts/<name>.js` が動くことを確認、(3) 共有クローン（例: `../shared-workflows/scripts/<name>.js`）を直接指定して実行、(4) それでも復旧できない場合のみサブモジュール再追加（前述手順）を実施。
+   - 必須スクリプト（例: report-validator.js）が .shared-workflows/scripts/ にない場合、親リポジトリの scripts/ にコピーして運用する
+
+5. `AI_CONTEXT.md` に `## タスク管理（短期/中期/長期）` や `### 短期（Next）` が欠けていても、**手動でテンプレを戻さず** `node scripts/todo-sync.js --dry-run` を実行して自動整形させる。スクリプトが見出しを追加できない場合のみ差分を記録し、原因を調査する。
+
+6. セットアップ完了後は **当日のうちに一度 `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text` を実行し、Complete Gate（後述のメタプロンプト項目）に必要なファイル/テンプレが揃っているか確認** してから引き継ぐ。エラーが出た場合は復旧コマンドと結果を docs/inbox/REPORT_TASK_*** に必ず記録する。
+</step>
+</phase>
+
+<phase name="Phase 5: 運用フラグ設定">
+<step>
+GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 docs/HANDOVER.md に以下を記載して判断根拠を固定する（未記載なら Orchestrator が1回だけ確認して追記する）:
+- GitHubAutoApprove: true
+</step>
+</phase>
+
+<phase name="Phase 6: 変更をコミット">
+<step>
+セットアップ差分（submodule追加、ファイル追加）をコミットして共有可能にする（必要なら push）
+</step>
+</phase>
+</workflow>
+
+<output_format>
 完了報告:
 - どのファイル/ディレクトリを作成したか
 - Complete Gate に必要な項目の初期状態（docs/inbox 空、docs/HANDOVER.md 更新済み、report-validator 実行ログ 等）
 - 次に貼るべきプロンプト（通常は Orchestrator Metaprompt）
+- `.cursor/MISSION_LOG.md` の最終更新（Phase 6 完了を記録）
+</output_format>
+
+<self_correction>
+- ファイルパスは **動的に確認** すること（`ls`, `find`, `Test-Path` 等を使用）。ハードコード禁止。
+- エラーが発生した場合は、MISSION_LOG.md に記録し、復旧手順を試行する。
+- 3回試行しても解決しない場合のみ、状況と試行内容を整理してユーザーに判断を仰ぐ。
+</self_correction>

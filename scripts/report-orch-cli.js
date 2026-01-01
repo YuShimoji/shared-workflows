@@ -130,27 +130,39 @@ function updateAiContext(contextPath, timestamp, progressPercent, workerStatus) 
   // Update Worker Status if provided
   if (workerStatus) {
     const workerStatusSectionHeader = '## Worker完了ステータス';
-    const workerStatusRe = /## Worker完了ステータス\s*\n\n([\s\S]*?)(?=\n\n##|$)/;
+    // 既存セクションの検出（改行コードを考慮して柔軟に）
+    const sectionMatch = content.match(/## Worker完了ステータス[\r\n]+([\s\S]*?)(?=\n## |$)/);
     const newEntry = `- ${workerStatus}`;
 
-    if (workerStatusRe.test(content)) {
-      content = content.replace(workerStatusRe, (match, items) => {
-        const lines = items.split('\n').filter(l => l.trim());
-        const [workerName] = workerStatus.split(':');
-        const existingIdx = lines.findIndex(l => l.includes(`- ${workerName}:`));
-        if (existingIdx !== -1) {
-          lines[existingIdx] = newEntry;
-        } else {
-          lines.push(newEntry);
+    if (sectionMatch) {
+      const currentBody = sectionMatch[1];
+      const lines = currentBody.split(/\r?\n/).filter(l => l.trim().length > 0);
+      const [workerName] = workerStatus.split(':');
+      
+      let updated = false;
+      const newLines = lines.map(line => {
+        if (line.includes(`- ${workerName}:`)) {
+          updated = true;
+          return newEntry;
         }
-        return `${workerStatusSectionHeader}\n\n${lines.join('\n')}`;
+        return line;
       });
+
+      if (!updated) {
+        newLines.push(newEntry);
+      }
+
+      const newSectionContent = `${workerStatusSectionHeader}\n\n${newLines.join('\n')}\n\n`;
+      content = content.replace(sectionMatch[0], newSectionContent.trimEnd() + '\n\n');
     } else {
       // Create section before Backlog or at the end
       const backlogHeader = '## Backlog';
       const newSection = `${workerStatusSectionHeader}\n\n${newEntry}\n\n`;
-      if (content.includes(backlogHeader)) {
-        content = content.replace(backlogHeader, `${newSection}${backlogHeader}`);
+      
+      // Backlogヘッダーを検索（行頭マッチを推奨）
+      const backlogMatch = content.match(/^## Backlog/m);
+      if (backlogMatch) {
+        content = content.replace(backlogMatch[0], `${newSection}${backlogMatch[0]}`);
       } else {
         content = content.trimEnd() + '\n\n' + newSection;
       }

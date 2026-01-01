@@ -17,36 +17,17 @@
 ## 次のアクション
 - <次に実施するアクション（担当/優先度）>
 
-## State
-- <進捗要約（総タスク数、完了数、統合済みレポート数、残タスク）>
-- <最終的に行った作業（例: REPORT回収、HANDOVER更新）>
+## ガイド
+- <作業の中項目（HANDOVER更新 / Inbox整理 / Worker再投入 / Git反映 など）>
 
-## Strategy
-- Workers: <0-3>
-- Reason: <並列判断の理由>
-- Risk: <Tier分布やブロッカー>
-- Duration: <本フェーズの所要時間>
+## メタプロンプト再投入条件
+- <次にDriverを再投入する条件（例: Worker納品回収後 / 新規タスク起票後 / ブロッカー発生時）>
 
-## Tickets
-- <TASK_...>: <Status（DONE/BLOCKED等） + 最終作業メモ>
-- 全タスク完了の場合も、最後に実施した作業を列挙する。
-
-## Next
-- <ユーザー/次担当のアクション>
-
-## Proposals
-- <今後起票するチケット案/改善案>
-
-## Risk
-- <リスク評価・残課題>
-
-## Outlook
-- Short-term: <直近1セッションで着手する内容（例: レトロ、監査）>
-- Mid-term: <今後数セッションで扱う内容（例: 優先バックログ）>
-- Long-term: <中長期でのゴールや指標>
+## 改善提案（New Feature Proposal）
+- <最低1件。優先度（High/Medium/Low）と理由を明記>
 
 ## Verification
-- <実行したコマンド（例: git status -sb）と結果>
+- <実行したコマンドと結果（例: report-validator.js=OK）>
 
 ## Integration Notes
-- <docs/HANDOVER.md や docs/tasks/ に反映した要約>
+- <docs/HANDOVER.md / docs/tasks/ / docs/reports/ への反映要約>

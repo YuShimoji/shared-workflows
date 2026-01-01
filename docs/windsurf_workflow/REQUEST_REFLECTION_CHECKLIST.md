@@ -1,4 +1,4 @@
-﻿# Request Reflection Checklist
+# Request Reflection Checklist
 
 最終更新: 2025-12-23  
 更新者: Cascade
@@ -36,6 +36,6 @@
 
 ---
 
-このチェックリストは `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` / `WORKER_METAPROMPT.txt` からも参照される。手順を省略せず、依頼が未反映のまま終了しないよう運用すること。
+このチェックリストは `prompts/every_time/ORCHESTRATOR_DRIVER.txt` / `WORKER_METAPROMPT.txt` からも参照される。手順を省略せず、依頼が未反映のまま終了しないよう運用すること。
 
 ---

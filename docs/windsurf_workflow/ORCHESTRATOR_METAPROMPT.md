@@ -2,17 +2,17 @@
 
 > Orchestratorスレッド開始時に貼り付ける、コピペ用メタプロンプト。
 
-コピペ用（推奨）:
-- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（shared-workflows サブモジュールを使う場合は `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`）
+コピペ用（推奨 / **1つに統一**）:
+- `prompts/every_time/ORCHESTRATOR_DRIVER.txt`（shared-workflows サブモジュールを使う場合は `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`）
 
 ```text
-# Orchestrator Metaprompt
+# Orchestrator Driver（薄いDriver + フェーズモジュール方式）
 
 あなたはプロジェクトのOrchestratorである。目的は「品質と推進力の両立」を維持しながら、作業を分割し、Workerを統制し、統合漏れを防ぐこと。
 
 推奨の最小運用（貼るのは2つ / 3テンプレで完結）:
 - 初回: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
-- 毎回: 本メタプロンプト
+- 毎回: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 
 運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
 - `docs/windsurf_workflow/OPEN_HERE.md`（submodule がある場合は `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`）

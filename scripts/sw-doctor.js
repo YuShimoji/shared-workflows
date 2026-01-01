@@ -104,7 +104,7 @@ function checkEnvironment(projectRoot, options = {}) {
   const swRoot = detectSwRoot(projectRoot);
   if (swRoot) {
     if (!quiet) {
-      console.log(`✓ shared-workflows detected: ${swRoot}`);
+      console.log(` shared-workflows detected: ${swRoot}`);
     }
     results.push(
       createCheckResult('env.sw-root', 'OK', `shared-workflows detected: ${swRoot}`, { swRoot })
@@ -121,7 +121,7 @@ function checkEnvironment(projectRoot, options = {}) {
     const fullPath = path.join(projectRoot, dir);
     if (fs.existsSync(fullPath)) {
       if (!quiet) {
-        console.log(`✓ ${dir} exists`);
+        console.log(` ${dir} exists`);
       }
       results.push(
         createCheckResult('env.required-dir', 'OK', `${dir} exists`, { dir, path: fullPath })
@@ -141,7 +141,7 @@ function checkEnvironment(projectRoot, options = {}) {
     const fullPath = path.join(projectRoot, file);
     if (fs.existsSync(fullPath)) {
       if (!quiet) {
-        console.log(`✓ ${file} exists`);
+        console.log(` ${file} exists`);
       }
       results.push(
         createCheckResult('env.required-file', 'OK', `${file} exists`, { file, path: fullPath })
@@ -167,7 +167,7 @@ function checkEnvironment(projectRoot, options = {}) {
     const fullPath = path.join(projectRoot, file);
     if (fs.existsSync(fullPath)) {
       if (!quiet) {
-        console.log(`✓ SSOT ${file} exists`);
+        console.log(` SSOT ${file} exists`);
       }
       results.push(
         createCheckResult('env.ssot-file', 'OK', `SSOT ${file} exists`, { file, path: fullPath })
@@ -211,7 +211,7 @@ function checkScripts(projectRoot, swRoot, options = {}) {
 
     if (fs.existsSync(projectPath)) {
       if (!quiet) {
-        console.log(`✓ ${script} (project)`);
+        console.log(` ${script} (project)`);
       }
       results.push(
         createCheckResult('script.available', 'OK', `${script} available in project`, {
@@ -222,7 +222,7 @@ function checkScripts(projectRoot, swRoot, options = {}) {
       );
     } else if (swPath && fs.existsSync(swPath)) {
       if (!quiet) {
-        console.log(`✓ ${script} (shared-workflows)`);
+        console.log(` ${script} (shared-workflows)`);
       }
       results.push(
         createCheckResult('script.available', 'OK', `${script} available in shared-workflows`, {
@@ -416,7 +416,7 @@ function suggestRepairs(allIssues, allWarnings) {
   console.log('\n=== Repair Suggestions ===\n');
 
   if (allIssues.length === 0 && allWarnings.length === 0) {
-    console.log('✓ No issues detected. System is healthy.');
+    console.log(' No issues detected. System is healthy.');
     return;
   }
 
@@ -473,6 +473,61 @@ function evaluateResults(results, severityPolicy) {
   return { issues, warnings };
 }
 
+function checkSSOTContent(projectRoot, options = {}) {
+  const quiet = options.quiet === true;
+  if (!quiet) {
+    console.log('\n=== SSOT Content Check ===\n');
+  }
+
+  const issues = [];
+  const warnings = [];
+  const results = [];
+
+  // Check latest.md content
+  const latestPath = path.join(projectRoot, 'docs/Windsurf_AI_Collab_Rules_latest.md');
+  if (fs.existsSync(latestPath)) {
+    const content = readFileSafe(latestPath);
+    if (!content || content.trim().length < 100) {
+      const msg = 'SSOT latest.md appears to be empty or too short';
+      issues.push(msg);
+      results.push(createCheckResult('ssot.content.latest', 'ERROR', msg, { path: latestPath }));
+    } else {
+      results.push(createCheckResult('ssot.content.latest', 'OK', 'SSOT latest.md has valid content'));
+    }
+  }
+
+  // Check legacy files for warning
+  const legacyFiles = [
+    'docs/Windsurf_AI_Collab_Rules_v1.1.md',
+    'docs/Windsurf_AI_Collab_Rules_v2.0.md'
+  ];
+
+  for (const file of legacyFiles) {
+    const fullPath = path.join(projectRoot, file);
+    if (fs.existsSync(fullPath)) {
+      const content = readFileSafe(fullPath);
+      const hasWarning = content && (
+        content.includes('レガシー') || 
+        content.includes('非推奨') || 
+        content.includes('latest.md')
+      );
+
+      if (!hasWarning) {
+        const msg = `${file} exists but missing legacy warning`;
+        warnings.push(msg);
+        results.push(createCheckResult('ssot.content.legacy', 'WARN', msg, { file }));
+      } else {
+        if (!quiet) {
+          console.log(` ${file} has legacy warning`);
+        }
+        results.push(createCheckResult('ssot.content.legacy', 'OK', `${file} has legacy warning`));
+      }
+    }
+  }
+
+  return { issues, warnings, results };
+}
+
 function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {}) {
   const quiet = options.quiet === true;
   const profile = doctorProfiles[profileId];
@@ -482,6 +537,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
   }
   
   const envCheck = checkEnvironment(projectRoot, { quiet });
+  const ssotContentCheck = checkSSOTContent(projectRoot, { quiet });
   const scriptCheck = checkScripts(projectRoot, envCheck.swRoot, { quiet });
   
   let auditResult = { issues: [], warnings: [], results: [] };
@@ -507,6 +563,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
   
   const allResults = [
     ...envCheck.results,
+    ...ssotContentCheck.results,
     ...scriptCheck.results,
     ...auditResult.results,
     ...devCheckResult.results,
@@ -523,6 +580,7 @@ function runAllChecks(projectRoot, profileId = 'shared-orch-doctor', options = {
     summary: { issues, warnings },
     results: {
       environment: envCheck.results,
+      ssotContent: ssotContentCheck.results,
       scripts: scriptCheck.results,
       audit: auditResult.results,
       devCheck: devCheckResult.results,
@@ -578,11 +636,11 @@ function main() {
   suggestRepairs(checkResult.summary.issues, checkResult.summary.warnings);
 
   if (checkResult.summary.issues.length > 0) {
-    console.log('\n⚠ Critical issues detected. Please address them before proceeding.');
+    console.log('\n Critical issues detected. Please address them before proceeding.');
     process.exit(1);
   }
 
-  console.log('\n✓ Doctor check complete.');
+  console.log('\n Doctor check complete.');
   process.exit(0);
 }
 
@@ -597,6 +655,7 @@ module.exports = {
   runDevCheck,
   runReportValidation,
   runTodoCheck,
+  checkSSOTContent,
   runAllChecks,
   createCheckResult,
   doctorProfiles
