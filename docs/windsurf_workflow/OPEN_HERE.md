@@ -67,6 +67,11 @@ Global Rules（エディタごとの統一）:
 - **Worker起動判定（準備ループ防止）**: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
   - Worker 投入の直前に GO/NO-GO を判断し、整合取りで停滞するループを防ぐ
 
+- **実運用手順（成功/失敗判定つき）**: `.shared-workflows/docs/windsurf_workflow/OPERATIONS_RUNBOOK.md`
+
+- **更新チェック（推奨）**: `.shared-workflows/scripts/sw-update-check.js`
+  - 例: `node .shared-workflows/scripts/sw-update-check.js`
+
 ---
 
 ## 運用ストレージ（プロジェクト側で必ず見る場所）
