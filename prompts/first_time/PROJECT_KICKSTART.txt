@@ -58,7 +58,11 @@ shared-workflows が明示している外部通信コマンド（git submodule a
        3) “プロジェクトを開いているディレクトリ”に移動してから再実行（例: Cursor のワークスペースルートへ `Set-Location`）
    - **禁止**: `C:\\Users\\<name>` 直下の `.git` を作成/移動/削除する等の“誤修復”。削除/移動は破壊的変更なので行わない。
 
-1. `.cursor/MISSION_LOG.md` を作成（`.cursor/MISSION_LOG_TEMPLATE.md` をベースに）
+1. `.cursor/MISSION_LOG.md` を作成（MISSION_LOG_TEMPLATE をベースに）
+   - テンプレ候補（この順で存在確認してから使う）:
+     1) `.shared-workflows/.cursor/MISSION_LOG_TEMPLATE.md`（submodule運用）
+     2) `.cursor/MISSION_LOG_TEMPLATE.md`（プロジェクト直下にある場合）
+     3) `prompts/` を置いている shared-workflows リポジトリ直下の `.cursor/MISSION_LOG_TEMPLATE.md`（直読み運用）
 2. `.shared-workflows/` が存在するか確認（`Test-Path .shared-workflows` または `ls -d .shared-workflows`）
 3. `git status -sb` で作業ツリー確認
 4. `docs/inbox/` が `.gitkeep` のみに保たれているか確認（`Get-ChildItem -Force docs/inbox` または `ls -a docs/inbox`）

@@ -60,6 +60,9 @@ Global Rules（エディタごとの統一）:
 - **更新チェック（推奨）**: `.shared-workflows/scripts/sw-update-check.js`
   - 例: `node .shared-workflows/scripts/sw-update-check.js`
 
+- **終了時チェック（推奨）**: `.shared-workflows/scripts/session-end-check.js`
+  - 例: `node .shared-workflows/scripts/session-end-check.js --project-root .`
+
 ---
 
 ## 運用ストレージ（プロジェクト側で必ず見る場所）

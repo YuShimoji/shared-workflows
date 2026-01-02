@@ -61,6 +61,46 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ---
 
+### Step E: 終了時チェック（推奨）
+
+- `node .shared-workflows/scripts/session-end-check.js --project-root .`
+
+期待結果:
+- `Result: OK`
+
+補足:
+- `--no-fetch` を付けると外部通信（fetch）を抑制できる
+
+---
+
+## 2.5 Windsurf 側の推奨ユーザー対応（毎回）
+
+目的: 「AIが止まった/終わった気になる/指示無視」を、ユーザー側でも **機械的に判定**できるようにする。
+
+- **ユーザーがやること（毎回）**:
+  - `node .shared-workflows/scripts/sw-update-check.js`
+  - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
+  - （Cursorなら）`pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .`
+  - チャットに `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を貼る
+
+- **期待される結果（成功判定）**:
+  - `sw-update-check`: `Behind origin/main: 0`
+  - `sw-doctor`: ERROR が無い（WARN は理由が明確）
+  - Orchestrator のチャット出力が **固定5セクションのみ**（追加セクション無し）
+  - `## 次のアクション` に **ユーザー返信テンプレ（完了判定 + 選択肢1-3）** が含まれる
+
+- **失敗と判断する結果（即STOPして再投入/再試行）**:
+  - `Behind origin/main: N (N>0)`（submodule更新が必要）
+  - `sw-doctor` が ERROR を出す（環境不備）
+  - Orchestrator が固定5セクション以外を出力（例: 結論/作業評価）
+  - `## 次のアクション` にユーザー返信テンプレが無い（= report-validator でも ERROR になる）
+  - `git status -sb` が汚いのに「完了」と言う（完了条件違反）
+
+- **終了時の推奨ユーザー返信（固定テンプレ）**:
+  - 本ファイル「4. 終了時テンプレ」をそのまま使う
+
+---
+
 ## 3. “同期が不要な仕組み”へ寄せる方針（散逸対策）
 
 散逸しやすい情報（運用まとめ/ルール/手順/テンプレ）を「手で同期」しないため、次を原則とする:
@@ -105,7 +145,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ## 5. 改善提案（提案するべき“類する機能”）
 
-- **(提案) session-end-check**: 終了時テンプレの有無 / git clean / behind/ahead / push pending を検査し、WARN を出す簡易チェッカーを追加する
+- **(導入済み) session-end-check**: 終了時テンプレの有無 / git clean / push pending を検査し、NOT OK を出す簡易チェッカー（`scripts/session-end-check.js`）
 - **(提案) docs-entrypoint-check**: `OPEN_HERE` が本ファイルと Runbook を参照しているか、Driver が固定5セクションと終了テンプレを要求しているかを検査する（散逸の早期検知）
 
 
