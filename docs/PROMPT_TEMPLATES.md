@@ -45,6 +45,7 @@
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_latest.md`
 - 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
+- 毎回の運用SSOT（最優先）: `docs/windsurf_workflow/EVERY_SESSION.md`
 - コピペ用プロンプト集: `prompts/`
 - Windsurf Global Rules（端末統一）: `prompts/global/WINDSURF_GLOBAL_RULES.txt`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`

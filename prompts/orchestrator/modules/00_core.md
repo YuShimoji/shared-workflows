@@ -15,6 +15,10 @@
   - **次のメッセージで何を指示すべきか**（選択肢形式で提示）
 - 報告後、ユーザーからの確認なしに続行してよいが、**報告を省略してはならない**。
 
+## 終了時テンプレ（必須）
+- 停止/終了（完了でも未完了でも）の場合、必ず `## 次のアクション` に **ユーザー返信テンプレ（選択肢1-3）** を含める。
+- テンプレ本文は `docs/windsurf_workflow/EVERY_SESSION.md` を SSOT とする（submodule 運用なら `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`）。
+
 ## 停止条件
 - Forbidden Area に触れないと完遂できない
 - 仕様の仮定が 3 つ以上必要

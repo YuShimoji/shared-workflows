@@ -32,26 +32,7 @@
 Global Rules（エディタごとの統一）:
 
 - **Windsurf**: Windsurf Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼り付け
-- **Cursor**: プロジェクトルートに `.cursorrules` を作成:
-  ```bash
-  # 消費側プロジェクト（.shared-workflows がある）:
-  cp .shared-workflows/templates/.cursorrules .cursorrules
-
-  # shared-workflows リポジトリ直下で試す場合:
-  cp templates/.cursorrules .cursorrules
-  ```
-  または `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` の内容を `.cursorrules` にコピー
-
-  追加（推奨）: `.cursor/rules.md` も配置すると Cursor の取りこぼしが減る:
-  ```bash
-  # 消費側プロジェクト:
-  mkdir -p .cursor && cp .shared-workflows/templates/.cursor/rules.md .cursor/rules.md
-
-  # shared-workflows リポジトリ直下:
-  mkdir -p .cursor && cp templates/.cursor/rules.md .cursor/rules.md
-  ```
-
-  PowerShell（推奨: スクリプトで一括適用）:
+- **Cursor**: PowerShell（推奨: スクリプトで一括適用）:
   ```powershell
   # 消費側プロジェクト（.shared-workflows がある）
   pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
@@ -60,7 +41,12 @@ Global Rules（エディタごとの統一）:
   pwsh -NoProfile -File scripts/apply-cursor-rules.ps1 -ProjectRoot .
   ```
 
+  代替（非推奨: 手動での取りこぼし/運用ブレが出やすい）:
+  - `.cursorrules` と `.cursor/rules.md` を templates からコピーする
+
 参照するもの（コピペは原則しない）:
+
+- **毎回の運用SSOT（最優先）**: `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`
 
 - **Worker生成テンプレ（参照）**: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
   - Orchestrator がチケット内容（Tier/Focus/Forbidden/DoD）に合わせて Worker Prompt を都度生成するためのベース

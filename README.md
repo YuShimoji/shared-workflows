@@ -85,6 +85,7 @@
 ### 0) 迷ったらまずここ（毎回の基本）
 
 - **運用者の入口（参照。どのフォルダを開く/どれをコピペする）**: `docs/windsurf_workflow/OPEN_HERE.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（プロジェクト側 / Submodule）
+- **毎回の運用SSOT（最優先）**: `docs/windsurf_workflow/EVERY_SESSION.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`（プロジェクト側 / Submodule）
 - **コピペ用プロンプト集**: `prompts/`（このリポジトリ内） / `.shared-workflows/prompts/`（プロジェクト側 / Submodule）
 - **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
   - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`

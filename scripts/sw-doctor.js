@@ -260,9 +260,13 @@ function checkWorkflowAssets(projectRoot, swRoot, options = {}) {
   const expectedInSw = [
     'prompts/every_time/ORCHESTRATOR_DRIVER.txt',
     'prompts/orchestrator/modules/00_core.md',
+    'prompts/orchestrator/modules/P6_report.md',
     'scripts/apply-cursor-rules.ps1',
+    '.cursor/MISSION_LOG_TEMPLATE.md',
     'templates/.cursorrules',
     'templates/.cursor/rules.md',
+    'docs/windsurf_workflow/EVERY_SESSION.md',
+    'docs/windsurf_workflow/OPERATIONS_RUNBOOK.md',
   ];
 
   if (swRoot) {

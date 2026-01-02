@@ -31,6 +31,7 @@ AI は常に `latest.md` をエントリポイントとして参照してくだ�
 | `prompts/first_time/PROJECT_KICKSTART.txt` | 初回セットアップ（コピペ用） |
 | `templates/PROJECT_KICKSTART_PROMPT.md` | 初回セットアップ（参照。説明付き / フォールバック） |
 | `docs/windsurf_workflow/OPEN_HERE.md` | 運用者の入口（どのフォルダを開く / どれをコピペする） |
+| `docs/windsurf_workflow/EVERY_SESSION.md` | 毎回の運用SSOT（終了時テンプレ/完了条件/推奨コマンドの固定） |
 | `prompts/` | コピペ用プロンプト集（貼るだけ） |
 | `prompts/global/WINDSURF_GLOBAL_RULES.txt` | Windsurf Global Rules（端末ごとの統一 / コピペ用） |
 | `prompts/every_time/ORCHESTRATOR_DRIVER.txt` | Orchestrator起動/再開（毎回コピペ / **1つに統一**） |

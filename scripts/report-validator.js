@@ -104,6 +104,22 @@ function ensureOrchestratorSections(reportContent) {
     warnings.push('Verification セクションにコマンド実行結果が見当たりません');
   }
 
+  // Current-only: require a stable user reply template in 次のアクション (to avoid "one-off" endings)
+  if (usesCurrent) {
+    const nextAction = extractSection(reportContent, '次のアクション');
+    const hasCompletionJudgement = /完了判定/i.test(nextAction);
+    const hasUserReplyTemplate =
+      /ユーザー返信テンプレ/i.test(nextAction) ||
+      /【次に私（ユーザー）が返す内容】/i.test(nextAction) ||
+      /選択肢1|選択肢2|選択肢3/.test(nextAction);
+
+    if (!hasCompletionJudgement || !hasUserReplyTemplate) {
+      errors.push(
+        "次のアクション に『ユーザー返信テンプレ（完了判定 + 選択肢1-3）』がありません。EVERY_SESSION.md の終了時テンプレに合わせて追記してください。"
+      );
+    }
+  }
+
   return { errors, warnings };
 }
 

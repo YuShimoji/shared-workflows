@@ -1,5 +1,8 @@
 # Operations Runbook（実稼働手順 / 成功・失敗判定）
 
+**毎回の運用SSOT（最優先）**: `docs/windsurf_workflow/EVERY_SESSION.md`  
+この Runbook は「詳細手順/背景/例/トラブルシュート」を扱う。毎回の判断や終了時テンプレは SSOT に従う。
+
 目的: shared-workflows を他プロジェクトへ適用し、**再現性のある運用**（止まりにくい・壊れにくい）を実現する。
 
 ---
