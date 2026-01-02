@@ -15,6 +15,12 @@
 - `docs/inbox/` を列挙し、`REPORT_TASK_SETUP_*`（`.md` 拡張子付き/無しの両方）という名前の**実在するファイル**があればその内容を確認（無ければ「ログ未作成」と判断し、Phase 3 で新規に `REPORT_TASK_SETUP_shared-workflows.md` 等を作成する。存在しないパスを推測して何度も開かない）
 - `.shared-workflows/` の有無と submodule 状態（`git submodule status --recursive` の結果）
 
+加えて、事故防止として **作業ディレクトリ固定**を最初に行うこと:
+- `pwd`（または `Get-Location`）で現在位置を出す
+- `git rev-parse --show-toplevel` を 1 回だけ実行して git ルートを確定し、必要なら `Set-Location <git-root>` へ移動する
+- 失敗（`not a git repository`）時は **推測でホームがgit repo等と断定しない**。まずプロジェクトディレクトリに居ることを確認してから再実行する
+- **禁止**: `.git` の移動/削除などの破壊的“誤修復”
+
 可能であれば、次のコマンドの実行も検討してください（権限があれば Orchestrator 側で実行する想定です。ここでは「推奨コマンド」として列挙するにとどめてください）。
 - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
   - ただし `sw-doctor.js` は存在確認（例: `Test-Path .shared-workflows/scripts/sw-doctor.js`）のうえ **最大1回だけ** 実行し、存在しない/失敗する場合はその事実を REPORT_TASK_SETUP_* レポートに1回だけ記録して以降は手動点検で続行する（無限リトライ禁止）。

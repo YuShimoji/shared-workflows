@@ -48,6 +48,16 @@ shared-workflows が明示している外部通信コマンド（git submodule a
 <workflow>
 <phase name="Phase 0: Bootstrap & 現状確認">
 <step>
+0. **作業ディレクトリ固定（最重要 / 事故防止）**
+   - まず `pwd`（または PowerShell の `Get-Location`）で「いま居るディレクトリ」を出す
+   - 次に `git rev-parse --show-toplevel` を **1回だけ** 実行し、プロジェクトの git ルートを確定する
+     - 成功したら、そのパスが **現在ディレクトリ配下**か確認し、必要なら `Set-Location <git-root>` で移動してから以降の作業を行う
+     - 失敗（`not a git repository`）した場合は、**推測で「ホームが巨大git repo」等と断定してはならない**。次の順で復旧する:
+       1) `Test-Path .git` を確認（カレントが git 管理下か）
+       2) `Test-Path .shared-workflows` / `Test-Path docs` / `Test-Path AI_CONTEXT.md` を確認（プロジェクトらしい構造か）
+       3) “プロジェクトを開いているディレクトリ”に移動してから再実行（例: Cursor のワークスペースルートへ `Set-Location`）
+   - **禁止**: `C:\\Users\\<name>` 直下の `.git` を作成/移動/削除する等の“誤修復”。削除/移動は破壊的変更なので行わない。
+
 1. `.cursor/MISSION_LOG.md` を作成（`.cursor/MISSION_LOG_TEMPLATE.md` をベースに）
 2. `.shared-workflows/` が存在するか確認（`Test-Path .shared-workflows` または `ls -d .shared-workflows`）
 3. `git status -sb` で作業ツリー確認
@@ -67,6 +77,13 @@ shared-workflows が明示している外部通信コマンド（git submodule a
 2. 導入後は以下を即実行し、必要ファイルが揃っていることを確認:
    - `git submodule sync --recursive`
    - `git submodule update --init --recursive --remote`
+
+   - 可能なら更新状況も確認（推奨）:
+     - `node .shared-workflows/scripts/sw-update-check.js --no-fetch`
+
+   - **重要**: submodule を更新した場合、親リポジトリ側で `.shared-workflows` の参照コミットが更新される。
+     - 必ず `git status -sb` で `.shared-workflows` が更新対象になっていることを確認し、Phase 6 で commit する。
+     - **禁止（事故の元）**: `git -C .shared-workflows pull` だけで「更新完了」と判断すること（親側の参照コミットが更新されず、他環境で再現できない）。
 
 3. shared-workflows の状態確認（**`.git/modules/.shared-workflows/info/sparse-checkout` は sparse-checkout を有効化していない限り存在しないため、参照しない**）:
    - `git submodule status --recursive`
