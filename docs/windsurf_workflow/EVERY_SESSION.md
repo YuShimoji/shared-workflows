@@ -9,6 +9,7 @@
 
 - **入口（運用者）**: `docs/windsurf_workflow/OPEN_HERE.md`
 - **実運用の詳細（手順/期待結果）**: `docs/windsurf_workflow/OPERATIONS_RUNBOOK.md`
+- **具体シナリオ（WritingPage等）**: `docs/windsurf_workflow/DEMO_SCENARIOS.md`
 
 Submodule 運用（推奨）の場合は、上記パスの先頭に `.shared-workflows/` を付けて読む:
 - 例: `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`

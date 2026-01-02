@@ -55,6 +55,8 @@ Global Rules（エディタごとの統一）:
 
 - **実運用手順（成功/失敗判定つき）**: `.shared-workflows/docs/windsurf_workflow/OPERATIONS_RUNBOOK.md`
 
+- **デモ（WritingPage等の消費側でどう使うか）**: `.shared-workflows/docs/windsurf_workflow/DEMO_SCENARIOS.md`
+
 - **更新チェック（推奨）**: `.shared-workflows/scripts/sw-update-check.js`
   - 例: `node .shared-workflows/scripts/sw-update-check.js`
 
