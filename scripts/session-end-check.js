@@ -12,9 +12,34 @@ function run(cmd, args, options = {}) {
 }
 
 function detectGitRoot(cwd) {
+  // まず git rev-parse を試行
   const r = run('git', ['rev-parse', '--show-toplevel'], { cwd });
-  if (r.code !== 0) return null;
-  return (r.stdout || '').trim() || null;
+  if (r.code === 0) {
+    const root = (r.stdout || '').trim();
+    if (root) {
+      return root;
+    }
+  }
+
+  // git rev-parse が失敗した場合、親ディレクトリを遡って .git ディレクトリを探す
+  let currentDir = path.resolve(cwd || process.cwd());
+  const rootPath = path.parse(currentDir).root; // Windows: 'C:\', Unix: '/'
+
+  while (currentDir !== rootPath) {
+    const gitDir = path.join(currentDir, '.git');
+    try {
+      const stat = fs.statSync(gitDir);
+      if (stat.isDirectory() || stat.isFile()) {
+        // .git がディレクトリまたはファイル（worktree/submodule の場合）の場合
+        return currentDir;
+      }
+    } catch {
+      // .git が存在しない場合は次の親ディレクトリへ
+    }
+    currentDir = path.dirname(currentDir);
+  }
+
+  return null;
 }
 
 function listReportCandidates(projectRoot, options = {}) {
