@@ -34,7 +34,7 @@ GitHubAutoApprove: false
 
 ## ブロッカー
 
-- なし
+- **TASK_UNITY_CYCLIC_DEPS**: BLOCKED — Unity プロジェクトへのアクセスが不可能な環境のため、タスクを実行できません。Unity プロジェクトの場所を特定するか、Unity プロジェクトのワークスペースを開いてから、このタスクを再開する必要があります。詳細は `docs/inbox/REPORT_UNITY_CYCLIC_DEPS_20250105.md` を参照してください。
 
 ## バックログ
 
