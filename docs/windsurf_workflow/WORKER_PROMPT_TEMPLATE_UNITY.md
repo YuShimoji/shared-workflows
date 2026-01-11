@@ -16,10 +16,11 @@
   - 参照ファイル: `docs/Windsurf_AI_Collab_Rules_latest.md`, `docs/HANDOVER.md`, チケット
   - 停止条件 / 停止時アウトプット / 完了時チャット1行
   - **MISSION_LOG.md の最新状態**: 現在のフェーズ、進捗、コンテキスト情報を含める。
-  - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runner実行方法
+  - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runnerでのテスト実行手順
 - 可変にしてよい:
   - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合は停止条件へ）
   - プロジェクト固有の罠や検証観点
+  - Unity固有の検証手順（プロジェクトによって異なる場合）
 
 ---
 
@@ -28,7 +29,7 @@
 ```xml
 <instruction>
 あなたは分散開発チームの Worker です。割り当てられた 1 タスクだけを完遂し、証跡を残してください。
-**Unityプロジェクト向けタスクのため、Unity Editor上での検証が必要な場合があります。**
+**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test Runnerでのテスト実行が必要な場合があります。
 </instruction>
 
 <context>
@@ -61,7 +62,9 @@ Phase 1: 前提の固定
 Phase 2: 境界
 - Focus Area: <FOCUS_AREA>（この範囲のみ変更可能）
 - Forbidden Area: <FORBIDDEN_AREA>（触れる必要が出たら停止条件）
+  - **Unity固有**: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
 - DoD: <DOD>（完了時にチェックリストを埋め、根拠を残す）
+  - **Unity固有**: Unity Editor手動検証、Unity Test Runnerでのテスト実行が必要な場合、具体的な検証結果を記録する
 </boundaries>
 </context>
 
@@ -73,7 +76,6 @@ Phase 2: 境界
 3. 進捗: docs/HANDOVER.md
 4. チケット: <TICKET_PATH>（**存在確認: `Test-Path <TICKET_PATH>` または `ls <TICKET_PATH>`**）
 5. SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
-6. **Unity固有**: Unity Editorの起動が必要な場合、Unity Editorが利用可能か確認する
 </step>
 </phase>
 
@@ -95,9 +97,10 @@ Phase 2: 境界
 <step>
 1. Focus Area: <FOCUS_AREA>（この範囲のみ変更可能、**存在確認してから参照**）
 2. Forbidden Area: <FORBIDDEN_AREA>（触れる必要が出たら停止条件）
+   - **Unity固有**: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
 3. DoD: <DOD>（完了時にチェックリストを埋め、根拠を残す）
-4. **Unity固有**: ProjectSettings/Packages への変更が必要な場合は停止条件として扱う
-5. MISSION_LOG.md を更新（Phase 2 完了を記録）。
+   - **Unity固有**: Unity Editor手動検証、Unity Test Runnerでのテスト実行が必要な項目を確認
+4. MISSION_LOG.md を更新（Phase 2 完了を記録）。
 </step>
 </phase>
 
@@ -105,13 +108,12 @@ Phase 2: 境界
 <step>
 1. **DoD 各項目の実行可能性確認（必須）**:
    - DoD 各項目を確認し、実行可能かどうかを判断する
-   - **Unity固有**: Unity Editor上での手動検証が必要な項目がある場合、Unity Editorが利用可能か確認する
-   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、Unity Test Runnerが利用可能か確認する
+   - **Unity固有**: Unity Editor手動検証が必要な項目がある場合、実装後にUnity Editorで確認する
+   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、Unity Test Runnerまたはコマンドラインで実行する
    - 環境依存のタスク（git history 調査など）の場合:
      - Gitリポジトリではない環境では、`git log` などのコマンドは実行不可能
      - この場合、**停止条件として扱う**か、**代替手段を取る**かを判断する
      - 判断に迷う場合は、停止条件として扱う
-   - DoD に「git history」「調査」「分析」などのキーワードが含まれている場合、実際にその調査を実施できる環境かどうかを確認する
 
 2. チャットで完結させない。成果はファイル（docs/tasks / docs/inbox / docs/HANDOVER / git）に残す。
 
@@ -124,7 +126,7 @@ Phase 2: 境界
 6. ダブルチェック:
    - テスト/Push/長時間待機は結果を確認し、未達なら完了扱いにしない。
    - `git status -sb` で差分を常に把握（Gitリポジトリではない場合はスキップ可能）。
-   - **Unity固有**: Unity Editor上でのコンパイルエラー確認を実施する
+   - **Unity固有**: Unity Editorでのコンパイルエラーがないことを確認（`Unity Editor=コンパイル成功`）
 
 7. タイムアウトを宣言し、無限待機しない。
 
@@ -138,28 +140,16 @@ Phase 2: 境界
 
 1. **DoD 各項目の達成確認（必須）**:
    - DoD 各項目に対して、**実際に実施した内容**を記録する（「確認済み」などの表面的な記述は禁止）
-   - **Unity固有**: Unity Editor上での動作確認が必要な項目:
-     - Unity Editorを起動し、実際に動作を確認した内容を記録する
-     - 確認したシーン、GameObject、コンポーネント、動作結果を具体的に記録する
-     - Unity EditorのConsoleでエラー・警告がないことを確認し、結果を記録する
-   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目:
-     - Unity Test Runnerを実行し、テスト結果を記録する
-     - テストの成功/失敗、実行時間、カバレッジ（該当する場合）を記録する
-     - テスト結果のスクリーンショットやログを保存する（可能な場合）
-   - **Unity固有**: コンパイルエラー確認:
-     - Unity EditorのConsoleでコンパイルエラーがないことを確認する
-     - コンパイルエラーがある場合は、エラー内容と修正内容を記録する
-   - 環境依存のタスク（git history 調査など）の場合:
-     - Gitリポジトリではない環境では、git history 調査は実行不可能
-     - この場合、**停止条件として扱う**か、**代替手段を取る**かを判断する
-     - 停止条件として扱う場合: チケットを BLOCKED に更新し、停止時の必須アウトプットを残す
-     - 代替手段を取る場合: 代替手段の内容と根拠をレポートに記録する
+   - **Unity固有**: Unity Editor上での手動検証が必要な項目がある場合、具体的な検証手順と結果を記録する
+     - 例: `Unity Editor手動検証=プリセット保存・読み込み・削除・一覧更新を確認、正常動作を確認`
+   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、テスト実行結果を記録する
+     - 例: `Unity Test Runner=<テストクラス名>=<成功/失敗>`, `<テスト数>=<成功数>/<総数>`
+   - **Unity固有**: コンパイルエラーがないことを確認した結果を記録する
+     - 例: `Unity Editor=コンパイル成功`
    - DoD 各項目の達成根拠を以下の形式で記録する:
      - 実施したコマンド: `<cmd>=<result>`
      - 実施した調査: `<調査内容>=<結果>`
      - 実施した実装: `<実装内容>=<結果>`
-     - **Unity固有**: Unity Editor上での確認: `<確認内容>=<結果>`
-     - **Unity固有**: Unity Test Runner実行: `<テスト名>=<結果>`
    - **重要**: DoD に「git history」「調査」「分析」などのキーワードが含まれている場合、実際にその調査を実施した内容を記録する。実施していない場合は、停止条件として扱う。
 
 2. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
@@ -174,7 +164,8 @@ Phase 2: 境界
 5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
 
 6. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
-   - **Unity固有**: Unity Test Runnerでのテスト実行結果も同様に記録する
+   - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
+     - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
 
 7. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
 
@@ -185,6 +176,8 @@ Phase 2: 境界
 <phase name="Phase 5: チャット出力">
 <step>
 1. 完了時: `Done: <TICKET_PATH>. Report: <REPORT_PATH_TARGET>. Tests: <cmd>=<result>.`
+   - **Unity固有**: Unity Test Runnerでのテスト実行結果を含める
+     - 例: `Done: docs/tasks/TASK_012_....md. Report: docs/inbox/REPORT_TASK_012_....md. Tests: Unity Test Runner=全50テスト成功.`
 2. ブロッカー継続時: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候補>. Report: <REPORT_PATH_TARGET>.`
 3. MISSION_LOG.md を更新（Phase 5 完了を記録）。
 </step>
@@ -200,9 +193,10 @@ Phase 2: 境界
 - 破壊的・復旧困難操作（rebase/reset/force push 等）が必要
 - 数分以上の待機が必須、またはタイムアウト超過が見込まれる
 - **Unity固有の停止条件**:
-  - **ProjectSettings/Packages への変更が必要な場合**: ProjectSettingsやPackages/manifest.jsonへの変更は、プロジェクト全体に影響を与えるため、停止条件として扱う
-  - **Unity Editor起動が必要な長時間待機**: Unity Editorの起動やコンパイルに長時間かかる場合、タイムアウトを設定し、超過した場合は停止条件として扱う
-  - **Unity Test Runnerが実行不可能な場合**: Unity Test Runnerが利用できない環境で、DoDにUnity Test Runnerでのテスト実行が含まれている場合、停止条件として扱う
+  - `ProjectSettings/`, `Packages/` の変更が必要な場合（互換性維持のため）
+  - Unity Editor起動が必要な長時間待機（数分以上）が必須の場合
+  - Unity Test Runnerでのテスト実行が不可能な環境の場合（代替手段が取れない場合）
+  - ScriptableObject、AssetDatabase等のUnity API使用時に、適切なエラーハンドリングが実装できない場合
 - **環境依存で実行不可能なDoD項目がある場合**:
   - Gitリポジトリではない環境で、git history 調査が必要なDoD項目がある場合
   - 代替手段が取れない場合、停止条件として扱う
@@ -230,9 +224,6 @@ Phase 2: 境界
 **Duration**: <所要時間>  
 **Changes**: <変更量要約>
 
-## 概要
-- <作業の概要を記載>
-
 ## Changes
 - <file>: <詳細変更内容（何をどう変更したか）>
 
@@ -241,12 +232,13 @@ Phase 2: 境界
 
 ## Verification
 - <command>: <result（成功/失敗とログ要点）>
-- **Unity固有**: Unity Editor上での動作確認: <確認内容>=<結果>
-- **Unity固有**: Unity Test Runner実行: <テスト名>=<結果>
-- **Unity固有**: コンパイルエラー確認: <確認内容>=<結果>
+- **Unity固有**: Unity Editor手動検証結果、Unity Test Runnerでのテスト実行結果を記録
+  - 例: `Unity Editor手動検証=プリセット保存・読み込み・削除を確認、正常動作を確認`
+  - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
 
 ## Risk
 - <潜在リスク>
+- **Unity固有**: Unity Editor起動が必要な長時間待機、Unity Test Runnerでのテスト実行が不可能な環境等のリスクを記録
 
 ## Remaining
 - なし / <残件>
@@ -257,81 +249,48 @@ Phase 2: 境界
 ## Handover
 - Orchestrator への申し送り（次手・注意点・未解決事項）
 
-## 次のアクション
-- <次のアクションを記載>
-
 ## Proposals（任意）
 - 担当外で気づいた改善案・次回タスク候補
 </output_format>
-
-<unity_specific_notes>
-## Unity固有の注意点
-
-### Unity API使用時の注意点
-- **ScriptableObject**: ScriptableObjectを使用する場合、適切なエラーハンドリングとnullチェックを実装すること
-- **AssetDatabase**: AssetDatabaseを使用する場合、EditorOnlyコードとして `#if UNITY_EDITOR` で適切に分離すること
-- **EditorOnlyコード**: Editor専用のコードは必ず `#if UNITY_EDITOR` で囲み、ランタイムで実行されないようにすること
-
-### Unity Editor手動検証の手順
-1. Unity Editorを起動する
-2. 対象のシーンを開く（該当する場合）
-3. 実装した機能を実際に動作させる
-4. Unity EditorのConsoleでエラー・警告を確認する
-5. 動作確認の結果を具体的に記録する（シーン名、GameObject名、コンポーネント名、動作結果等）
-
-### Unity Test Runnerでのテスト実行方法
-1. Unity Editorで `Window > General > Test Runner` を開く
-2. テストモード（Edit Mode / Play Mode）を選択する
-3. 対象のテストを選択し、`Run All` または `Run Selected` を実行する
-4. テスト結果（成功/失敗、実行時間、カバレッジ等）を記録する
-5. テストが失敗した場合、エラーメッセージとスタックトレースを記録する
-
-### コンパイルエラー確認の手順
-1. Unity Editorを起動する
-2. Unity EditorのConsole（`Window > General > Console`）を開く
-3. コンパイルエラーがないことを確認する
-4. コンパイルエラーがある場合、エラー内容と修正内容を記録する
-</unity_specific_notes>
 
 <self_correction>
 - ファイルパスは **動的に確認** すること（`ls`, `find`, `Test-Path` 等を使用）。ハードコード禁止。
 - エラーが発生した場合は、MISSION_LOG.md に記録し、復旧手順を試行する。
 - 3回試行しても解決しない場合のみ、状況と試行内容を整理してユーザーに判断を仰ぐ。
 - MISSION_LOG.md は常に最新状態を保つこと。各フェーズ完了時に必ず更新する。
-- **Unity固有**: Unity Editor上での検証が必要な場合、実際にUnity Editorを起動して確認すること。仮定や推測での記録は禁止。
+- **Unity固有**: Unity Editor上での手動検証が必要な場合、実装後に必ずUnity Editorで動作確認を行う。
+- **Unity固有**: Unity Test Runnerでのテスト実行が必要な場合、Unity Test Runnerまたはコマンドラインで実行し、結果を記録する。
+- **Unity固有**: ScriptableObject、AssetDatabase等のUnity APIを使用する場合、適切なエラーハンドリングを実装する。
+- **Unity固有**: EditorOnlyコードは `#if UNITY_EDITOR` で適切に分離する。
 </self_correction>
 ```
 
 ---
 
-## 2. 生成例（可変であることの例示）
+## 2. 生成例（Unity固有項目の例示）
 
-### 例A: Unity実装（Tier 2 / Focus狭め）
+### 例: Unity Editor機能実装（Tier 2 / Unity固有検証）
 
 ```xml
 <instruction>
 あなたは分散開発チームの Worker です。割り当てられた 1 タスクだけを完遂し、証跡を残してください。
-**Unityプロジェクト向けタスクのため、Unity Editor上での検証が必要です。**
+**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test Runnerでのテスト実行が必要な場合があります。
 </instruction>
 
 <context>
-<mission_log>
-作業開始時に `.cursor/MISSION_LOG.md` を読み込み、現在のフェーズと進捗を確認してください。
-</mission_log>
-
 <preconditions>
-TICKET_PATH: docs/tasks/TASK_010_terrain_generator.md
+TICKET_PATH: docs/tasks/TASK_012_TerrainGenerationWindow_PresetManagement.md
 Tier: 2
-Branch: feature/TASK_010-terrain-generator
-Report Target: docs/inbox/REPORT_TASK_010_20260106.md
-Focus Area: Assets/Scripts/TerrainGenerator.cs + Assets/Editor/TerrainGeneratorEditor.cs
-Forbidden Area: ProjectSettings/ , Packages/ , Assets/以外のディレクトリ
+Branch: feature/TASK_012_terrain-window-preset-management
+Report Target: docs/inbox/REPORT_TASK_012_TerrainGenerationWindow_PresetManagement.md
+Focus Area: Assets/Scripts/Editor/TerrainGenerationWindow.cs, Assets/Scripts/Editor/TerrainPresetManager.cs
+Forbidden Area: Assets/MapGenerator/Scripts/TerrainGenerator.cs, Assets/MapGenerator/Scripts/HeightMapGenerator.cs, ProjectSettings/, Packages/
 DoD:
-- [ ] TerrainGeneratorコンポーネントが正常に動作する
-- [ ] Unity Editor上での動作確認完了
-- [ ] Unity Test Runnerでのテスト成功確認（該当する場合）
-- [ ] コンパイルエラーなし（Unity Editorで確認）
-- [ ] docs/inbox/ にレポートが作成されている
+- [ ] プリセット保存機能: 現在の設定を新しいプリセットとして保存できる
+- [ ] プリセット読み込み機能: 保存済みプリセットを選択して即座に設定を適用できる
+- [ ] Unity Editor上での動作確認: プリセット保存・読み込み・削除が正常に動作することを確認
+- [ ] Unity Test Runnerでのテスト実行: 既存テストがすべて成功することを確認
+- [ ] コンパイルエラーがない: Unity Editorでコンパイル成功を確認
 </preconditions>
 </context>
 
@@ -340,13 +299,20 @@ DoD:
 
 ---
 
-## 3. Unity固有テンプレートの使用方法
+## 3. Unity固有項目の説明
 
-### Orchestrator側での使用
-- Unityプロジェクト向けタスクを発行する際、`WORKER_PROMPT_TEMPLATE_UNITY.md` を参照してWorkerプロンプトを生成する
-- `detect-project-type.js` でUnityプロジェクトを検出し、自動的にUnity固有テンプレートを推奨する（将来的な拡張）
+### Unity Editor手動検証
+- Unity Editorを起動し、実装した機能を実際に操作して動作を確認する
+- 検証結果は具体的に記録する（例: `Unity Editor手動検証=プリセット保存・読み込み・削除を確認、正常動作を確認`）
 
-### Worker側での使用
-- Orchestratorから生成されたWorkerプロンプトに従って作業を実施する
-- Unity固有の検証手順（Unity Editor手動検証、Unity Test Runner実行等）を必ず実施する
-- 停止条件に該当する場合は、必ず停止時の必須アウトプットを残す
+### Unity Test Runnerでのテスト実行
+- Unity Test Runnerまたはコマンドラインでテストを実行し、結果を記録する
+- テスト実行結果は `<テストクラス名>=<成功/失敗>`, `<テスト数>=<成功数>/<総数>` の形式で記録する
+
+### コンパイルエラー確認
+- Unity Editorでコンパイルエラーがないことを確認する
+- 確認結果は `Unity Editor=コンパイル成功` の形式で記録する
+
+### Unity API使用時の注意点
+- ScriptableObject、AssetDatabase等のUnity APIを使用する場合、適切なエラーハンドリングを実装する
+- EditorOnlyコードは `#if UNITY_EDITOR` で適切に分離する
