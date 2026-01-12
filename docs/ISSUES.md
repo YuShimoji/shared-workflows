@@ -16,8 +16,8 @@
 
 ### DoD（受入基準）
 
-- [ ] 本ファイルの運用ルール（命名、更新、削除の扱い）が簡潔に記載されている
-- [ ] Actionsから自動実行（push）または手動実行（workflow_dispatch）でIssue同期ができる
+- [x] 本ファイルの運用ルール（命名、更新、削除の扱い）が簡潔に記載されている
+- [x] Actionsから自動実行（push）または手動実行（workflow_dispatch）でIssue同期ができる
 
 ### Note（補足）
 
@@ -31,8 +31,8 @@
 
 ### DoD（受入基準）
 
-- [ ] READMEのどこかに `docs/ISSUES.md` と同期ワークフローの存在が記載されている
-- [ ] 「更新→Actions実行→Issue反映」の最小手順が分かる
+- [x] READMEのどこかに `docs/ISSUES.md` と同期ワークフローの存在が記載されている
+- [x] 「更新→Actions実行→Issue反映」の最小手順が分かる
 
 ## 3) sync-issues.yml のラベル運用を柔軟化（任意）
 

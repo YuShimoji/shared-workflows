@@ -151,6 +151,24 @@
 - **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
   - 見る箇所: `エッジケース早見表` / `デモ2: pushが拒否される` / `デモ6: PR自動マージが働かない`
 
+## バックログ管理（Issue同期）
+
+このリポジトリでは、`docs/ISSUES.md` を起点にバックログを管理し、GitHub Actions のワークフロー（`.github/workflows/sync-issues.yml`）で自動的に GitHub Issue に同期します。
+
+### 使い方
+
+1. **バックログの更新**: `docs/ISSUES.md` を編集（各セクション（`##` 見出し）が1つのIssueに対応）
+2. **自動同期**: `docs/ISSUES.md` を `main` ブランチに push すると自動実行
+3. **手動実行**: GitHub Actions の「Reusable Sync Issues from docs」ワークフローを手動実行（`workflow_dispatch`）も可能
+
+### 運用ルール
+
+- **更新**: 見出しタイトルを変えなければ同じIssueが更新されます
+- **削除**: `docs/ISSUES.md` から削除された見出しは、`managed:docs-sync` ラベル付きの既存Issueが自動でクローズされます
+- **実行方法**: `docs/ISSUES.md` 更新時に自動実行（mainのみ）し、必要なら手動実行（workflow_dispatch）もできます
+
+詳細は [`docs/ISSUES.md`](./docs/ISSUES.md) を参照してください。
+
 ## 関連リンク
 
 - [Windsurf AI 協調開発ルール（最新版 / SSOT）](./docs/Windsurf_AI_Collab_Rules_latest.md)

@@ -1,0 +1,22 @@
+# Git attributes for encoding and line endings
+
+# Markdown files: UTF-8 encoding, LF line endings
+*.md text eol=lf encoding=utf-8
+
+# Text files: UTF-8 encoding, LF line endings
+*.txt text eol=lf encoding=utf-8
+*.yml text eol=lf encoding=utf-8
+*.yaml text eol=lf encoding=utf-8
+*.json text eol=lf encoding=utf-8
+
+# Script files
+*.ps1 text eol=crlf encoding=utf-8
+*.sh text eol=lf encoding=utf-8
+*.js text eol=lf encoding=utf-8
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
