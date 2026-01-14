@@ -172,6 +172,207 @@ function verifySystemHealth() {
   console.log('System health check passed.');
 }
 
+function extractWorkerReportInfo(reportPath) {
+  const content = readFileSafe(reportPath);
+  if (!content) return null;
+
+  const info = {
+    file: path.basename(reportPath),
+    ticket: null,
+    changes: null,
+    handover: null,
+    summary: null
+  };
+
+  // Extract Ticket from header (e.g., **Ticket**: docs/tasks/TASK_008_WorkerReportAutoIntegration.md or **Ticket**: TASK_005_ReportAudit.md)
+  const ticketMatch = content.match(/\*\*Ticket\*\*:\s*(.+?)(?:\n|$)/i);
+  if (ticketMatch) {
+    let ticketValue = ticketMatch[1].trim();
+    // If ticket is just a filename without path, try to construct the path
+    if (!ticketValue.includes('/') && !ticketValue.includes('\\')) {
+      // Assume it's in docs/tasks/ if it starts with TASK_
+      if (/^TASK_/.test(ticketValue)) {
+        ticketValue = `docs/tasks/${ticketValue}`;
+      }
+    }
+    info.ticket = ticketValue;
+  }
+
+  // Extract Changes summary from header (e.g., **Changes**: <変更量要約>)
+  const changesHeaderMatch = content.match(/\*\*Changes\*\*:\s*(.+?)(?:\n|$)/i);
+  if (changesHeaderMatch) {
+    info.changes = changesHeaderMatch[1].trim();
+  }
+
+  // Extract Changes section content
+  const changesSectionMatch = content.match(/## Changes\s*\n([\s\S]*?)(?=\n## |$)/i);
+  if (changesSectionMatch) {
+    const changesContent = changesSectionMatch[1].trim();
+    // Take first few lines as summary if header Changes is not available
+    if (!info.changes && changesContent) {
+      const lines = changesContent.split('\n').filter(l => l.trim()).slice(0, 3);
+      info.changes = lines.join('; ').replace(/^-\s*/, '').substring(0, 100);
+    }
+  }
+
+  // Extract Handover section
+  const handoverMatch = content.match(/## Handover\s*\n([\s\S]*?)(?=\n## |$)/i);
+  if (handoverMatch) {
+    info.handover = handoverMatch[1].trim();
+  }
+
+  // Generate summary from ticket and changes
+  if (info.ticket || info.changes) {
+    const parts = [];
+    if (info.ticket) {
+      const ticketName = path.basename(info.ticket, '.md');
+      parts.push(ticketName);
+    }
+    if (info.changes) {
+      parts.push(info.changes);
+    }
+    info.summary = parts.join(': ');
+  }
+
+  return info;
+}
+
+function integrateWorkerReports(handoverPath, reportsDir) {
+  if (!fs.existsSync(handoverPath)) {
+    console.warn(`HANDOVER.md not found: ${handoverPath}`);
+    return 0;
+  }
+
+  if (!fs.existsSync(reportsDir)) {
+    console.warn(`Reports directory not found: ${reportsDir}`);
+    return 0;
+  }
+
+  // Find Worker reports (REPORT_TASK_*.md)
+  const files = fs.readdirSync(reportsDir);
+  const workerReports = files.filter(f => /^REPORT_TASK_.*\.md$/i.test(f));
+  
+  if (workerReports.length === 0) {
+    console.log('No Worker reports found in docs/reports/');
+    return 0;
+  }
+
+  // Extract info from each Worker report
+  const reportInfos = [];
+  for (const reportFile of workerReports) {
+    const reportPath = path.join(reportsDir, reportFile);
+    const info = extractWorkerReportInfo(reportPath);
+    if (info && (info.ticket || info.changes || info.handover)) {
+      reportInfos.push(info);
+    }
+  }
+
+  if (reportInfos.length === 0) {
+    console.log('No valid Worker report information found.');
+    return 0;
+  }
+
+  // Read HANDOVER.md
+  let content = readFileSafe(handoverPath);
+  if (!content) {
+    console.warn('Could not read HANDOVER.md');
+    return 0;
+  }
+
+  const lines = content.split(/\r?\n/);
+  const integrationSectionIndex = lines.findIndex((line) => 
+    line.trim() === '## 統合レポート'
+  );
+
+  if (integrationSectionIndex === -1) {
+    console.warn('HANDOVER.md に「## 統合レポート」セクションが見つかりません。');
+    return 0;
+  }
+
+  // Find the end of the integration section (next ## section or end of file)
+  let sectionEndIndex = integrationSectionIndex + 1;
+  while (sectionEndIndex < lines.length && !lines[sectionEndIndex].trim().startsWith('## ')) {
+    sectionEndIndex++;
+  }
+
+  // Build new integration entries
+  const newEntries = [];
+  for (const info of reportInfos) {
+    const entryParts = [];
+    
+    // File reference
+    const reportPathRel = `docs/reports/${info.file}`;
+    entryParts.push(`- ${reportPathRel}`);
+    
+    // Ticket reference if available
+    if (info.ticket) {
+      entryParts.push(`  - Ticket: ${info.ticket}`);
+    }
+    
+    // Changes summary
+    if (info.changes) {
+      entryParts.push(`  - Changes: ${info.changes}`);
+    }
+    
+    // Handover notes if available
+    if (info.handover) {
+      const handoverLines = info.handover.split('\n')
+        .filter(l => l.trim())
+        .map(l => {
+          const trimmed = l.trim();
+          // If already starts with -, keep it; otherwise add -
+          if (trimmed.startsWith('-')) {
+            return `  ${trimmed}`;
+          }
+          return `  - ${trimmed}`;
+        })
+        .slice(0, 5); // Limit to first 5 lines
+      if (handoverLines.length > 0) {
+        // Remove "Handover:" prefix if present in first line
+        const firstLine = handoverLines[0].replace(/^  - Handover:\s*/i, '  - ');
+        entryParts.push(firstLine);
+        if (handoverLines.length > 1) {
+          entryParts.push(...handoverLines.slice(1));
+        }
+      }
+    }
+    
+    newEntries.push(entryParts.join('\n'));
+  }
+
+  // Check if entries already exist (simple check by file name)
+  const existingContent = lines.slice(integrationSectionIndex + 1, sectionEndIndex).join('\n');
+  const newEntriesToAdd = newEntries.filter(entry => {
+    const fileNameMatch = entry.match(/docs\/reports\/(REPORT_TASK_.*\.md)/);
+    if (!fileNameMatch) return true;
+    const fileName = fileNameMatch[1];
+    return !existingContent.includes(fileName);
+  });
+
+  if (newEntriesToAdd.length === 0) {
+    console.log('All Worker reports are already integrated in HANDOVER.md');
+    return 0;
+  }
+
+  // Insert new entries after the section header
+  const insertIndex = integrationSectionIndex + 1;
+  // Ensure there's a blank line after the header if needed
+  if (insertIndex < lines.length && lines[insertIndex].trim() !== '') {
+    lines.splice(insertIndex, 0, '');
+    sectionEndIndex++;
+  }
+  
+  // Insert new entries
+  const entriesToInsert = newEntriesToAdd.join('\n\n');
+  lines.splice(insertIndex, 0, entriesToInsert);
+
+  // Write back
+  writeFileSafe(handoverPath, lines.join('\n'));
+  console.log(`Integrated ${newEntriesToAdd.length} Worker report(s) into HANDOVER.md`);
+  
+  return newEntriesToAdd.length;
+}
+
 function updateGit(commitMessage) {
   console.log('Staging all changes...');
   if (!runCommand('git add .')) return false;
@@ -210,6 +411,13 @@ function main() {
       const updatedTasks = updateTaskReferences(docsDir);
       if (updatedTasks > 0) {
         console.log(`Updated references in ${updatedTasks} task files.`);
+      }
+
+      // 1.6 Integrate Worker Reports into HANDOVER.md
+      const handoverPath = path.join(docsDir, 'HANDOVER.md');
+      const integrated = integrateWorkerReports(handoverPath, reportsDir);
+      if (integrated > 0) {
+        console.log(`Integrated ${integrated} Worker report(s) into HANDOVER.md`);
       }
     }
 

@@ -7,3 +7,5 @@ server.log
 docs/inbox/REPORT_*.md
 scripts/ahk/windsurf_autopilot.ini
 scripts/ahk/windsurf_autopilot_fixed.ahk
+docs/PROGRESS_DASHBOARD.md
+docs/TEST_MANUAL_REPORT_*.md

@@ -12,9 +12,32 @@ function runCommand(cmd, cwd) {
 }
 
 function detectGitRoot(cwd) {
+  // まず git rev-parse を試行
   const output = runCommand('git rev-parse --show-toplevel', cwd);
   const root = (output || '').trim();
-  return root || null;
+  if (root) {
+    return root;
+  }
+
+  // git rev-parse が失敗した場合、親ディレクトリを遡って .git ディレクトリを探す
+  let currentDir = path.resolve(cwd || process.cwd());
+  const rootPath = path.parse(currentDir).root; // Windows: 'C:\', Unix: '/'
+
+  while (currentDir !== rootPath) {
+    const gitDir = path.join(currentDir, '.git');
+    try {
+      const stat = fs.statSync(gitDir);
+      if (stat.isDirectory() || stat.isFile()) {
+        // .git がディレクトリまたはファイル（worktree/submodule の場合）の場合
+        return currentDir;
+      }
+    } catch {
+      // .git が存在しない場合は次の親ディレクトリへ
+    }
+    currentDir = path.dirname(currentDir);
+  }
+
+  return null;
 }
 
 function parseGitLog(repoPath) {
@@ -337,6 +360,9 @@ function validateReport(reportPath, configPath, projectRoot) {
   errors.push(...fileChecks.errors);
   warnings.push(...fileChecks.warnings);
 
+  const suggestions = generateSuggestions(errors, warnings);
+  const isValid = errors.length === 0;
+
   console.log(`Validation for ${reportPath}:`);
   if (errors.length) {
     console.log('Errors:', errors);
@@ -344,21 +370,105 @@ function validateReport(reportPath, configPath, projectRoot) {
   if (warnings.length) {
     console.log('Warnings:', warnings);
   }
-  const suggestions = generateSuggestions(errors, warnings);
   if (suggestions.length) {
     console.log('Suggestions:', suggestions);
   }
-  if (errors.length === 0) {
+  if (isValid) {
     console.log('OK');
-    return true;
   }
-  return false;
+
+  return { errors, warnings, suggestions, isValid };
 }
 
-const [, , reportPathArg, configPathArg, projectRootArg] = process.argv;
+function appendValidationResultsToReport(reportPath, validationResults) {
+  const { errors, warnings, suggestions, isValid } = validationResults;
+  let content = fs.readFileSync(reportPath, 'utf8');
+
+  // 検証結果をフォーマット
+  const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  const status = isValid ? '✅ OK' : '❌ Errors found';
+  
+  let validationOutput = `- \`node scripts/report-validator.js\` (${timestamp}): ${status}`;
+  
+  if (errors.length > 0) {
+    validationOutput += `\n  - Errors: ${errors.length}`;
+    errors.forEach(err => {
+      validationOutput += `\n    - ${err}`;
+    });
+  }
+  
+  if (warnings.length > 0) {
+    validationOutput += `\n  - Warnings: ${warnings.length}`;
+    warnings.forEach(warn => {
+      validationOutput += `\n    - ${warn}`;
+    });
+  }
+  
+  if (suggestions.length > 0) {
+    validationOutput += `\n  - Suggestions:`;
+    suggestions.forEach(sugg => {
+      validationOutput += `\n    - ${sugg}`;
+    });
+  }
+
+  // ## Verification セクションを検出
+  const verificationRegex = /(## Verification\s*\r?\n)([\s\S]*?)(?=\n## |$)/i;
+  const match = content.match(verificationRegex);
+
+  if (match) {
+    // 既存の検証結果を検出（report-validator.js の実行結果を探す）
+    const existingSection = match[2];
+    const validatorResultRegex = /- `node scripts\/report-validator\.js`[^\n]*(?:\n(?:  - |    - )[^\n]*)*/;
+    
+    // 次のセクションの開始位置を取得
+    const sectionEnd = match.index + match[0].length;
+    const remainingContent = content.substring(sectionEnd);
+    const nextSectionMatch = remainingContent.match(/^\n## /);
+    
+    if (validatorResultRegex.test(existingSection)) {
+      // 既存の検証結果を置き換え
+      const newSection = existingSection.replace(validatorResultRegex, validationOutput);
+      const replacement = match[1] + newSection;
+      content = content.substring(0, match.index) + replacement + remainingContent;
+    } else {
+      // 既存の検証結果がない場合は追記
+      const newSection = existingSection.trim() 
+        ? `${existingSection.trim()}\n${validationOutput}`
+        : validationOutput;
+      const replacement = match[1] + newSection;
+      content = content.substring(0, match.index) + replacement + remainingContent;
+    }
+  } else {
+    // ## Verification セクションが存在しない場合は作成
+    // Integration Notes の前に追加、なければ最後に追加
+    const integrationNotesRegex = /(## Integration Notes\s*\r?\n)/i;
+    if (integrationNotesRegex.test(content)) {
+      content = content.replace(integrationNotesRegex, `## Verification\n\n${validationOutput}\n\n$1`);
+    } else {
+      content = content.trimEnd() + `\n\n## Verification\n\n${validationOutput}\n`;
+    }
+  }
+
+  fs.writeFileSync(reportPath, content, 'utf8');
+  console.log(`検証結果をレポートに追記しました: ${reportPath}`);
+}
+
+function hasFlag(flag) {
+  return process.argv.slice(2).includes(flag);
+}
+
+const args = process.argv.slice(2);
+const appendToReport = hasFlag('--append-to-report');
+
+// --append-to-report オプションを除いた引数を取得
+const filteredArgs = args.filter(arg => arg !== '--append-to-report');
+
+const reportPathArg = filteredArgs[0];
+const configPathArg = filteredArgs[1];
+const projectRootArg = filteredArgs[2];
 
 if (!reportPathArg) {
-  console.error('Usage: node scripts/report-validator.js <reportPath> [configPath] [projectRoot]');
+  console.error('Usage: node scripts/report-validator.js <reportPath> [configPath] [projectRoot] [--append-to-report]');
   process.exit(1);
 }
 
@@ -391,7 +501,13 @@ function resolveConfigPath(inputPath, projectRoot) {
 const resolvedConfigPath = resolveConfigPath(configPathArg, resolvedProjectRoot);
 
 try {
-  validateReport(resolvedReportPath, resolvedConfigPath, resolvedProjectRoot);
+  const validationResults = validateReport(resolvedReportPath, resolvedConfigPath, resolvedProjectRoot);
+  
+  if (appendToReport) {
+    appendValidationResultsToReport(resolvedReportPath, validationResults);
+  }
+  
+  process.exit(validationResults.isValid ? 0 : 1);
 } catch (error) {
   console.error(error.message);
   process.exit(1);

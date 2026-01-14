@@ -114,16 +114,36 @@ function updateAiContext(contextPath, timestamp, progressPercent, workerStatus) 
   let content = fs.readFileSync(contextPath, 'utf8');
 
   // Update Timestamp
-  const timestampRe = /(- \*\*最終更新\*\*|最終更新)\s*:\s*.*$/m;
+  // Match: "- **最終更新**: <timestamp>" or "最終更新: <timestamp>"
+  const timestampRe = /(- \*\*最終更新\*\*|最終更新)\s*:\s*[^\n]*/m;
   if (timestampRe.test(content)) {
-    content = content.replace(timestampRe, (match, p1) => `${p1}: ${timestamp}`);
+    content = content.replace(timestampRe, (match, p1) => {
+      // Keep the prefix (either "- **最終更新**" or "最終更新") and update timestamp
+      return `${p1}: ${timestamp}`;
+    });
   }
 
   // Update Progress if provided
   if (progressPercent !== undefined) {
-    const progressRe = /(- \*\*進捗\*\*|進捗)\s*:\s*(\d+)%/m;
+    // Match: "- **進捗**: 100%（説明文）" or "進捗: 100%（説明文）"
+    const progressRe = /(- \*\*進捗\*\*|進捗)\s*:\s*\d+%[^\n]*/m;
     if (progressRe.test(content)) {
-      content = content.replace(progressRe, (match, p1) => `${p1}: ${progressPercent}%`);
+      content = content.replace(progressRe, (match, p1) => {
+        // Keep the prefix (either "- **進捗**" or "進捗") and update percentage
+        return `${p1}: ${progressPercent}%`;
+      });
+    } else {
+      // Progress field doesn't exist, add it after "現在のミッション" section
+      const missionSectionMatch = content.match(/(## 現在のミッション[\s\S]*?)(\n## |$)/);
+      if (missionSectionMatch) {
+        const missionContent = missionSectionMatch[1];
+        // Check if progress line already exists in mission section
+        if (!/進捗\s*:/.test(missionContent)) {
+          // Add progress line before the closing of mission section
+          const newProgressLine = `- **進捗**: ${progressPercent}%\n`;
+          content = content.replace(missionSectionMatch[0], `${missionContent}\n${newProgressLine}${missionSectionMatch[2]}`);
+        }
+      }
     }
   }
 

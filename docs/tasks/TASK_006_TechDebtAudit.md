@@ -1,6 +1,6 @@
 # Task: プロジェクト監査と技術的負債の整理 (Technical Debt & Unimplemented Features)
 
-Status: IN_PROGRESS
+Status: DONE
 Tier: 1
 Branch: main
 Owner: Orchestrator
@@ -30,10 +30,13 @@ Created: 2025-12-29T05:40:00+09:00
 - チケット化する際は、本タスクのサブタスクとしてではなく、新規チケットとして `docs/tasks/` に起票することを検討する。
 
 ## DoD
-- [ ] `report-orch-cli.js` に `--sync-context` オプションが実装され、`AI_CONTEXT.md` が更新される。
-- [ ] 旧 SSOT ファイル (`v1.1.md`, `v2.0.md`) に明確なレガシー警告が追加されている。
-- [ ] 検出された主要な TODO/FIXME が、必要に応じて新規チケット化されている。
-- [ ] 本チケットの Report 欄に完了レポートが紐付けられている。
+- [x] `report-orch-cli.js` に `--sync-context` オプションが実装され、`AI_CONTEXT.md` が更新される。
+- [x] 旧 SSOT ファイル (`v1.1.md`, `v2.0.md`) に明確なレガシー警告が追加されている。
+- [x] 検出された主要な TODO/FIXME が、必要に応じて新規チケット化されている。
+- [x] 本チケットの Report 欄に完了レポートが紐付けられている。
 
 ## Notes
 - `report-orch-cli.js` の拡張は、`todo-sync.js` のロジックを参考にする。
+
+## Report
+- [REPORT_ORCH_20260104_2115.md](../inbox/REPORT_ORCH_20260104_2115.md): 技術的負債の整理完了レポート
