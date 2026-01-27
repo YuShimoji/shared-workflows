@@ -175,3 +175,4 @@
 - [変更履歴（v2.0）](./docs/Windsurf_AI_Collab_Rules_v2.0.md#変更履歴)
 - [Issue同期用バックログ（docs/ISSUES.md）](./docs/ISSUES.md)
 - [参照ナビ（いつ・何を見るか）](#reference-navigation)
+- [文字化け修正ガイド](./docs/ENCODING_FIX_GUIDE.md) - 文字化けが発生した場合の対処法
