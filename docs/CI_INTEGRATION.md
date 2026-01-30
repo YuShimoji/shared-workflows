@@ -1,15 +1,11 @@
 # CI Integration Guide for Doctor
 
-## 概要
-
-`sw-doctor.js` は JSON 出力モード（`--format json`）により、CI/CD パイプラインから機械可読な診断結果を取得できます。
-
-このガイドでは、GitHub Actions を例に、doctor を CI に統合する方法を説明します。
-
+## 概要E
+`sw-doctor.js` は JSON 出力モード！E--format json`�E�により、CI/CD パイプラインから機械可読な診断結果を取得できます、E
+こ�Eガイドでは、GitHub Actions を例に、doctor めECI に統合する方法を説明します、E
 ## GitHub Actions での利用
 
-### 基本的なワークフロー例
-
+### 基本皁E��ワークフロー侁E
 ```yaml
 name: Doctor Health Check
 
@@ -19,8 +15,7 @@ on:
   pull_request:
     branches: [main, develop]
   schedule:
-    # 毎日 09:00 UTC に実行
-    - cron: '0 9 * * *'
+    # 毎日 09:00 UTC に実衁E    - cron: '0 9 * * *'
 
 jobs:
   doctor-check:
@@ -47,7 +42,7 @@ jobs:
           WARNINGS=$(jq '.summary.warnings | length' doctor-bootstrap.json)
           echo "Bootstrap Issues: $ISSUES, Warnings: $WARNINGS"
           if [ "$ISSUES" -gt 0 ]; then
-            echo "❌ Bootstrap check failed"
+            echo "❁EBootstrap check failed"
             exit 1
           fi
 
@@ -83,8 +78,8 @@ jobs:
 - Issues: ${full.summary.issues.length}
 - Warnings: ${full.summary.warnings.length}
 
-${bootstrap.summary.issues.length > 0 ? '❌ Bootstrap check failed' : '✅ Bootstrap check passed'}
-${full.summary.issues.length > 0 ? '❌ Full check failed' : '✅ Full check passed'}
+${bootstrap.summary.issues.length > 0 ? '❁EBootstrap check failed' : '✁EBootstrap check passed'}
+${full.summary.issues.length > 0 ? '❁EFull check failed' : '✁EFull check passed'}
             `;
             
             github.rest.issues.createComment({
@@ -95,8 +90,7 @@ ${full.summary.issues.length > 0 ? '❌ Full check failed' : '✅ Full check pas
             });
 ```
 
-### CI Strict Profile（本番環境用）
-
+### CI Strict Profile�E�本番環墁E���E�E
 ```yaml
   doctor-ci-strict:
     runs-on: ubuntu-latest
@@ -121,16 +115,15 @@ ${full.summary.issues.length > 0 ? '❌ Full check failed' : '✅ Full check pas
           WARNINGS=$(jq '.summary.warnings | length' doctor-ci-strict.json)
           
           if [ "$ISSUES" -gt 0 ] || [ "$WARNINGS" -gt 0 ]; then
-            echo "❌ CI Strict check failed"
+            echo "❁ECI Strict check failed"
             jq '.summary' doctor-ci-strict.json
             exit 1
           fi
-          echo "✅ All checks passed"
+          echo "✁EAll checks passed"
 ```
 
-## JSON 出力スキーマ
-
-doctor の JSON 出力は以下の構造を持ちます:
+## JSON 出力スキーチE
+doctor の JSON 出力�E以下�E構造を持ちまぁE
 
 ```json
 {
@@ -160,32 +153,21 @@ doctor の JSON 出力は以下の構造を持ちます:
 }
 ```
 
-### 結果の解釈
-
-- **`summary.issues`**: 失敗扱いになったチェック（exit code 1 で終了）
-- **`summary.warnings`**: 警告扱いになったチェック（profile の severityPolicy に依存）
-- **`results`**: 全チェック結果の詳細（id, severity, message, context を含む）
-
-## プロファイル別の用途
-
+### 結果の解釁E
+- **`summary.issues`**: 失敗扱ぁE��なったチェチE���E�Exit code 1 で終亁E��E- **`summary.warnings`**: 警告扱ぁE��なったチェチE���E�Erofile の severityPolicy に依存！E- **`results`**: 全チェチE��結果の詳細�E�Ed, severity, message, context を含む�E�E
+## プロファイル別の用送E
 ### `shared-orch-bootstrap`
-- **用途**: 初期セットアップ検証、環境準備確認
-- **チェック対象**: SSOT ファイル、基本ディレクトリ構造
-- **推奨実行タイミング**: PR 作成時、初回セットアップ後
-
+- **用送E*: 初期セチE��アチE�E検証、環墁E��備確誁E- **チェチE��対象**: SSOT ファイル、基本チE��レクトリ構造
+- **推奨実行タイミング**: PR 作�E時、�E回セチE��アチE�E征E
 ### `shared-orch-doctor`
-- **用途**: 定期的な健全性チェック、開発中の監査
-- **チェック対象**: 環境 + スクリプト + orchestrator-audit + dev-check
-- **推奨実行タイミング**: 毎日の定期実行、PR マージ前
-
+- **用送E*: 定期皁E��健全性チェチE��、E��発中の監査
+- **チェチE��対象**: 環墁E+ スクリプト + orchestrator-audit + dev-check
+- **推奨実行タイミング**: 毎日の定期実行、PR マ�Eジ剁E
 ### `ci-strict`
-- **用途**: 本番環境への反映前の厳密チェック
-- **チェック対象**: 全チェック（WARN も fail 扱い）
-- **推奨実行タイミング**: リリース前、main ブランチへのマージ時
-
-## カスタム設定
-
-プロジェクト固有の doctor 設定を行いたい場合は、プロジェクトルートに `.doctorrc.js` を配置します:
+- **用送E*: 本番環墁E��の反映前�E厳寁E��ェチE��
+- **チェチE��対象**: 全チェチE���E�EARN めEfail 扱ぁE��E- **推奨実行タイミング**: リリース前、main ブランチへのマ�Eジ晁E
+## カスタム設宁E
+プロジェクト固有�E doctor 設定を行いたい場合�E、�Eロジェクトルートに `.doctorrc.js` を�E置しまぁE
 
 ```javascript
 module.exports = {
@@ -205,46 +187,38 @@ module.exports = {
 };
 ```
 
-その後、以下のコマンドで実行:
+そ�E後、以下�Eコマンドで実衁E
 
 ```bash
 node scripts/sw-doctor.js --profile my-project-check --format json
 ```
 
-## トラブルシューティング
+## トラブルシューチE��ング
 
-### doctor が見つからない
-
+### doctor が見つからなぁE
 ```bash
-# shared-workflows submodule から実行
-node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format json
+# shared-workflows submodule から実衁Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format json
 
-# または、ローカルコピーを利用
+# また�E、ローカルコピ�Eを利用
 node scripts/sw-doctor.js --profile shared-orch-bootstrap --format json
 ```
 
-### JSON パース エラー
+### JSON パ�Eス エラー
 
-doctor の出力が JSON でない場合、以下を確認:
+doctor の出力が JSON でなぁE��合、以下を確誁E
 
-1. `--format json` オプションが指定されているか
-2. stderr に警告メッセージが出ていないか
-3. doctor スクリプト自体がエラーで終了していないか
-
-```bash
-# デバッグ: stderr を確認
-node scripts/sw-doctor.js --profile shared-orch-doctor --format json 2>&1 | head -20
-```
-
-### プロファイルが見つからない
+1. `--format json` オプションが指定されてぁE��ぁE2. stderr に警告メチE��ージが�EてぁE��ぁE��
+3. doctor スクリプト自体がエラーで終亁E��てぁE��ぁE��
 
 ```bash
-# 利用可能なプロファイルを確認（text 出力で確認）
-node scripts/sw-doctor.js --profile shared-orch-doctor --format text
+# チE��チE��: stderr を確誁Enode scripts/sw-doctor.js --profile shared-orch-doctor --format json 2>&1 | head -20
 ```
 
-## 次のステップ
+### プロファイルが見つからなぁE
+```bash
+# 利用可能なプロファイルを確認！Eext 出力で確認！Enode scripts/sw-doctor.js --profile shared-orch-doctor --format text
+```
 
-- CI 結果を Slack や他の通知システムに連携
-- doctor の結果に基づいて自動修復を実行（例: `ensure-ssot.js` の自動実行）
-- カスタムプロファイルを定義して、プロジェクト固有のチェックを追加
+## 次のスチE��チE
+- CI 結果めESlack めE���E通知シスチE��に連携
+- doctor の結果に基づぁE��自動修復を実行（侁E `ensure-ssot.js` の自動実行！E- カスタムプロファイルを定義して、�Eロジェクト固有�EチェチE��を追加

@@ -5,58 +5,48 @@
 **Issue/PR**: <関連Issue/PR>
 **Mode**: <mode>
 **Type**: Orchestrator
-**Duration**: <例: 2.0h>
-**Changes**: <主要変更点（要約）>
+**Duration**: <侁E 2.0h>
+**Changes**: <主要変更点�E�要紁E��E
 
-## 概要
-- <概要（目的/達成状況/主要インパクト）>
+## 概要E- <概要E��目皁E達�E状況E主要インパクト！E
 
 ## 現状
-- <現状詳細（アクティブチケット・進行タスク・リスク）>
+- <現状詳細�E�アクチE��ブチケチE��・進行タスク・リスク�E�E
 
 ## 次のアクション
-- <次に実施するアクション（担当/優先度）>
+- <次に実施するアクション�E�担彁E優先度�E�E
 
-**ユーザー返信テンプレ（必須）**:
-- 【確認】完了判定: 完了 / 未完了
-- 【次に私（ユーザー）が返す内容】以下から1つ選んで返信します:
+**ユーザー返信チE��プレ�E�忁E��！E*:
+- 【確認】完亁E��宁E 完亁E/ 未完亁E- 【次に私E��ユーザー�E�が返す冁E��】以下かめEつ選んで返信しまぁE
 
 ### 推奨アクション
-1) <アイコン> ⭐⭐⭐ 「選択肢1を実行して」: [<タスク種類>] <選択肢1> - <理由・影響>
-2) <アイコン> ⭐⭐ 「選択肢2を実行して」: [<タスク種類>] <選択肢2> - <理由・影響>
+1) <アイコン> ⭐⭐⭁E「選択肢1を実行して、E [<タスク種顁E] <選択肢1> - <琁E��・影響>
+2) <アイコン> ⭐⭁E「選択肢2を実行して、E [<タスク種顁E] <選択肢2> - <琁E��・影響>
 
-### その他の選択肢
-3) <アイコン> ⭐ 「選択肢3を実行して」: [<タスク種類>] <選択肢3> - <理由・影響>
-<追加の選択肢がある場合は4, 5...と続ける>
+### そ�E他�E選択肢
+3) <アイコン> ⭁E「選択肢3を実行して、E [<タスク種顁E] <選択肢3> - <琁E��・影響>
+<追加の選択肢がある場合�E4, 5...と続けめE
 
-**アイコン一覧**: 🎨 UI, 🧪 テスト, 🚫 ブロッカー, 🐛 バグ修正, ✨ 機能実装, 📝 ドキュメント, 🔧 リファクタリング, ⚙️ CI/CD, 📋 その他
-
-### 現在積み上がっているタスクとの連携
-- 選択肢1を実行すると、<TASK_ID>（優先度: High/Medium/Low）の<前提条件/並行作業/依存関係>が整います
-- 選択肢2を実行すると、<TASK_ID>（優先度: High/Medium/Low）と並行して進められます
-
-## ガイド
-- <作業の中項目（HANDOVER更新 / Inbox整理 / Worker再投入 / Git反映 など）>
+**アイコン一覧**: 🎨 UI, 🧪 チE��チE 🚫 ブロチE��ー, 🐛 バグ修正, ✨ 機�E実裁E 📝 ドキュメンチE 🔧 リファクタリング, ⚙︁ECI/CD, 📋 そ�E仁E
+### 現在積み上がってぁE��タスクとの連携
+- 選択肢1を実行すると、ETASK_ID>�E�優先度: High/Medium/Low�E��E<前提条件/並行作業/依存関俁Eが整ぁE��ぁE- 選択肢2を実行すると、ETASK_ID>�E�優先度: High/Medium/Low�E�と並行して進められまぁE
+## ガイチE- <作業の中頁E���E�EANDOVER更新 / Inbox整琁E/ Worker再投入 / Git反映 など�E�E
 
 ## メタプロンプト再投入条件
-- <次にDriverを再投入する条件（例: Worker納品回収後 / 新規タスク起票後 / ブロッカー発生時）>
+- <次にDriverを�E投�Eする条件�E�侁E Worker納品回収征E/ 新規タスク起票征E/ ブロチE��ー発生時�E�E
 
-## 改善提案（New Feature Proposal）
+## 改喁E��案！Eew Feature Proposal�E�E
+### プロジェクト�E�E�EPROJECT_NAME>�E�E- 優先度: High/Medium/Low - <提案�E容> - <状態（設計済み/準備完亁E未着手など�E�E
+- 優先度: High/Medium/Low - <提案�E容> - <状慁E
 
-### プロジェクト側（<PROJECT_NAME>）
-- 優先度: High/Medium/Low - <提案内容> - <状態（設計済み/準備完了/未着手など）>
-- 優先度: High/Medium/Low - <提案内容> - <状態>
+### Shared Workflow側�E�Eshared-workflows submodule�E�E- 優先度: High/Medium/Low - <提案�E容> - <状慁E
+- 優先度: High/Medium/Low - <提案�E容> - <状慁E
 
-### Shared Workflow側（.shared-workflows submodule）
-- 優先度: High/Medium/Low - <提案内容> - <状態>
-- 優先度: High/Medium/Low - <提案内容> - <状態>
-
-**注記**: プロジェクト側の改善提案は、プロジェクト固有の機能改善や要件を対象とします。Shared Workflow側の改善提案は、共通ワークフローやツールの改善を対象とします。
-
+**注訁E*: プロジェクト�Eの改喁E��案�E、�Eロジェクト固有�E機�E改喁E��要件を対象とします。Shared Workflow側の改喁E��案�E、�E通ワークフローめE��ールの改喁E��対象とします、E
 ## Verification
-- <実行したコマンドと結果（例: report-validator.js=OK）>
-- <git status -sb がクリーンであること（または Git リポジトリではない旨）>
-- <push 済み/未push（pending）の明記>
+- <実行したコマンドと結果�E�侁E report-validator.js=OK�E�E
+- <git status -sb がクリーンであること�E�また�E Git リポジトリではなぁE���E�E
+- <push 済み/未push�E�Eending�E��E明訁E
 
 ## Integration Notes
-- <docs/HANDOVER.md / docs/tasks/ / docs/reports/ への反映要約>
+- <docs/HANDOVER.md / docs/tasks/ / docs/reports/ への反映要紁E

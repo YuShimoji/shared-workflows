@@ -1,14 +1,12 @@
 # Prompt Templates
 
-> レポート形式とリスク管理の標準テンプレート。
-
+> レポ�Eト形式とリスク管琁E�E標準テンプレート、E
 ---
 
-## 1. レポート形式
-
+## 1. レポ�Eト形弁E
 ### Standard
 ```
-目的: <goal>
+目皁E <goal>
 現状: <current_state>
 懸念: <risks>
 次のアクション: <actions>
@@ -22,35 +20,32 @@
 
 ---
 
-## 2. Tier別対応
-
-| Tier | 対象 | 対応 |
+## 2. Tier別対忁E
+| Tier | 対象 | 対忁E|
 |------|------|------|
 | Tier 1 | ドキュメント、軽微修正 | 自律実行可 |
-| Tier 2 | 機能実装、リファクタ | PR作成、品質ゲート通過で自動マージ |
-| Tier 3 | 基幹変更、本番操作 | 人間承認必須、バックアウトプラン必須 |
+| Tier 2 | 機�E実裁E��リファクタ | PR作�E、品質ゲート通過で自動�Eージ |
+| Tier 3 | 基幹変更、本番操佁E| 人間承認忁E��、バチE��アウト�Eラン忁E��E|
 
 ---
 
-## 3. 禁止事項
-
-- 絵文字、装飾表現
-- 冗長な言い回し
-- 「念のため」のテスト・フォールバック追加
-- 確認なしの担当外リファクタリング
+## 3. 禁止事頁E
+- 絵斁E��、裁E��表現
+- 冗長な言ぁE��ぁE- 「念のため」�EチE��ト�Eフォールバック追加
+- 確認なし�E拁E��外リファクタリング
 
 ---
 
-## 4. 参照
+## 4. 参�E
 
 - 中央ルール: `docs/Windsurf_AI_Collab_Rules_latest.md`
-- 運用者の入口: `docs/windsurf_workflow/OPEN_HERE.md`
-- 毎回の運用SSOT（最優先）: `docs/windsurf_workflow/EVERY_SESSION.md`
-- コピペ用プロンプト集: `prompts/`
-- Windsurf Global Rules（端末統一）: `prompts/global/WINDSURF_GLOBAL_RULES.txt`
+- 運用老E�E入口: `docs/windsurf_workflow/OPEN_HERE.md`
+- 毎回の運用SSOT�E�最優先！E `docs/windsurf_workflow/EVERY_SESSION.md`
+- コピ�E用プロンプト雁E `prompts/`
+- Windsurf Global Rules�E�端末統一�E�E `prompts/global/WINDSURF_GLOBAL_RULES.txt`
 - オーケストレーション: `docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- Orchestrator起動/再開（毎回コピペ / 1つに統一）: `prompts/every_time/ORCHESTRATOR_DRIVER.txt`
-- Orchestrator起動（参照）: `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
-- Worker生成テンプレ（参照）: `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
-- チケット雛形: `templates/TASK_TICKET_TEMPLATE.md`
-- レポート設定: `REPORT_CONFIG.yml`
+- Orchestrator起勁E再開�E�毎回コピ�E / 1つに統一�E�E `prompts/every_time/ORCHESTRATOR_DRIVER.txt`
+- Orchestrator起動（参照�E�E `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md`
+- Worker生�EチE��プレ�E�参照�E�E `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+- チケチE��雛形: `templates/TASK_TICKET_TEMPLATE.md`
+- レポ�Eト設宁E `REPORT_CONFIG.yml`

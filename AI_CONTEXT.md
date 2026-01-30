@@ -1,72 +1,51 @@
 # AI Context
 
-## 基本情報
+## 基本惁E��
 
 - **最終更新**: 2026-01-04T21:15:47+09:00
-- **更新者**: Cascade
+- **更新老E*: Cascade
 
-## レポート設定（推奨）
-
+## レポ�Eト設定（推奨�E�E
 - **report_style**: standard
 - **mode**: orchestration
-- **creativity_triggers**: 代替案を最低2件提示する / リスクとメリットを表形式で整理する
-
+- **creativity_triggers**: 代替案を最佁E件提示する / リスクとメリチE��を表形式で整琁E��めE
 ## 現在のミッション
 
 - **タイトル**: SSOT Entrypoint Unification & Workflow Stabilization
 - **Issue**: #0 (Project-wide cleanup & optimization)
-- **ブランチ**: main
-- **関連PR**: なし
-- **進捗**: 100%
+- **ブランチE*: main
+- **関連PR**: なぁE- **進捁E*: 100%
 
 ## 次の中断可能点
 
-- ミッション完了報告後（現在）
-
-## 決定事項
-
-- Orchestrator レポートは `report-orch-cli.js` を使用して生成し、`HANDOVER.md` を自動同期する。
-- SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md` を唯一のエントリポイントとし、プロンプト指示をこれに一本化する。
-- 過去のバージョン（v1.1/v2.0）は、サブモジュールのバージョン差異を吸収するための「内部実装」として扱い、AI の表層的な指示からは隠蔽する。
-
+- ミッション完亁E��告後（現在�E�E
+## 決定事頁E
+- Orchestrator レポ�Eト�E `report-orch-cli.js` を使用して生�Eし、`HANDOVER.md` を�E動同期する、E- SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md` を唯一のエントリポイントとし、�Eロンプト持E��をこれに一本化する、E- 過去のバ�Eジョン�E�E1.1/v2.0�E��E、サブモジュールのバ�Eジョン差異を吸収するため�E「�E部実裁E��として扱ぁE��AI の表層皁E��持E��からは隠蔽する、E
 ## リスク/懸念
 
-- `AI_CONTEXT.md` と `HANDOVER.md` の記述が過去のセッション状態と混ざり、Worker が混乱する原因になっている。
-- サブモジュールのコミットが古いため、最新のスクリプト機能が一部欠落している（プロジェクト側 `scripts/` で補完中）。
-
-## Worker完了ステータス
+- `AI_CONTEXT.md` と `HANDOVER.md` の記述が過去のセチE��ョン状態と混ざり、Worker が混乱する原因になってぁE��、E- サブモジュールのコミットが古ぁE��め、最新のスクリプト機�Eが一部欠落してぁE���E��Eロジェクト�E `scripts/` で補完中�E�、E
+## Worker完亁E��チE�Eタス
 
 - worker_ssot_fallback: completed
 - worker_audit: completed
 - worker_onboarding_std: completed
 
-## Backlog（将来提案）
+## Backlog�E�封E��提案！E
+- [ ] `report-orch-cli.js` に `AI_CONTEXT.md` の `Worker完亁E��チE�Eタス` を�E動解析�E更新する機�Eを追加
+- [ ] `sw-doctor.js` に SSOT の「中身」が `latest` に一本化されてぁE��か�E検証を追加
+- [ ] `docs/tasks/` の自動クリーンアチE�E�E�EONEから一定期間経過で削除/アーカイブ！E
+## タスク管琁E��短朁E中朁E長期！E
+### 短期！Eext�E�E
+- 完亁E��たタスク: TASK_006�E�EONE�E�、TASK_007�E�EONE�E�、TASK_008�E�EONE�E�、TASK_009�E�EONE�E�、TASK_010�E�EONE�E�、TASK_011�E�EONE�E�、TASK_012�E�EONE�E�E- 新規タスク: バックログから優先度の高いタスクを選び、新規タスクとして起票
 
-- [ ] `report-orch-cli.js` に `AI_CONTEXT.md` の `Worker完了ステータス` を自動解析・更新する機能を追加
-- [ ] `sw-doctor.js` に SSOT の「中身」が `latest` に一本化されているかの検証を追加
-- [ ] `docs/tasks/` の自動クリーンアップ（DONEから一定期間経過で削除/アーカイブ）
+### 中期！Eater�E�E
+- [ ] AI_CONTEXT.md を�E動整形するスクリプトめEdev-check.js フローへ追加
+- [ ] orchestrator-audit.js めECI へ統合して false completion を早期検知
 
-## タスク管理（短期/中期/長期）
-
-### 短期（Next）
-
-- 完了したタスク: TASK_006（DONE）、TASK_007（DONE）、TASK_008（DONE）、TASK_009（DONE）、TASK_010（DONE）、TASK_011（DONE）、TASK_012（DONE）
-- 新規タスク: バックログから優先度の高いタスクを選び、新規タスクとして起票
-
-### 中期（Later）
-
-- [ ] AI_CONTEXT.md を自動整形するスクリプトを dev-check.js フローへ追加
-- [ ] orchestrator-audit.js を CI へ統合して false completion を早期検知
-
-### 長期（Someday）
-
-- [ ] False completion 検出と Outlook/Next/Proposals 必須化を別リポジトリにも配布
-
-## 備考（自由記述）
-
-- 現在 docs/inbox/ は空（.gitkeep のみ）。REPORT_ORCH CLI で初の実レポートを作成予定。
-- creativity / report hint は standard スタイルを採用済み。必要に応じて REPORT_CONFIG.yml を拡張。
-
+### 長期！Eomeday�E�E
+- [ ] False completion 検�Eと Outlook/Next/Proposals 忁E��化を別リポジトリにも�E币E
+## 備老E���E由記述�E�E
+- 現在 docs/inbox/ は空�E�Egitkeep のみ�E�。REPORT_ORCH CLI で初�E実レポ�Eトを作�E予定、E- creativity / report hint は standard スタイルを採用済み。忁E��に応じて REPORT_CONFIG.yml を拡張、E
 ## 履歴
 
-- 2025-12-21 01:05: AI_CONTEXT.md を初期化
+- 2025-12-21 01:05: AI_CONTEXT.md を�E期化

@@ -1,97 +1,62 @@
-# Issues（docs同期用 / SSOTバックログ）
-
-このファイルは、GitHub Actions の「Reusable Sync Issues from docs」ワークフロー（`.github/workflows/sync-issues.yml`）で読み取られ、各セクション（`##` 見出し）ごとに GitHub Issue を作成/更新します。
-
-- 更新の基本: 見出しタイトルを変えなければ同じIssueが更新されます
-- 削除の扱い: ここから削除された見出しは、`managed:docs-sync` ラベル付きの既存Issueが自動でクローズされます
-- 実行方法: `docs/ISSUES.md` 更新時に自動実行（mainのみ）し、必要なら手動実行（workflow_dispatch）もできます
-
+# Issues�E�Eocs同期用 / SSOTバックログ�E�E
+こ�Eファイルは、GitHub Actions の「Reusable Sync Issues from docs」ワークフロー�E�E.github/workflows/sync-issues.yml`�E�で読み取られ、各セクション�E�E##` 見�Eし）ごとに GitHub Issue を作�E/更新します、E
+- 更新の基本: 見�Eしタイトルを変えなければ同じIssueが更新されまぁE- 削除の扱ぁE ここから削除された見�Eし�E、`managed:docs-sync` ラベル付きの既存Issueが�E動でクローズされまぁE- 実行方況E `docs/ISSUES.md` 更新時に自動実行！Eainのみ�E�し、忁E��なら手動実行！Eorkflow_dispatch�E�もできまぁE
 ---
 
-## 1) docs/ISSUES.md 運用の定着（このファイルのテンプレ整備）
+## 1) docs/ISSUES.md 運用の定着�E�このファイルのチE��プレ整備！E
+### Goal�E�目皁E��E
+- docs起点のバックログ管琁E��Essue同期�E�をチ�Eム運用として定着させめE
+### DoD�E�受入基準！E
+- [x] 本ファイルの運用ルール�E�命名、更新、削除の扱ぁE��が簡潔に記載されてぁE��
+- [x] Actionsから自動実行！Eush�E�また�E手動実行！Eorkflow_dispatch�E�でIssue同期ができる
 
-### Goal（目的）
+### Note�E�補足�E�E
+- `.github/workflows/sync-issues.yml` は `docs/ISSUES.md` 更新時に自動実行！Eush�E�し、忁E��なら手動実行！Eorkflow_dispatch�E�もできまぁE
+## 2) README に Issue 同期�E�Eocs/ISSUES.md�E�運用の導線を追加
 
-- docs起点のバックログ管理（Issue同期）をチーム運用として定着させる
+### Goal�E�目皁E��E
+- 「どこにバックログを書け�Eよいか」をREADMEから辿れるようにする
 
-### DoD（受入基準）
+### DoD�E�受入基準！E
+- [x] READMEのどこかに `docs/ISSUES.md` と同期ワークフローの存在が記載されてぁE��
+- [x] 「更新→Actions実行�EIssue反映」�E最小手頁E��刁E��めE
+## 3) sync-issues.yml のラベル運用を柔軟化�E�任意！E
+### Goal�E�目皁E��E
+- リポジトリ/チ�Eムごとのラベル体系に合わせやすくする
 
-- [x] 本ファイルの運用ルール（命名、更新、削除の扱い）が簡潔に記載されている
-- [x] Actionsから自動実行（push）または手動実行（workflow_dispatch）でIssue同期ができる
+### DoD�E�受入基準！E
+- [ ] 既定ラベル�E�Emanaged:docs-sync` 等）を入力！Eorkflow_dispatch inputs�E�や変数で上書きできる
+- [ ] 上書きしなぁE��合�E現状互換で動く
 
-### Note（補足）
+## 4) マ�Eジコンフリクト解決後�E自動コンパイルチェチE��
 
-- `.github/workflows/sync-issues.yml` は `docs/ISSUES.md` 更新時に自動実行（push）し、必要なら手動実行（workflow_dispatch）もできます
+### Goal�E�目皁E��E
+- コンパイルエラーの早期検�Eと修正の効玁E��
 
-## 2) README に Issue 同期（docs/ISSUES.md）運用の導線を追加
+### DoD�E�受入基準！E
+- [ ] マ�Eジコンフリクト解決後に自動的にコンパイルチェチE��を実行する仕絁E��を実裁E- [ ] コンパイルエラーが検�Eされた場合、E��刁E��通知とエラー惁E��の出劁E- [ ] CI/CDパイプラインまた�Eローカル環墁E��の実行が可能
 
-### Goal（目的）
-
-- 「どこにバックログを書けばよいか」をREADMEから辿れるようにする
-
-### DoD（受入基準）
-
-- [x] READMEのどこかに `docs/ISSUES.md` と同期ワークフローの存在が記載されている
-- [x] 「更新→Actions実行→Issue反映」の最小手順が分かる
-
-## 3) sync-issues.yml のラベル運用を柔軟化（任意）
-
-### Goal（目的）
-
-- リポジトリ/チームごとのラベル体系に合わせやすくする
-
-### DoD（受入基準）
-
-- [ ] 既定ラベル（`managed:docs-sync` 等）を入力（workflow_dispatch inputs）や変数で上書きできる
-- [ ] 上書きしない場合は現状互換で動く
-
-## 4) マージコンフリクト解決後の自動コンパイルチェック
-
-### Goal（目的）
-
-- コンパイルエラーの早期検出と修正の効率化
-
-### DoD（受入基準）
-
-- [ ] マージコンフリクト解決後に自動的にコンパイルチェックを実行する仕組みを実装
-- [ ] コンパイルエラーが検出された場合、適切な通知とエラー情報の出力
-- [ ] CI/CDパイプラインまたはローカル環境での実行が可能
-
-### Note（補足）
-
+### Note�E�補足�E�E
 - 優先度: Medium
-- マージコンフリクト解決直後のコンパイルエラーを早期に検出することで、後続の作業効率を向上させる
+- マ�Eジコンフリクト解決直後�Eコンパイルエラーを早期に検�Eすることで、後続�E作業効玁E��向上させる
 
-## 5) アセンブリ定義ファイルの重複参照検出ツール
+## 5) アセンブリ定義ファイルの重褁E��照検�EチE�Eル
 
-### Goal（目的）
+### Goal�E�目皁E��E
+- コンパイルエラーの予防と品質向丁E
+### DoD�E�受入基準！E
+- [ ] Unityプロジェクト�Eのアセンブリ定義ファイル�E�Easmdef�E��E重褁E��照を検�EするチE�Eルを実裁E- [ ] 重褁E��照が検�Eされた場合、警告また�Eエラーとして報呁E- [ ] CI/CDパイプラインまた�Eローカル環墁E��の実行が可能
 
-- コンパイルエラーの予防と品質向上
-
-### DoD（受入基準）
-
-- [ ] Unityプロジェクト内のアセンブリ定義ファイル（.asmdef）の重複参照を検出するツールを実装
-- [ ] 重複参照が検出された場合、警告またはエラーとして報告
-- [ ] CI/CDパイプラインまたはローカル環境での実行が可能
-
-### Note（補足）
-
+### Note�E�補足�E�E
 - 優先度: Low
-- アセンブリ定義ファイルの重複参照はコンパイルエラーの原因となるため、事前に検出することで品質を向上させる
+- アセンブリ定義ファイルの重褁E��照はコンパイルエラーの原因となるため、事前に検�Eすることで品質を向上させる
 
-## 6) マージコンフリクト解決のベストプラクティスドキュメント
+## 6) マ�Eジコンフリクト解決のベスト�EラクチE��スドキュメンチE
+### Goal�E�目皁E��E
+- 今後�Eマ�Eジ作業の効玁E��と品質向丁E
+### DoD�E�受入基準！E
+- [ ] マ�Eジコンフリクト解決の手頁E��ベスト�EラクチE��スを文書匁E- [ ] よくある問題とそ�E解決方法を記輁E- [ ] チ�Eム冁E��共有可能な形式！Earkdown等）で作�E
 
-### Goal（目的）
-
-- 今後のマージ作業の効率化と品質向上
-
-### DoD（受入基準）
-
-- [ ] マージコンフリクト解決の手順とベストプラクティスを文書化
-- [ ] よくある問題とその解決方法を記載
-- [ ] チーム内で共有可能な形式（Markdown等）で作成
-
-### Note（補足）
-
+### Note�E�補足�E�E
 - 優先度: Low
-- ドキュメント化により、今後のマージ作業の効率化と品質向上を図る
+- ドキュメント化により、今後�Eマ�Eジ作業の効玁E��と品質向上を図めE

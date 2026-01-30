@@ -1,40 +1,30 @@
-# Report: Worker完了レポートの自動統合スクリプト作成
+# Report: Worker完亁E��ポ�Eト�E自動統合スクリプト作�E
 
 **Timestamp**: 2025-01-03T12:00:00+09:00
 **Actor**: Worker
 **Ticket**: docs/tasks/TASK_008_WorkerReportAutoIntegration.md
 **Type**: Worker
 **Duration**: 1.5h
-**Changes**: scripts/finalize-phase.js にWorkerレポート統合機能を追加
+**Changes**: scripts/finalize-phase.js にWorkerレポ�Eト統合機�Eを追加
 
-## 概要
-- Worker完了レポートを自動的に `docs/inbox/` から回収し、`docs/HANDOVER.md` に統合するスクリプト機能を実装
-- Orchestratorの作業負荷を軽減し、統合漏れのリスクを排除
+## 概要E- Worker完亁E��ポ�Eトを自動的に `docs/inbox/` から回収し、`docs/HANDOVER.md` に統合するスクリプト機�Eを実裁E- Orchestratorの作業負荷を軽減し、統合漏れのリスクを排除
 
 ## Changes
-- scripts/finalize-phase.js: Workerレポート統合機能を追加
-  - `extractWorkerReportInfo()`: Workerレポートから主要情報（Ticket、Changes、Handover）を抽出
-  - `integrateWorkerReports()`: HANDOVER.mdの「統合レポート」セクションにWorkerレポートを追加
-  - `main()`: レポートアーカイブ後に統合処理を実行
-
+- scripts/finalize-phase.js: Workerレポ�Eト統合機�Eを追加
+  - `extractWorkerReportInfo()`: Workerレポ�Eトから主要情報�E�Eicket、Changes、Handover�E�を抽出
+  - `integrateWorkerReports()`: HANDOVER.mdの「統合レポ�Eト」セクションにWorkerレポ�Eトを追加
+  - `main()`: レポ�Eトアーカイブ後に統合�E琁E��実衁E
 ## Decisions
-- `report-orch-cli.js` の `updateHandoverLatest` 関数のパターンを参考に実装
-- Workerレポートのフォーマットは `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` を参照
+- `report-orch-cli.js` の `updateHandoverLatest` 関数のパターンを参老E��実裁E- Workerレポ�Eト�Eフォーマット�E `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` を参照
 
 ## Verification
-- `node scripts/finalize-phase.js --dry-run`: 統合処理の動作確認（予定）
-- `node scripts/sw-doctor.js`: システム健全性確認（予定）
-
+- `node scripts/finalize-phase.js --dry-run`: 統合�E琁E�E動作確認（予定！E- `node scripts/sw-doctor.js`: シスチE��健全性確認（予定！E
 ## Risk
-- 既存のHANDOVER.mdの構造が変更されている場合、統合処理が失敗する可能性がある
-
+- 既存�EHANDOVER.mdの構造が変更されてぁE��場合、統合�E琁E��失敗する可能性があめE
 ## Remaining
-- なし
-
+- なぁE
 ## Handover
-- Orchestratorへの申し送り: 実装完了後、実際のWorkerレポートで動作確認を実施してください
-- `finalize-phase.js` を実行すると、`docs/inbox/` のWorkerレポートが `docs/reports/` にアーカイブされ、同時にHANDOVER.mdに統合されます
-
+- Orchestratorへの申し送り: 実裁E��亁E��、実際のWorkerレポ�Eトで動作確認を実施してください
+- `finalize-phase.js` を実行すると、`docs/inbox/` のWorkerレポ�Eトが `docs/reports/` にアーカイブされ、同時にHANDOVER.mdに統合されまぁE
 ## 次のアクション
-- 実際のWorkerレポートで動作確認
-- `sw-doctor.js` でシステム健全性を確認
+- 実際のWorkerレポ�Eトで動作確誁E- `sw-doctor.js` でシスチE��健全性を確誁E

@@ -1,60 +1,50 @@
-# デプロイメントサマリ
+# チE�Eロイメントサマリ
 
-**デプロイ日時**: 2026-01-05  
-**コミット**: 78e36b8  
-**ブランチ**: main
+**チE�Eロイ日晁E*: 2026-01-05  
+**コミッチE*: 78e36b8  
+**ブランチE*: main
 
 ---
 
-## デプロイ内容
+## チE�Eロイ冁E��
 
-### 新規機能
+### 新規機�E
 
-1. **進捗ダッシュボード機能**
-   - `scripts/progress-dashboard.js`: アイデアと実装度合いの対照表を自動生成
-   - `docs/PROGRESS_DASHBOARD.md`: 自動生成される進捗ダッシュボード（.gitignoreに追加済み）
-
-2. **テスト分離ドキュメント機能**
-   - `scripts/generate-test-steps.js`: 手動テストと自動テストを分離
-   - `templates/TEST_MANUAL_TEMPLATE.md`: 手動テストテンプレート
-
-3. **視覚的進捗表示機能**
-   - `scripts/progress-meter.js`: コマンドラインでのプログレスバー表示
-   - チャット上でも表示可能なコンパクト形式を提供
-
-4. **改善提案機能の明確化**
-   - プロジェクト側とShared Workflow側を分離
-   - Workerプロンプトにプロジェクト側改善提案の指示を追加
+1. **進捗ダチE��ュボ�Eド機�E**
+   - `scripts/progress-dashboard.js`: アイチE��と実裁E��合いの対照表を�E動生戁E   - `docs/PROGRESS_DASHBOARD.md`: 自動生成される進捗ダチE��ュボ�Eド！Egitignoreに追加済み�E�E
+2. **チE��ト�E離ドキュメント機�E**
+   - `scripts/generate-test-steps.js`: 手動チE��トと自動テストを刁E��
+   - `templates/TEST_MANUAL_TEMPLATE.md`: 手動チE��トテンプレーチE
+3. **視覚的進捗表示機�E**
+   - `scripts/progress-meter.js`: コマンドラインでのプログレスバ�E表示
+   - チャチE��上でも表示可能なコンパクト形式を提侁E
+4. **改喁E��案機�Eの明確匁E*
+   - プロジェクト�EとShared Workflow側を�E離
+   - Workerプロンプトにプロジェクト�E改喁E��案�E持E��を追加
 
 5. **アクション選択肢の柔軟化**
    - `scripts/generate-action-choices.js`: タスクタイプに応じたアイコン表示
-   - 推奨度ランク付けとタスク連携情報の追加
+   - 推奨度ランク付けとタスク連携惁E��の追加
 
 ### 更新されたファイル
 
-- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md`: 改善提案とアクション選択肢の拡張
-- `prompts/orchestrator/modules/P6_report.md`: 進捗バー生成とタスクタイプ判定の指示追加
-- `prompts/every_time/WORKER_COMPLETION_DRIVER.txt`: プロジェクト側改善提案の指示追加
-- `docs/windsurf_workflow/EVERY_SESSION.md`: 終了時テンプレの拡張
+- `templates/ORCHESTRATOR_REPORT_TEMPLATE.md`: 改喁E��案とアクション選択肢の拡張
+- `prompts/orchestrator/modules/P6_report.md`: 進捗バー生�Eとタスクタイプ判定�E持E��追加
+- `prompts/every_time/WORKER_COMPLETION_DRIVER.txt`: プロジェクト�E改喁E��案�E持E��追加
+- `docs/windsurf_workflow/EVERY_SESSION.md`: 終亁E��チE��プレの拡張
 
-### 新規ドキュメント
+### 新規ドキュメンチE
+- `docs/REQUIREMENT_VALIDATION_REPORT.md`: 要望妥当性検証レポ�EチE- `docs/IMPLEMENTATION_PLAN_PROGRESS_FEATURES.md`: 実裁E��画書
+- `docs/FEATURE_VERIFICATION_REPORT.md`: 機�E動作確認レポ�EチE- `docs/FEATURE_IMPROVEMENT_SUMMARY.md`: 機�E改喁E��マリ
+- `docs/PROGRESS_METER_USAGE.md`: 進捗バー使用方況E
+### そ�E他�E変更
 
-- `docs/REQUIREMENT_VALIDATION_REPORT.md`: 要望妥当性検証レポート
-- `docs/IMPLEMENTATION_PLAN_PROGRESS_FEATURES.md`: 実装計画書
-- `docs/FEATURE_VERIFICATION_REPORT.md`: 機能動作確認レポート
-- `docs/FEATURE_IMPROVEMENT_SUMMARY.md`: 機能改善サマリ
-- `docs/PROGRESS_METER_USAGE.md`: 進捗バー使用方法
-
-### その他の変更
-
-- `scripts/utils/filename-sanitize.js`: Windows環境でのファイル名制約対応
-- `.gitignore`: 自動生成ファイル（PROGRESS_DASHBOARD.md, TEST_MANUAL_REPORT_*.md）を追加
+- `scripts/utils/filename-sanitize.js`: Windows環墁E��のファイル名制紁E��忁E- `.gitignore`: 自動生成ファイル�E�EROGRESS_DASHBOARD.md, TEST_MANUAL_REPORT_*.md�E�を追加
 
 ---
 
-## 使用方法
-
-### 進捗ダッシュボードの生成
+## 使用方況E
+### 進捗ダチE��ュボ�Eド�E生�E
 ```bash
 node scripts/progress-dashboard.js
 ```
@@ -64,27 +54,26 @@ node scripts/progress-dashboard.js
 node scripts/progress-meter.js
 ```
 
-### アクション選択肢の生成
+### アクション選択肢の生�E
 ```bash
 node scripts/generate-action-choices.js
 ```
 
-### テスト手順の生成
+### チE��ト手頁E�E生�E
 ```bash
 node scripts/generate-test-steps.js <REPORT_PATH>
 ```
 
 ---
 
-## 他のプロジェクトでの利用
+## 他�Eプロジェクトでの利用
 
-このリポジトリをサブモジュールとして使用しているプロジェクトでは、以下の手順で更新できます：
-
+こ�Eリポジトリをサブモジュールとして使用してぁE��プロジェクトでは、以下�E手頁E��更新できます！E
 ```bash
 # サブモジュールの更新
 git submodule update --remote .shared-workflows
 
-# または、親リポジトリでサブモジュール参照を更新
+# また�E、親リポジトリでサブモジュール参�Eを更新
 cd .shared-workflows
 git pull origin main
 cd ..
@@ -94,20 +83,16 @@ git commit -m "chore: shared-workflows サブモジュールを更新"
 
 ---
 
-## 動作確認
-
-すべての機能はこのプロジェクト内で動作確認済みです：
-
-- ✅ 進捗ダッシュボード: 10個のタスクと3個のバックログを正常に読み込み
-- ✅ テスト分離: Workerレポートから3つの手動テストステップを正常に抽出
-- ✅ 視覚的進捗表示: プログレスバーが正常に表示
-- ✅ アクション選択肢: タスクタイプ判定が正常に動作
-- ✅ 改善提案機能: プロジェクト側とShared Workflow側の分離が可能
+## 動作確誁E
+すべての機�Eはこ�Eプロジェクト�Eで動作確認済みです！E
+- ✁E進捗ダチE��ュボ�EチE 10個�Eタスクと3個�Eバックログを正常に読み込み
+- ✁EチE��ト�E離: Workerレポ�EトかめEつの手動チE��トスチE��プを正常に抽出
+- ✁E視覚的進捗表示: プログレスバ�Eが正常に表示
+- ✁Eアクション選択肢: タスクタイプ判定が正常に動佁E- ✁E改喁E��案機�E: プロジェクト�EとShared Workflow側の刁E��が可能
 
 ---
 
-## 注意事項
-
-- `docs/PROGRESS_DASHBOARD.md` は自動生成ファイルのため、.gitignoreに追加済み
-- `docs/TEST_MANUAL_REPORT_*.md` も自動生成ファイルのため、.gitignoreに追加済み
-- 進捗バーは Unicode 記号（█ と ░）を使用しているため、一部の環境では正しく表示されない場合があります
+## 注意事頁E
+- `docs/PROGRESS_DASHBOARD.md` は自動生成ファイルのため、Egitignoreに追加済み
+- `docs/TEST_MANUAL_REPORT_*.md` も�E動生成ファイルのため、Egitignoreに追加済み
+- 進捗バーは Unicode 記号�E�█ と ░）を使用してぁE��ため、一部の環墁E��は正しく表示されなぁE��合がありまぁE

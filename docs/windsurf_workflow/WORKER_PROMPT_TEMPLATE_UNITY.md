@@ -1,281 +1,197 @@
-# Worker Prompt Template（Unity版 / Orchestratorが毎回生成 / コピペ用）
-
-> Orchestrator が `docs/tasks/TASK_*.md` を元に Worker スレッドへ貼り付ける最小プロンプトのベース（Unityプロジェクト向け）。  
-> Orchestrator メタプロンプトと同じ「フェーズ構成 / 粒度」で作り、Worker側でも Phase 0〜5 を明示して統率を揃える。  
-> **Unity固有の検証手順、停止条件、注意点を追加したバージョン**。
-
+# Worker Prompt Template�E�Enity牁E/ Orchestratorが毎回生�E / コピ�E用�E�E
+> Orchestrator ぁE`docs/tasks/TASK_*.md` を�Eに Worker スレチE��へ貼り付ける最小�Eロンプトのベ�Eス�E�Enityプロジェクト向け）、E 
+> Orchestrator メタプロンプトと同じ「フェーズ構�E / 粒度」で作り、Worker側でめEPhase 0、E を�E示して統玁E��揁E��る、E 
+> **Unity固有�E検証手頁E��停止条件、注意点を追加したバ�Eジョン**、E
 ---
 
-## 0. 生成ルール（Orchestrator向け）
-
-- 1チケット = 1 code block。チケットの DoD / Tier / Branch / Focus / Forbidden / Report / GitHubAutoApprove / Pending Items を必ず埋める。
-- 変数（例）:
+## 0. 生�Eルール�E�Erchestrator向け�E�E
+- 1チケチE�� = 1 code block。チケチE��の DoD / Tier / Branch / Focus / Forbidden / Report / GitHubAutoApprove / Pending Items を忁E��埋める、E- 変数�E�例！E
   - `TICKET_PATH`, `TIER`, `BRANCH`, `FOCUS_AREA`, `FORBIDDEN_AREA`, `DOD`, `REPORT_PATH_TARGET`, `HANDOVER_SECTIONS`, `PENDING_ITEMS`
-- 必須で書くこと:
+- 忁E��で書くこと:
   - 納品物: `docs/inbox/REPORT_...md`
-  - 参照ファイル: `docs/Windsurf_AI_Collab_Rules_latest.md`, `docs/HANDOVER.md`, チケット
-  - 停止条件 / 停止時アウトプット / 完了時チャット1行
-  - **MISSION_LOG.md の最新状態**: 現在のフェーズ、進捗、コンテキスト情報を含める。
-  - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runnerでのテスト実行手順
-- 可変にしてよい:
-  - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合は停止条件へ）
-  - プロジェクト固有の罠や検証観点
-  - Unity固有の検証手順（プロジェクトによって異なる場合）
-
+  - 参�Eファイル: `docs/Windsurf_AI_Collab_Rules_latest.md`, `docs/HANDOVER.md`, チケチE��
+  - 停止条件 / 停止時アウト�EチE�� / 完亁E��チャチE��1衁E  - **MISSION_LOG.md の最新状慁E*: 現在のフェーズ、E��捗、コンチE��スト情報を含める、E  - **Unity固有�E検証手頁E*: Unity Editor手動検証、Unity Test RunnerでのチE��ト実行手頁E- 可変にしてよい:
+  - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合�E停止条件へ�E�E  - プロジェクト固有�E罠めE��証観点
+  - Unity固有�E検証手頁E���Eロジェクトによって異なる場合！E
 ---
 
-## 1. Worker Prompt（テンプレ / 置換して使う）
-
+## 1. Worker Prompt�E�テンプレ / 置換して使ぁE��E
 ```xml
 <instruction>
-あなたは分散開発チームの Worker です。割り当てられた 1 タスクだけを完遂し、証跡を残してください。
-**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test Runnerでのテスト実行が必要な場合があります。
-</instruction>
+あなた�E刁E��開発チ�Eムの Worker です。割り当てられぁE1 タスクだけを完遂し、証跡を残してください、E**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test RunnerでのチE��ト実行が忁E��な場合があります、E</instruction>
 
 <context>
 <mission_log>
-作業開始時に `.cursor/MISSION_LOG.md` を読み込み、現在のフェーズと進捗を確認してください。
-作業完了時に MISSION_LOG.md を更新し、進捗を記録してください。
-</mission_log>
+作業開始時に `.cursor/MISSION_LOG.md` を読み込み、現在のフェーズと進捗を確認してください、E作業完亁E��に MISSION_LOG.md を更新し、E��捗を記録してください、E</mission_log>
 
 <ssot_reference>
-Phase 0: 参照と整備
-- SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md（無ければ docs/ 配下を参照し、必ず `ensure-ssot.js` で取得を試す）
-- 進捗: docs/HANDOVER.md
-- チケット: <TICKET_PATH>
-- SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
+Phase 0: 参�Eと整傁E- SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md�E�無ければ docs/ 配下を参�Eし、忁E�� `ensure-ssot.js` で取得を試す！E- 進捁E docs/HANDOVER.md
+- チケチE��: <TICKET_PATH>
+- SSOT 未整備�Eensure-ssot.js 不在で解決できなぁE��合�E停止条件
 </ssot_reference>
 
 <preconditions>
-Phase 1: 前提の固定
-- Tier: <TIER>
+Phase 1: 前提の固宁E- Tier: <TIER>
 - Branch: <BRANCH>
 - Report Target: <REPORT_PATH_TARGET>
-- GitHubAutoApprove: docs/HANDOVER.md の記述を参照（未記載なら push 禁止）
-- ブランチが異なる場合:
-  - `git status -sb` で未コミットが無いことを確認
-  - `git switch <BRANCH>` で切替を試す
-  - 破壊的操作が必要なら停止条件
+- GitHubAutoApprove: docs/HANDOVER.md の記述を参照�E�未記載なめEpush 禁止�E�E- ブランチが異なる場吁E
+  - `git status -sb` で未コミットが無ぁE��とを確誁E  - `git switch <BRANCH>` で刁E��を試ぁE  - 破壊的操作が忁E��なら停止条件
 </preconditions>
 
 <boundaries>
-Phase 2: 境界
-- Focus Area: <FOCUS_AREA>（この範囲のみ変更可能）
-- Forbidden Area: <FORBIDDEN_AREA>（触れる必要が出たら停止条件）
-  - **Unity固有**: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
-- DoD: <DOD>（完了時にチェックリストを埋め、根拠を残す）
-  - **Unity固有**: Unity Editor手動検証、Unity Test Runnerでのテスト実行が必要な場合、具体的な検証結果を記録する
+Phase 2: 墁E��
+- Focus Area: <FOCUS_AREA>�E�この篁E��のみ変更可能�E�E- Forbidden Area: <FORBIDDEN_AREA>�E�触れる忁E��が出たら停止条件�E�E  - **Unity固朁E*: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
+- DoD: <DOD>�E�完亁E��にチェチE��リストを埋め、根拠を残す�E�E  - **Unity固朁E*: Unity Editor手動検証、Unity Test RunnerでのチE��ト実行が忁E��な場合、�E体的な検証結果を記録する
 </boundaries>
 </context>
 
 <workflow>
-<phase name="Phase 0: 参照と整備">
+<phase name="Phase 0: 参�Eと整傁E>
 <step>
-1. `.cursor/MISSION_LOG.md` を読み込み、現在のフェーズと進捗を確認。
-2. SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md（無ければ docs/ 配下を参照し、必ず `ensure-ssot.js` で取得を試す）
-3. 進捗: docs/HANDOVER.md
-4. チケット: <TICKET_PATH>（**存在確認: `Test-Path <TICKET_PATH>` または `ls <TICKET_PATH>`**）
-5. SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
+1. `.cursor/MISSION_LOG.md` を読み込み、現在のフェーズと進捗を確認、E2. SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md�E�無ければ docs/ 配下を参�Eし、忁E�� `ensure-ssot.js` で取得を試す！E3. 進捁E docs/HANDOVER.md
+4. チケチE��: <TICKET_PATH>�E�E*存在確誁E `Test-Path <TICKET_PATH>` また�E `ls <TICKET_PATH>`**�E�E5. SSOT 未整備�Eensure-ssot.js 不在で解決できなぁE��合�E停止条件
 </step>
 </phase>
 
-<phase name="Phase 1: 前提の固定">
+<phase name="Phase 1: 前提の固宁E>
 <step>
 1. Tier: <TIER>
 2. Branch: <BRANCH>
 3. Report Target: <REPORT_PATH_TARGET>
-4. GitHubAutoApprove: docs/HANDOVER.md の記述を参照（未記載なら push 禁止）
-5. ブランチが異なる場合:
-   - `git status -sb` で未コミットが無いことを確認
-   - `git switch <BRANCH>` で切替を試す
-   - 破壊的操作が必要なら停止条件
-6. MISSION_LOG.md を更新（Phase 1 完了を記録）。
-</step>
+4. GitHubAutoApprove: docs/HANDOVER.md の記述を参照�E�未記載なめEpush 禁止�E�E5. ブランチが異なる場吁E
+   - `git status -sb` で未コミットが無ぁE��とを確誁E   - `git switch <BRANCH>` で刁E��を試ぁE   - 破壊的操作が忁E��なら停止条件
+6. MISSION_LOG.md を更新�E�Ehase 1 完亁E��記録�E�、E</step>
 </phase>
 
-<phase name="Phase 2: 境界確認">
+<phase name="Phase 2: 墁E��確誁E>
 <step>
-1. Focus Area: <FOCUS_AREA>（この範囲のみ変更可能、**存在確認してから参照**）
-2. Forbidden Area: <FORBIDDEN_AREA>（触れる必要が出たら停止条件）
-   - **Unity固有**: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
-3. DoD: <DOD>（完了時にチェックリストを埋め、根拠を残す）
-   - **Unity固有**: Unity Editor手動検証、Unity Test Runnerでのテスト実行が必要な項目を確認
-4. MISSION_LOG.md を更新（Phase 2 完了を記録）。
-</step>
+1. Focus Area: <FOCUS_AREA>�E�この篁E��のみ変更可能、E*存在確認してから参�E**�E�E2. Forbidden Area: <FORBIDDEN_AREA>�E�触れる忁E��が出たら停止条件�E�E   - **Unity固朁E*: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
+3. DoD: <DOD>�E�完亁E��にチェチE��リストを埋め、根拠を残す�E�E   - **Unity固朁E*: Unity Editor手動検証、Unity Test RunnerでのチE��ト実行が忁E��な頁E��を確誁E4. MISSION_LOG.md を更新�E�Ehase 2 完亁E��記録�E�、E</step>
 </phase>
 
 <phase name="Phase 3: 実行ルール">
 <step>
-1. **DoD 各項目の実行可能性確認（必須）**:
-   - DoD 各項目を確認し、実行可能かどうかを判断する
-   - **Unity固有**: Unity Editor手動検証が必要な項目がある場合、実装後にUnity Editorで確認する
-   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、Unity Test Runnerまたはコマンドラインで実行する
-   - 環境依存のタスク（git history 調査など）の場合:
-     - Gitリポジトリではない環境では、`git log` などのコマンドは実行不可能
-     - この場合、**停止条件として扱う**か、**代替手段を取る**かを判断する
-     - 判断に迷う場合は、停止条件として扱う
-
-2. チャットで完結させない。成果はファイル（docs/tasks / docs/inbox / docs/HANDOVER / git）に残す。
-
-3. コマンドは実行して結果で判断。失敗は「失敗」と明記し、根拠と次手を出す。
-
-4. 指示コマンドが無い場合: `Get-Command <cmd>` 等で確認 → 代替案提示 → それでも依存追加/外部通信が必要なら停止。
-
-5. 「念のため」のテスト/フォールバック/リファクタは禁止（DoD 従属のみ）。
-
-6. ダブルチェック:
-   - テスト/Push/長時間待機は結果を確認し、未達なら完了扱いにしない。
-   - `git status -sb` で差分を常に把握（Gitリポジトリではない場合はスキップ可能）。
-   - **Unity固有**: Unity Editorでのコンパイルエラーがないことを確認（`Unity Editor=コンパイル成功`）
-
-7. タイムアウトを宣言し、無限待機しない。
-
-8. MISSION_LOG.md を更新（Phase 3 完了を記録、実行内容を記録）。
-</step>
+1. **DoD 吁E��E��の実行可能性確認（忁E��！E*:
+   - DoD 吁E��E��を確認し、実行可能かどぁE��を判断する
+   - **Unity固朁E*: Unity Editor手動検証が忁E��な頁E��がある場合、実裁E��にUnity Editorで確認すめE   - **Unity固朁E*: Unity Test RunnerでのチE��ト実行が忁E��な頁E��がある場合、Unity Test Runnerまた�Eコマンドラインで実行すめE   - 環墁E��存�Eタスク�E�Eit history 調査など�E��E場吁E
+     - GitリポジトリではなぁE��墁E��は、`git log` などのコマンド�E実行不可能
+     - こ�E場合、E*停止条件として扱ぁE*か、E*代替手段を取めE*かを判断する
+     - 判断に迷ぁE��合�E、停止条件として扱ぁE
+2. チャチE��で完結させなぁE���E果�Eファイル�E�Eocs/tasks / docs/inbox / docs/HANDOVER / git�E�に残す、E
+3. コマンド�E実行して結果で判断。失敗�E「失敗」と明記し、根拠と次手を出す、E
+4. 持E��コマンドが無ぁE��吁E `Get-Command <cmd>` 等で確誁EↁE代替案提示 ↁEそれでも依存追加/外部通信が忁E��なら停止、E
+5. 「念のため」�EチE��チEフォールバック/リファクタは禁止�E�EoD 従属�Eみ�E�、E
+6. ダブルチェチE��:
+   - チE��チEPush/長時間征E���E結果を確認し、未達なら完亁E��ぁE��しなぁE��E   - `git status -sb` で差刁E��常に把握�E�EitリポジトリではなぁE��合�EスキチE�E可能�E�、E   - **Unity固朁E*: Unity EditorでのコンパイルエラーがなぁE��とを確認！EUnity Editor=コンパイル成功`�E�E
+7. タイムアウトを宣言し、無限征E��しなぁE��E
+8. MISSION_LOG.md を更新�E�Ehase 3 完亁E��記録、実行�E容を記録�E�、E</step>
 </phase>
 
 <phase name="Phase 4: 納品 & 検証">
 <step>
-**必須: DoD の実際の達成確認（表面的な確認ではなく、実際に実施した内容を記録）**
+**忁E��E DoD の実際の達�E確認（表面皁E��確認ではなく、実際に実施した冁E��を記録�E�E*
 
-1. **DoD 各項目の達成確認（必須）**:
-   - DoD 各項目に対して、**実際に実施した内容**を記録する（「確認済み」などの表面的な記述は禁止）
-   - **Unity固有**: Unity Editor上での手動検証が必要な項目がある場合、具体的な検証手順と結果を記録する
-     - 例: `Unity Editor手動検証=プリセット保存・読み込み・削除・一覧更新を確認、正常動作を確認`
-   - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、テスト実行結果を記録する
-     - 例: `Unity Test Runner=<テストクラス名>=<成功/失敗>`, `<テスト数>=<成功数>/<総数>`
-   - **Unity固有**: コンパイルエラーがないことを確認した結果を記録する
-     - 例: `Unity Editor=コンパイル成功`
-   - DoD 各項目の達成根拠を以下の形式で記録する:
-     - 実施したコマンド: `<cmd>=<result>`
-     - 実施した調査: `<調査内容>=<結果>`
-     - 実施した実装: `<実装内容>=<結果>`
-   - **重要**: DoD に「git history」「調査」「分析」などのキーワードが含まれている場合、実際にその調査を実施した内容を記録する。実施していない場合は、停止条件として扱う。
+1. **DoD 吁E��E��の達�E確認（忁E��！E*:
+   - DoD 吁E��E��に対して、E*実際に実施した冁E��**を記録する�E�「確認済み」などの表面皁E��記述は禁止�E�E   - **Unity固朁E*: Unity Editor上での手動検証が忁E��な頁E��がある場合、�E体的な検証手頁E��結果を記録する
+     - 侁E `Unity Editor手動検証=プリセチE��保存�E読み込み・削除・一覧更新を確認、正常動作を確認`
+   - **Unity固朁E*: Unity Test RunnerでのチE��ト実行が忁E��な頁E��がある場合、テスト実行結果を記録する
+     - 侁E `Unity Test Runner=<チE��トクラス吁E=<成功/失敁E`, `<チE��ト数>=<成功数>/<総数>`
+   - **Unity固朁E*: コンパイルエラーがなぁE��とを確認した結果を記録する
+     - 侁E `Unity Editor=コンパイル成功`
+   - DoD 吁E��E��の達�E根拠を以下�E形式で記録する:
+     - 実施したコマンチE `<cmd>=<result>`
+     - 実施した調査: `<調査冁E��>=<結果>`
+     - 実施した実裁E `<実裁E�E容>=<結果>`
+   - **重要E*: DoD に「git history」「調査」「�E析」などのキーワードが含まれてぁE��場合、実際にそ�E調査を実施した冁E��を記録する。実施してぁE��ぁE��合�E、停止条件として扱ぁE��E
+2. チケチE��めEDONE に更新する前に、DoD 吁E��E��の達�E根拠を確認すめE
+   - DoD 吁E��E��が実際に達�EされてぁE��かを確認すめE   - 環墁E��存で実行不可能な頁E��がある場合、停止条件として扱ぁE��、代替手段を取るかを判断する
+   - 判断に迷ぁE��合�E、停止条件として扱ぁE
+3. チケチE��めEDONE に更新し、DoD 吁E��E��に対して根拠�E�差刁Eor チE��ト結果 or 調査結果�E�を記�E
 
-2. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
-   - DoD 各項目が実際に達成されているかを確認する
-   - 環境依存で実行不可能な項目がある場合、停止条件として扱うか、代替手段を取るかを判断する
-   - 判断に迷う場合は、停止条件として扱う
+4. docs/inbox/ にレポ�Eト（以下テンプレ�E�を作�E/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`�E�無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`�E�を実行。結果をレポ�Eトに記輁E
+5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次囁EOrchestrator が把握できるよう記録
 
-3. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
+6. 実行したテストを `<cmd>=<result>` 形式でレポ�EトとチケチE��に残す
+   - **Unity固朁E*: Unity Test RunnerでのチE��ト実行結果を記録する
+     - 侁E `Unity Test Runner=HeightMapGeneratorTests=14チE��ト�E功`, `TerrainGeneratorIntegrationTests=7チE��ト�E功`
 
-4. docs/inbox/ にレポート（以下テンプレ）を作成/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`（無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`）を実行。結果をレポートに記載
+7. `git status -sb` をクリーンにしてから commit�E�忁E��なめEpush�E�。push は GitHubAutoApprove=true の場合�Eみ
 
-5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
-
-6. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
-   - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
-     - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
-
-7. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
-
-8. MISSION_LOG.md を更新（Phase 4 完了を記録、納品物のパスを記録）。
-</step>
+8. MISSION_LOG.md を更新�E�Ehase 4 完亁E��記録、納品物のパスを記録�E�、E</step>
 </phase>
 
-<phase name="Phase 5: チャット出力">
+<phase name="Phase 5: チャチE��出劁E>
 <step>
-1. 完了時: `Done: <TICKET_PATH>. Report: <REPORT_PATH_TARGET>. Tests: <cmd>=<result>.`
-   - **Unity固有**: Unity Test Runnerでのテスト実行結果を含める
-     - 例: `Done: docs/tasks/TASK_012_....md. Report: docs/inbox/REPORT_TASK_012_....md. Tests: Unity Test Runner=全50テスト成功.`
-2. ブロッカー継続時: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候補>. Report: <REPORT_PATH_TARGET>.`
-3. MISSION_LOG.md を更新（Phase 5 完了を記録）。
-</step>
+1. 完亁E��: `Done: <TICKET_PATH>. Report: <REPORT_PATH_TARGET>. Tests: <cmd>=<result>.`
+   - **Unity固朁E*: Unity Test RunnerでのチE��ト実行結果を含める
+     - 侁E `Done: docs/tasks/TASK_012_....md. Report: docs/inbox/REPORT_TASK_012_....md. Tests: Unity Test Runner=全50チE��ト�E劁E`
+2. ブロチE��ー継続時: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候裁E. Report: <REPORT_PATH_TARGET>.`
+3. MISSION_LOG.md を更新�E�Ehase 5 完亁E��記録�E�、E</step>
 </phase>
 </workflow>
 
 <stop_conditions>
 停止条件:
-- Forbidden Area に触れないと解決できない
-- 仕様仮定が3件以上
-- SSOT が取得できない / `ensure-ssot.js` でも解決不可
-- 依存追加 / 外部通信（fetch/pull/push 等）が必要で GitHubAutoApprove=true が未確認
-- 破壊的・復旧困難操作（rebase/reset/force push 等）が必要
-- 数分以上の待機が必須、またはタイムアウト超過が見込まれる
-- **Unity固有の停止条件**:
-  - `ProjectSettings/`, `Packages/` の変更が必要な場合（互換性維持のため）
-  - Unity Editor起動が必要な長時間待機（数分以上）が必須の場合
-  - Unity Test Runnerでのテスト実行が不可能な環境の場合（代替手段が取れない場合）
-  - ScriptableObject、AssetDatabase等のUnity API使用時に、適切なエラーハンドリングが実装できない場合
-- **環境依存で実行不可能なDoD項目がある場合**:
-  - Gitリポジトリではない環境で、git history 調査が必要なDoD項目がある場合
-  - 代替手段が取れない場合、停止条件として扱う
-  - 停止時は、環境依存の理由と代替手段の検討結果をレポートに記録する
+- Forbidden Area に触れなぁE��解決できなぁE- 仕様仮定が3件以丁E- SSOT が取得できなぁE/ `ensure-ssot.js` でも解決不可
+- 依存追加 / 外部通信�E�Eetch/pull/push 等）が忁E��で GitHubAutoApprove=true が未確誁E- 破壊的・復旧困難操作！Eebase/reset/force push 等）が忁E��E- 数刁E��上�E征E��が忁E��、また�Eタイムアウト趁E��が見込まれる
+- **Unity固有�E停止条件**:
+  - `ProjectSettings/`, `Packages/` の変更が忁E��な場合（互換性維持�Eため�E�E  - Unity Editor起動が忁E��な長時間征E��（数刁E��上）が忁E���E場吁E  - Unity Test RunnerでのチE��ト実行が不可能な環墁E�E場合（代替手段が取れなぁE��合！E  - ScriptableObject、AssetDatabase等�EUnity API使用時に、E��刁E��エラーハンドリングが実裁E��きなぁE��吁E- **環墁E��存で実行不可能なDoD頁E��がある場吁E*:
+  - GitリポジトリではなぁE��墁E��、git history 調査が忁E��なDoD頁E��がある場吁E  - 代替手段が取れなぁE��合、停止条件として扱ぁE  - 停止時�E、環墁E��存�E琁E��と代替手段の検討結果をレポ�Eトに記録する
 </stop_conditions>
 
 <stop_output>
-停止時の必須アウトプット:
-1. チケット <TICKET_PATH> を IN_PROGRESS/BLOCKED のまま更新  
-   - 事実 / 根拠ログ要点 / 次手 1-3 件 / Report パスを必ず追記
-2. docs/inbox/ に未完了レポートを作成し、調査結果・詰まり・次手を記録
-3. 変更は commit する（push は GitHubAutoApprove=true の場合のみ自律実行）。push 不要時は「push pending」を明記
-4. チャット 1 行: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候補>. Report: <REPORT_PATH_TARGET>.`
-5. MISSION_LOG.md を更新（停止理由と次手を記録）。
-</stop_output>
+停止時�E忁E��アウト�EチE��:
+1. チケチE�� <TICKET_PATH> めEIN_PROGRESS/BLOCKED のまま更新  
+   - 事宁E/ 根拠ログ要点 / 次扁E1-3 件 / Report パスを忁E��追訁E2. docs/inbox/ に未完亁E��ポ�Eトを作�Eし、調査結果・詰まり�E次手を記録
+3. 変更は commit する�E�Eush は GitHubAutoApprove=true の場合�Eみ自律実行）。push 不要時は「push pending」を明訁E4. チャチE�� 1 衁E `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候裁E. Report: <REPORT_PATH_TARGET>.`
+5. MISSION_LOG.md を更新�E�停止琁E��と次手を記録�E�、E</stop_output>
 
 <output_format>
-納品レポート（docs/inbox/REPORT_...md）フォーマット:
-# Report: <タスク名>
+納品レポ�Eト！Eocs/inbox/REPORT_...md�E�フォーマッチE
+# Report: <タスク吁E
 
 **Timestamp**: <ISO8601>  
 **Actor**: Worker  
 **Ticket**: <TICKET_PATH>  
 **Type**: Worker  
-**Duration**: <所要時間>  
-**Changes**: <変更量要約>
+**Duration**: <所要時閁E  
+**Changes**: <変更量要紁E
 
 ## Changes
-- <file>: <詳細変更内容（何をどう変更したか）>
+- <file>: <詳細変更冁E���E�何をどぁE��更したか！E
 
 ## Decisions
-- <decision>: <理由>
+- <decision>: <琁E��>
 
 ## Verification
-- <command>: <result（成功/失敗とログ要点）>
-- **Unity固有**: Unity Editor手動検証結果、Unity Test Runnerでのテスト実行結果を記録
-  - 例: `Unity Editor手動検証=プリセット保存・読み込み・削除を確認、正常動作を確認`
-  - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
+- <command>: <result�E��E劁E失敗とログ要点�E�E
+- **Unity固朁E*: Unity Editor手動検証結果、Unity Test RunnerでのチE��ト実行結果を記録
+  - 侁E `Unity Editor手動検証=プリセチE��保存�E読み込み・削除を確認、正常動作を確認`
+  - 侁E `Unity Test Runner=HeightMapGeneratorTests=14チE��ト�E功`, `TerrainGeneratorIntegrationTests=7チE��ト�E功`
 
 ## Risk
 - <潜在リスク>
-- **Unity固有**: Unity Editor起動が必要な長時間待機、Unity Test Runnerでのテスト実行が不可能な環境等のリスクを記録
+- **Unity固朁E*: Unity Editor起動が忁E��な長時間征E��、Unity Test RunnerでのチE��ト実行が不可能な環墁E���Eリスクを記録
 
 ## Remaining
-- なし / <残件>
+- なぁE/ <残件>
 
-## Blocked（State: BLOCKED の場合）
-- Reason / Evidence / Options（1〜3）
-
+## Blocked�E�Etate: BLOCKED の場合！E- Reason / Evidence / Options�E�E、E�E�E
 ## Handover
-- Orchestrator への申し送り（次手・注意点・未解決事項）
-
-## Proposals（任意）
-- 担当外で気づいた改善案・次回タスク候補
-</output_format>
+- Orchestrator への申し送り�E�次手�E注意点・未解決事頁E��E
+## Proposals�E�任意！E- 拁E��外で気づぁE��改喁E���E次回タスク候裁E</output_format>
 
 <self_correction>
-- ファイルパスは **動的に確認** すること（`ls`, `find`, `Test-Path` 等を使用）。ハードコード禁止。
-- エラーが発生した場合は、MISSION_LOG.md に記録し、復旧手順を試行する。
-- 3回試行しても解決しない場合のみ、状況と試行内容を整理してユーザーに判断を仰ぐ。
-- MISSION_LOG.md は常に最新状態を保つこと。各フェーズ完了時に必ず更新する。
-- **Unity固有**: Unity Editor上での手動検証が必要な場合、実装後に必ずUnity Editorで動作確認を行う。
-- **Unity固有**: Unity Test Runnerでのテスト実行が必要な場合、Unity Test Runnerまたはコマンドラインで実行し、結果を記録する。
-- **Unity固有**: ScriptableObject、AssetDatabase等のUnity APIを使用する場合、適切なエラーハンドリングを実装する。
-- **Unity固有**: EditorOnlyコードは `#if UNITY_EDITOR` で適切に分離する。
-</self_correction>
+- ファイルパスは **動的に確誁E* すること�E�Els`, `find`, `Test-Path` 等を使用�E�。ハードコード禁止、E- エラーが発生した場合�E、MISSION_LOG.md に記録し、復旧手頁E��試行する、E- 3回試行しても解決しなぁE��合�Eみ、状況と試行�E容を整琁E��てユーザーに判断を仰ぐ、E- MISSION_LOG.md は常に最新状態を保つこと。各フェーズ完亁E��に忁E��更新する、E- **Unity固朁E*: Unity Editor上での手動検証が忁E��な場合、実裁E��に忁E��Unity Editorで動作確認を行う、E- **Unity固朁E*: Unity Test RunnerでのチE��ト実行が忁E��な場合、Unity Test Runnerまた�Eコマンドラインで実行し、結果を記録する、E- **Unity固朁E*: ScriptableObject、AssetDatabase等�EUnity APIを使用する場合、E��刁E��エラーハンドリングを実裁E��る、E- **Unity固朁E*: EditorOnlyコード�E `#if UNITY_EDITOR` で適刁E��刁E��する、E</self_correction>
 ```
 
 ---
 
-## 2. 生成例（Unity固有項目の例示）
-
-### 例: Unity Editor機能実装（Tier 2 / Unity固有検証）
-
+## 2. 生�E例！Enity固有頁E��の例示�E�E
+### 侁E Unity Editor機�E実裁E��Eier 2 / Unity固有検証�E�E
 ```xml
 <instruction>
-あなたは分散開発チームの Worker です。割り当てられた 1 タスクだけを完遂し、証跡を残してください。
-**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test Runnerでのテスト実行が必要な場合があります。
-</instruction>
+あなた�E刁E��開発チ�Eムの Worker です。割り当てられぁE1 タスクだけを完遂し、証跡を残してください、E**Unityプロジェクト向けタスク**のため、Unity Editor上での手動検証とUnity Test RunnerでのチE��ト実行が忁E��な場合があります、E</instruction>
 
 <context>
 <preconditions>
@@ -286,33 +202,22 @@ Report Target: docs/inbox/REPORT_TASK_012_TerrainGenerationWindow_PresetManageme
 Focus Area: Assets/Scripts/Editor/TerrainGenerationWindow.cs, Assets/Scripts/Editor/TerrainPresetManager.cs
 Forbidden Area: Assets/MapGenerator/Scripts/TerrainGenerator.cs, Assets/MapGenerator/Scripts/HeightMapGenerator.cs, ProjectSettings/, Packages/
 DoD:
-- [ ] プリセット保存機能: 現在の設定を新しいプリセットとして保存できる
-- [ ] プリセット読み込み機能: 保存済みプリセットを選択して即座に設定を適用できる
-- [ ] Unity Editor上での動作確認: プリセット保存・読み込み・削除が正常に動作することを確認
-- [ ] Unity Test Runnerでのテスト実行: 既存テストがすべて成功することを確認
-- [ ] コンパイルエラーがない: Unity Editorでコンパイル成功を確認
-</preconditions>
+- [ ] プリセチE��保存機�E: 現在の設定を新しいプリセチE��として保存できる
+- [ ] プリセチE��読み込み機�E: 保存済みプリセチE��を選択して即座に設定を適用できる
+- [ ] Unity Editor上での動作確誁E プリセチE��保存�E読み込み・削除が正常に動作することを確誁E- [ ] Unity Test RunnerでのチE��ト実衁E 既存テストがすべて成功することを確誁E- [ ] コンパイルエラーがなぁE Unity Editorでコンパイル成功を確誁E</preconditions>
 </context>
 
-（以降はテンプレ本文に沿って Phase 0〜5 を実施）
-```
+�E�以降�EチE��プレ本斁E��沿って Phase 0、E を実施�E�E```
 
 ---
 
-## 3. Unity固有項目の説明
-
+## 3. Unity固有頁E��の説昁E
 ### Unity Editor手動検証
-- Unity Editorを起動し、実装した機能を実際に操作して動作を確認する
-- 検証結果は具体的に記録する（例: `Unity Editor手動検証=プリセット保存・読み込み・削除を確認、正常動作を確認`）
+- Unity Editorを起動し、実裁E��た機�Eを実際に操作して動作を確認すめE- 検証結果は具体的に記録する�E�侁E `Unity Editor手動検証=プリセチE��保存�E読み込み・削除を確認、正常動作を確認`�E�E
+### Unity Test RunnerでのチE��ト実衁E- Unity Test Runnerまた�EコマンドラインでチE��トを実行し、結果を記録する
+- チE��ト実行結果は `<チE��トクラス吁E=<成功/失敁E`, `<チE��ト数>=<成功数>/<総数>` の形式で記録する
 
-### Unity Test Runnerでのテスト実行
-- Unity Test Runnerまたはコマンドラインでテストを実行し、結果を記録する
-- テスト実行結果は `<テストクラス名>=<成功/失敗>`, `<テスト数>=<成功数>/<総数>` の形式で記録する
+### コンパイルエラー確誁E- Unity EditorでコンパイルエラーがなぁE��とを確認すめE- 確認結果は `Unity Editor=コンパイル成功` の形式で記録する
 
-### コンパイルエラー確認
-- Unity Editorでコンパイルエラーがないことを確認する
-- 確認結果は `Unity Editor=コンパイル成功` の形式で記録する
-
-### Unity API使用時の注意点
-- ScriptableObject、AssetDatabase等のUnity APIを使用する場合、適切なエラーハンドリングを実装する
-- EditorOnlyコードは `#if UNITY_EDITOR` で適切に分離する
+### Unity API使用時�E注意点
+- ScriptableObject、AssetDatabase等�EUnity APIを使用する場合、E��刁E��エラーハンドリングを実裁E��めE- EditorOnlyコード�E `#if UNITY_EDITOR` で適刁E��刁E��する

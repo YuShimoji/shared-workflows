@@ -1,23 +1,16 @@
-# Phase 4: チケット発行
-
-## 目的
-Worker 用のタスクチケットを発行する。
-
-## 手順
-1. `docs/tasks/` に `TASK_XXX_*.md` を作成し、Status: OPEN で登録
-2. DoD をチェックリストで定義（調査が必要な項目は Worker に委譲することを明記）
-3. MISSION_LOG.md を更新（Phase 4 完了を記録）
-
-## チケットに必ず含める項目
+# Phase 4: チケチE��発衁E
+## 目皁EWorker 用のタスクチケチE��を発行する、E
+## 手頁E1. `docs/tasks/` に `TASK_XXX_*.md` を作�Eし、Status: OPEN で登録
+2. DoD をチェチE��リストで定義�E�調査が忁E��な頁E��は Worker に委譲することを�E記！E3. MISSION_LOG.md を更新�E�Ehase 4 完亁E��記録�E�E
+## チケチE��に忁E��含める頁E��
 - Tier / Branch
 - Focus Area / Forbidden Area
 - Constraints / DoD
 - 停止条件
 
-## 完了条件
-- チケットが発行されている
-- DoD が定義されている
+## 完亁E��件
+- チケチE��が発行されてぁE��
+- DoD が定義されてぁE��
 
 ## 次フェーズ
-P5（Worker起動用プロンプト生成）
-
+P5�E�Eorker起動用プロンプト生�E�E�E

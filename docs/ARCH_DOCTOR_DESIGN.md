@@ -1,203 +1,119 @@
-# Shared Doctor / Check-Fix エンジン設計案
-
-## 1. 目的
-
-shared-workflows に閉じたスクリプト群（ensure-ssot, orchestrator-audit, dev-check, sw-doctor 等）を、
-「任意プロジェクトで利用可能な自己診断・自己修復エンジン」として再設計する。
-
-本設計では、具体的なファイル構造（AI_CONTEXT.md, HANDOVER.md, docs/tasks/* など）に依存しない
-抽象モデルを定義し、その上に shared-workflows 用のプラグインを載せることを目指す。
-
-## 2. ドメインモデル
+# Shared Doctor / Check-Fix エンジン設計桁E
+## 1. 目皁E
+shared-workflows に閉じたスクリプト群�E�Ensure-ssot, orchestrator-audit, dev-check, sw-doctor 等）を、E「任意�Eロジェクトで利用可能な自己診断・自己修復エンジン」として再設計する、E
+本設計では、�E体的なファイル構造�E�EI_CONTEXT.md, HANDOVER.md, docs/tasks/* など�E�に依存しなぁE抽象モチE��を定義し、その上に shared-workflows 用のプラグインを載せることを目持E��、E
+## 2. ドメインモチE��
 
 ### 2.1 Workspace
 
-- 単一のコードベース / リポジトリを表す単位。
-- プロジェクトルートパス、設定ファイルパス、拡張メタデータ（例: Git リモート、ブランチ名）を持つ。
-- 例:
+- 単一のコード�Eース / リポジトリを表す単位、E- プロジェクトルートパス、設定ファイルパス、拡張メタチE�Eタ�E�侁E Git リモート、ブランチ名�E�を持つ、E- 侁E
   - `projectRoot`: `C:/repo/my-app`
   - `config`: `REPORT_CONFIG.yml`, `.doctorrc` など
 
 ### 2.2 Artifact
 
-- Workspace 内の「役割を持ったリソース」の抽象。
-- 具体的なファイル形式（Markdown/JSON/YAML）には依存せず、「こういう意味を持つもの」として定義する。
-- 代表例（shared-workflows 用プラグインの観点）:
+- Workspace 冁E�E「役割を持ったリソース」�E抽象、E- 具体的なファイル形式！Earkdown/JSON/YAML�E�には依存せず、「こぁE��ぁE��味を持つも�E」として定義する、E- 代表例！Ehared-workflows 用プラグインの観点�E�E
   - `Context`: AI_CONTEXT.md
   - `Handover`: docs/HANDOVER.md
   - `TaskBoard`: docs/tasks/*.md
   - `Report`: docs/inbox/REPORT_*.md
-- 他プロジェクトでは、Context/Handover/TaskBoard が別ファイルや別ストレージでもよい。
-
+- 他�Eロジェクトでは、Context/Handover/TaskBoard が別ファイルめE��ストレージでもよぁE��E
 ### 2.3 Check
 
-- ある Workspace に対して、invariant を検証する純粋関数として定義する。
-- 入力
-  - `workspace`: Workspace
-  - `options`: 設定・プロファイルに応じたオプション
-- 出力（概念）
-  - `id`: 一意な識別子（例: `ssot.files.present`, `handover.latest_report_linked`）
-  - `severity`: `OK | WARN | ERROR`
-  - `message`: 人間向けメッセージ（日本語が既定）
-  - `context`: 追加情報（関連ファイルパス、抜粋、提案など）
-
+- ある Workspace に対して、invariant を検証する純粋関数として定義する、E- 入劁E  - `workspace`: Workspace
+  - `options`: 設定�Eプロファイルに応じたオプション
+- 出力（概念�E�E  - `id`: 一意な識別子（侁E `ssot.files.present`, `handover.latest_report_linked`�E�E  - `severity`: `OK | WARN | ERROR`
+  - `message`: 人間向けメチE��ージ�E�日本語が既定！E  - `context`: 追加惁E���E�関連ファイルパス、抜粋、提案など�E�E
 ### 2.4 Fix (Repair)
 
-- Check に紐づく任意の修復アクション。
-- 入力
-  - `workspace`
-  - `checkResult`: 上記の Check の結果
+- Check に紐づく任意�E修復アクション、E- 入劁E  - `workspace`
+  - `checkResult`: 上記�E Check の結果
   - `options`: `dryRun`, `interactive` など
-- 出力（概念）
-  - `applied`: boolean（実際に修正を適用したか）
-  - `changes`: 変更ファイル一覧や diff 要約
-  - `notes`: 人間向け説明
-
+- 出力（概念�E�E  - `applied`: boolean�E�実際に修正を適用したか！E  - `changes`: 変更ファイル一覧めEdiff 要紁E  - `notes`: 人間向け説昁E
 ### 2.5 Profile
 
-- チェック集合とポリシーの組。
-- 情報:
-  - `id`: プロファイル名（例: `shared-orch-bootstrap`, `shared-orch-doctor`, `ci-strict`）
-  - `checks`: 実行する Check の一覧
-  - `severityPolicy`: どの severity で fail 扱いにするか
-  - `autoFixPolicy`: どの Check/Fix を自動適用するか（`safe-only`/`none`/`all` など）
-
+- チェチE��雁E��とポリシーの絁E��E- 惁E��:
+  - `id`: プロファイル名（侁E `shared-orch-bootstrap`, `shared-orch-doctor`, `ci-strict`�E�E  - `checks`: 実行すめECheck の一覧
+  - `severityPolicy`: どの severity で fail 扱ぁE��するぁE  - `autoFixPolicy`: どの Check/Fix を�E動適用するか！Esafe-only`/`none`/`all` など�E�E
 ## 3. レイヤ構造
 
-本エンジンは、概ね次の3レイヤに分ける:
+本エンジンは、概�E次の3レイヤに刁E��めE
 
 1. **コアエンジン層**
-   - Workspace/Artifact/Check/Fix/Profile の型定義と実行エンジン。
-   - チェックの並列実行、タイムアウト、再試行ポリシーなどを扱う。
-   - 出力は JSON などの機械可読フォーマットを既定とし、人間向けテキストは後段で生成する。
-
-2. **プラグイン層（shared-workflows 用）**
-   - AI_CONTEXT/HANDOVER/docs/tasks/docs/inbox に関する具体的な Check/Fix 実装。
-   - 既存スクリプト（orchestrator-audit, todo-sync, todo-leak-preventer など）を徐々にここへ集約。
-
-3. **フロントエンド層（CLI / メタプロンプト / CI 連携）**
-   - `doctor check`, `doctor fix`, `doctor explain` など、ユーザやCIが呼ぶ入口。
-   - 出力形式（text/json/markdown）選択や profile 選択を担当。
-
+   - Workspace/Artifact/Check/Fix/Profile の型定義と実行エンジン、E   - チェチE��の並列実行、タイムアウト、�E試行�Eリシーなどを扱ぁE��E   - 出力�E JSON などの機械可読フォーマットを既定とし、人間向けテキスト�E後段で生�Eする、E
+2. **プラグイン層�E�Ehared-workflows 用�E�E*
+   - AI_CONTEXT/HANDOVER/docs/tasks/docs/inbox に関する具体的な Check/Fix 実裁E��E   - 既存スクリプト�E�Erchestrator-audit, todo-sync, todo-leak-preventer など�E�を徐、E��ここへ雁E��E��E
+3. **フロントエンド層�E�ELI / メタプロンプト / CI 連携�E�E*
+   - `doctor check`, `doctor fix`, `doctor explain` など、ユーザやCIが呼ぶ入口、E   - 出力形式！Eext/json/markdown�E�選択や profile 選択を拁E��、E
 ## 4. 既存スクリプトとのマッピング
 
 ### 4.1 orchestrator-audit.js
 
 - 主な役割
-  - docs/tasks, docs/inbox, HANDOVER.md を横断して、整合性をチェック。
-  - Orchestrator レポートの検証（report-validator 経由）。
-- 将来の位置づけ
-  - shared-workflows プラグイン層の **複数 Check の集合** として再定義。
-  - 例: `handover.latest_orch_report_linked`, `tasks.report_link_exists`, `inbox.empty_after_merge` など。
-
+  - docs/tasks, docs/inbox, HANDOVER.md を横断して、整合性をチェチE��、E  - Orchestrator レポ�Eト�E検証�E�Eeport-validator 経由�E�、E- 封E��の位置づぁE  - shared-workflows プラグイン層の **褁E�� Check の雁E��** として再定義、E  - 侁E `handover.latest_orch_report_linked`, `tasks.report_link_exists`, `inbox.empty_after_merge` など、E
 ### 4.2 ensure-ssot.js
 
 - 主な役割
-  - shared-workflows サブモジュール or 共有クローンから SSOT ファイルを取得し、プロジェクト側に揃える。
-- 将来の位置づけ
-  - Check: `ssot.files.present`
+  - shared-workflows サブモジュール or 共有クローンから SSOT ファイルを取得し、�Eロジェクト�Eに揁E��る、E- 封E��の位置づぁE  - Check: `ssot.files.present`
   - Fix: `ssot.ensure_files`
-  - `--no-fail` は profile の `severityPolicy`/`autoFixPolicy` でコントロール。
-
+  - `--no-fail` は profile の `severityPolicy`/`autoFixPolicy` でコントロール、E
 ### 4.3 dev-check.js
 
 - 主な役割
-  - 複数スクリプト（detect-project-type, report-style-hint, creativity-booster, adapt-response, todo-sync/todo-leak-preventer）を順に実行。
-  - Git 競合状態チェック。
-- 将来の位置づけ
-  - 「profileを選択して Check 集合を実行する CLI」の一実装 → `doctor check --profile shared-orch-dev` に統合。
-
+  - 褁E��スクリプト�E�Eetect-project-type, report-style-hint, creativity-booster, adapt-response, todo-sync/todo-leak-preventer�E�を頁E��実行、E  - Git 競合状態チェチE��、E- 封E��の位置づぁE  - 「profileを選択して Check 雁E��を実行すめECLI」�E一実裁EↁE`doctor check --profile shared-orch-dev` に統合、E
 ### 4.4 sw-doctor.js
 
 - 現状
-  - 環境チェック → スクリプト可用性 → orchestrator-audit → dev-check → 修復提案 を一括で実行。
-- 将来の役割
-  - コアエンジンの **ランナー/CLI** の1つとして整理。
-  - 段階的リファクタ目標:
-    1. 現在の `checkEnvironment` / `checkScripts` / `runAudit` / `runDevCheck` を Check オブジェクトにマッピング（内部API）。
-    2. 結果を `{ id, severity, message, context }[]` で取得できるようにする。
-    3. `--format text|json` で出力形式を切り替え可能にする。
-    4. `--profile shared-orch-bootstrap|shared-orch-doctor|ci-strict` などでチェックセットを切り替える。
-
-## 5. 段階的移行計画（高レベル）
-
-### Phase A: カタログ化と設計固定（このドキュメント）
-
-- 既存スクリプトの振る舞いを Check/Fix 観点でカタログ化する。
-- 本ドキュメントでドメインモデルとレイヤ構造・マッピングを固定する。
-
-### Phase B: sw-doctor の内部API化
-
+  - 環墁E��ェチE�� ↁEスクリプト可用性 ↁEorchestrator-audit ↁEdev-check ↁE修復提桁Eを一括で実行、E- 封E��の役割
+  - コアエンジンの **ランナ�E/CLI** の1つとして整琁E��E  - 段階的リファクタ目樁E
+    1. 現在の `checkEnvironment` / `checkScripts` / `runAudit` / `runDevCheck` めECheck オブジェクトにマッピング�E��E部API�E�、E    2. 結果めE`{ id, severity, message, context }[]` で取得できるようにする、E    3. `--format text|json` で出力形式を刁E��替え可能にする、E    4. `--profile shared-orch-bootstrap|shared-orch-doctor|ci-strict` などでチェチE��セチE��を�Eり替える、E
+## 5. 段階的移行計画�E�高レベル�E�E
+### Phase A: カタログ化と設計固定（このドキュメント！E
+- 既存スクリプトの振る�EぁE�� Check/Fix 観点でカタログ化する、E- 本ドキュメントでドメインモチE��とレイヤ構造・マッピングを固定する、E
+### Phase B: sw-doctor の冁E��API匁E
 - 変更は最小限に抑えつつ、現在の
   - `checkEnvironment`
   - `checkScripts`
   - `runAudit`
   - `runDevCheck`
-  を、それぞれ Check 実装のラッパとして扱えるよう内部 API を導入する。
-- 例（イメージのみ・実装は別フェーズ）:
+  を、それぞめECheck 実裁E�EラチE��として扱えるよう冁E�� API を導�Eする、E- 例（イメージのみ・実裁E�E別フェーズ�E�E
   - `runChecks(profileId, options) -> CheckResult[]`
-- この段階では CLI 表面は極力互換を保つ（`node scripts/sw-doctor.js` の振る舞いは維持）。
-
-### Phase C: プロファイルと出力形式の導入
+- こ�E段階では CLI 表面は極力互換を保つ�E�Enode scripts/sw-doctor.js` の振る�EぁE�E維持E��、E
+### Phase C: プロファイルと出力形式�E導�E
 
 - `--profile` オプション:
-  - 例: `shared-orch-bootstrap`, `shared-orch-doctor`, `ci-strict`。
-  - 各 profile ごとに実行する Check セットとポリシーを定義。
-- `--format` オプション:
-  - `text`（現行互換）と `json`（CI や他ツール連携用）を用意。
-  - JSON には CheckResult 一覧とサマリ（OK/WARN/ERROR 数など）を含める。
-
-### Phase D: メタプロンプト・ドキュメントの整理
-
-- ORCHESTRATOR_METAPROMPT / PROJECT_KICKSTART / WORKER_METAPROMPT を「個別 Node スクリプト名」から
-  「doctor profile 呼び出し」ベースの指示へ段階的に書き換える。
-- 例:
+  - 侁E `shared-orch-bootstrap`, `shared-orch-doctor`, `ci-strict`、E  - 吁Eprofile ごとに実行すめECheck セチE��とポリシーを定義、E- `--format` オプション:
+  - `text`�E�現行互換�E�と `json`�E�EI めE��ツール連携用�E�を用意、E  - JSON には CheckResult 一覧とサマリ�E�EK/WARN/ERROR 数など�E�を含める、E
+### Phase D: メタプロンプト・ドキュメント�E整琁E
+- ORCHESTRATOR_METAPROMPT / PROJECT_KICKSTART / WORKER_METAPROMPT を「個別 Node スクリプト名」かめE  「doctor profile 呼び出し」�Eースの持E��へ段階的に書き換える、E- 侁E
   - 旧: `node scripts/orchestrator-audit.js --no-fail`
   - 新: `node scripts/sw-doctor.js --profile shared-orch-doctor --format text`
 
-### Phase E: 他プロジェクト向け拡張
+### Phase E: 他�Eロジェクト向け拡張
 
-- shared-workflows 外のプロジェクトで、独自の Artifact/Check/Fix を追加できるエクステンションポイントを整備。
-- 想定:
-  - `doctor.config.js` や `.doctorrc` による profile/プラグイン設定。
-  - shared-workflows は「標準プラグインセット」として利用される。
-
-## 6. CI 連携とカスタム設定
-
+- shared-workflows 外�Eプロジェクトで、独自の Artifact/Check/Fix を追加できるエクスチE��ションポイントを整備、E- 想宁E
+  - `doctor.config.js` めE`.doctorrc` による profile/プラグイン設定、E  - shared-workflows は「標準�EラグインセチE��」として利用される、E
+## 6. CI 連携とカスタム設宁E
 ### 6.1 CI での利用
 
-doctor の JSON 出力（`--format json`）を活用して、GitHub Actions や他の CI システムから:
-- 環境チェック結果の機械的な評価
-- PR コメントへの自動レポート生成
-- ビルド失敗判定（profile の severityPolicy に基づく）
+doctor の JSON 出力！E--format json`�E�を活用して、GitHub Actions めE���E CI シスチE��から:
+- 環墁E��ェチE��結果の機械皁E��評価
+- PR コメントへの自動レポ�Eト生戁E- ビルド失敗判定！Erofile の severityPolicy に基づく！E
+詳細は `docs/CI_INTEGRATION.md` を参照、E
+### 6.2 カスタム設定！E.doctorrc.js`�E�E
+プロジェクト固有�E doctor 設定を `.doctorrc.js` で定義可能にする�E�封E��実裁E��E
+- プロファイルの追加・上書ぁE- カスタム Check/Fix の追加
+- 環墁E��数めE��部設定�E読み込み
 
-詳細は `docs/CI_INTEGRATION.md` を参照。
+チE��プレート�E `templates/.doctorrc.example.js` を参照、E
+## 7. 今後�E優先タスク
 
-### 6.2 カスタム設定（`.doctorrc.js`）
-
-プロジェクト固有の doctor 設定を `.doctorrc.js` で定義可能にする（将来実装）:
-- プロファイルの追加・上書き
-- カスタム Check/Fix の追加
-- 環境変数や外部設定の読み込み
-
-テンプレートは `templates/.doctorrc.example.js` を参照。
-
-## 7. 今後の優先タスク
-
-1. **✅ sw-doctor 内部での CheckResult 構造の導入** (完了)
-   - CheckResult 配列を構築し、JSON 出力に対応。
-
-2. **✅ --format / --profile オプションの仕様確定** (完了)
-   - 3 つのプロファイル（bootstrap/doctor/ci-strict）を定義。
-   - JSON スキーマを実装。
-
-3. **✅ メタプロンプトへの doctor 統合方針の詳細化** (完了)
-   - ORCHESTRATOR_METAPROMPT / PROJECT_KICKSTART を doctor プロファイル呼び出しベースに更新。
-
-4. **次フェーズ（将来実装）**
-   - `.doctorrc.js` のサポート（カスタムプロファイル・Check/Fix の追加）
-   - 他プロジェクト向けの doctor パッケージ化（npm 公開等）
-   - GitHub Actions テンプレートの提供
-   - プラグインシステムの整備
-
-このドキュメントは、上記タスクの設計上の基準点（SSOT）として扱い、実装変更時には随時更新する。
+1. **✁Esw-doctor 冁E��での CheckResult 構造の導�E** (完亁E
+   - CheckResult 配�Eを構築し、JSON 出力に対応、E
+2. **✁E--format / --profile オプションの仕様確宁E* (完亁E
+   - 3 つのプロファイル�E�Eootstrap/doctor/ci-strict�E�を定義、E   - JSON スキーマを実裁E��E
+3. **✁Eメタプロンプトへの doctor 統合方針�E詳細匁E* (完亁E
+   - ORCHESTRATOR_METAPROMPT / PROJECT_KICKSTART めEdoctor プロファイル呼び出し�Eースに更新、E
+4. **次フェーズ�E�封E��実裁E��E*
+   - `.doctorrc.js` のサポ�Eト（カスタムプロファイル・Check/Fix の追加�E�E   - 他�Eロジェクト向け�E doctor パッケージ化！Epm 公開等！E   - GitHub Actions チE��プレート�E提侁E   - プラグインシスチE��の整傁E
+こ�Eドキュメント�E、上記タスクの設計上�E基準点�E�ESOT�E�として扱ぁE��実裁E��更時には随時更新する、E

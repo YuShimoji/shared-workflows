@@ -1,5 +1,4 @@
-# Task: GitHubのデフォルトブランチを main に統一（origin/HEAD を是正）
-
+# Task: GitHubのチE��ォルトブランチを main に統一�E�Erigin/HEAD を是正�E�E
 Status: DONE
 Tier: 1
 Branch: main
@@ -7,47 +6,34 @@ Owner: Orchestrator
 Created: 2025-12-20T10:05+09:00
 Report: docs/reports/REPORT_ORCH_20251226_1332.md
 ## DoD
-- [x] GitHub 側のデフォルトブランチを `main` に統一し、clone 時の初期ブランチが `main` になる状態にする。
-- [x] ローカルで `git remote show origin` の `HEAD branch` が `main` になっていることを確認できる状態にする。
-- [x] 変更/判断の根拠を docs/inbox/ のレポートに残している
-- [x] 本チケットの Report 欄にレポートパスが追記されている
+- [x] GitHub 側のチE��ォルトブランチを `main` に統一し、clone 時�E初期ブランチが `main` になる状態にする、E- [x] ローカルで `git remote show origin` の `HEAD branch` ぁE`main` になってぁE��ことを確認できる状態にする、E- [x] 変更/判断の根拠めEdocs/inbox/ のレポ�Eトに残してぁE��
+- [x] 本チケチE��の Report 欁E��レポ�Eトパスが追記されてぁE��
 
 ## Current Status
-- ローカルブランチは `main` に一本化済み。
-- リモート (`origin/HEAD`) は依然として `chore/central-init` を指している。
-- `git remote set-head origin main` は実行したが、GitHub 側のデフォルトブランチ設定が優先されるため反映されない。
-
+- ローカルブランチ�E `main` に一本化済み、E- リモーチE(`origin/HEAD`) は依然として `chore/central-init` を指してぁE��、E- `git remote set-head origin main` は実行したが、GitHub 側のチE��ォルトブランチ設定が優先されるため反映されなぁE��E
 ## Next Action for User
-- GitHub リポジトリ設定 (Settings > General > Default branch) で `main` をデフォルトブランチに変更してください。
-- 変更後、Orchestrator が `git remote set-head origin -a` を実行して完了とします。
-
+- GitHub リポジトリ設宁E(Settings > General > Default branch) で `main` をデフォルトブランチに変更してください、E- 変更後、Orchestrator ぁE`git remote set-head origin -a` を実行して完亁E��します、E
 ## Context
 
-- 現状 `origin/HEAD -> origin/chore/central-init` となっており、初見の利用者が `main` ではないブランチに着地しうる。
-- 本リポジトリは SSOT として参照されるため、入口での迷いを減らす必要がある。
-
+- 現状 `origin/HEAD -> origin/chore/central-init` となっており、�E見�E利用老E�� `main` ではなぁE��ランチに着地しうる、E- 本リポジトリは SSOT として参�Eされるため、�E口での迷ぁE��減らす忁E��がある、E
 ## Focus Area
 
-- GitHub リポジトリ設定（Default branch）
-- `docs/`（必要なら README / OPEN_HERE / CENTRAL_REPO_REF の注意書きのみ）
-
+- GitHub リポジトリ設定！Eefault branch�E�E- `docs/`�E�忁E��なめEREADME / OPEN_HERE / CENTRAL_REPO_REF の注意書き�Eみ�E�E
 ## Forbidden Area
 
-- 履歴破壊操作（rebase/reset/force push）
-- 運用に無関係な大規模リファクタ
+- 履歴破壊操作！Eebase/reset/force push�E�E- 運用に無関係な大規模リファクタ
 
 ## Constraints
 
-- テスト: 主要パスのみ（clone/参照導線の確認）
-- フォールバック: 新規追加禁止
+- チE��チE 主要パスのみ�E�Elone/参�E導線�E確認！E- フォールバック: 新規追加禁止
 
 ## DoD
 
-- [ ] GitHub 側の Default branch が `main` になっている
-- [ ] `git remote show origin` の `HEAD branch` が `main` と確認できる
-- [ ] 変更/判断の根拠を docs/inbox/ のレポートに残している
-- [ ] 本チケットの Report 欄にレポートパスが追記されている
+- [ ] GitHub 側の Default branch ぁE`main` になってぁE��
+- [ ] `git remote show origin` の `HEAD branch` ぁE`main` と確認できる
+- [ ] 変更/判断の根拠めEdocs/inbox/ のレポ�Eトに残してぁE��
+- [ ] 本チケチE��の Report 欁E��レポ�Eトパスが追記されてぁE��
 
 ## Notes
 
-- GitHub 側の設定変更が必要な場合は、手順と理由をレポートに明記する
+- GitHub 側の設定変更が忁E��な場合�E、手頁E��琁E��をレポ�Eトに明記すめE

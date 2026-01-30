@@ -1,32 +1,25 @@
-# Phase 5: Worker起動用プロンプト生成
+# Phase 5: Worker起動用プロンプト生�E
 
-## 目的
-Worker に渡すプロンプトを生成する。
-
-## 手順
-1. 各チケットごとに Worker プロンプトを生成
-2. `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` をベースに動的生成
-3. MISSION_LOG.md を更新（Phase 5 完了を記録）
-
-## プロンプトに必ず含める項目
-- チケットパス
+## 目皁EWorker に渡す�Eロンプトを生成する、E
+## 手頁E1. 吁E��ケチE��ごとに Worker プロンプトを生戁E2. `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を�Eースに動的生�E
+3. MISSION_LOG.md を更新�E�Ehase 5 完亁E��記録�E�E
+## プロンプトに忁E��含める頁E��
+- チケチE��パス
 - Tier / Branch
 - Focus Area / Forbidden Area
 - 停止条件
-- 納品先: `docs/inbox/REPORT_...`
-- AI_CONTEXT の背景情報
-- MISSION_LOG.md の最新状態
-
-## 出力形式
-```text
+- 納品允E `docs/inbox/REPORT_...`
+- AI_CONTEXT の背景惁E��
+- MISSION_LOG.md の最新状慁E
+## 出力形弁E```text
 # Worker Prompt: TASK_XXX_...
 
-## 参照
-- チケット: docs/tasks/TASK_XXX_....md
+## 参�E
+- チケチE��: docs/tasks/TASK_XXX_....md
 - SSOT: docs/Windsurf_AI_Collab_Rules_latest.md
 - HANDOVER: docs/HANDOVER.md
 
-## 境界
+## 墁E��
 - Focus Area: ...
 - Forbidden Area: ...
 
@@ -36,13 +29,11 @@ Worker に渡すプロンプトを生成する。
 ## 停止条件
 - ...
 
-## 納品先
-- docs/inbox/REPORT_TASK_XXX_....md
+## 納品允E- docs/inbox/REPORT_TASK_XXX_....md
 ```
 
-## 完了条件
-- Worker プロンプトが生成されている
+## 完亁E��件
+- Worker プロンプトが生成されてぁE��
 
 ## 次フェーズ
-P6（Orchestrator Report）
-
+P6�E�Erchestrator Report�E�E

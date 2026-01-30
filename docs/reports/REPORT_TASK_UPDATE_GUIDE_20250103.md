@@ -1,51 +1,42 @@
-# Report: 改善提案実装タスク完了後の更新方法ガイド
-
+# Report: 改喁E��案実裁E��スク完亁E���E更新方法ガイチE
 **Timestamp**: 2025-01-03T00:00:00+09:00
 **Actor**: Orchestrator
 **Type**: Orchestrator
 **Duration**: 0.2h
-**Changes**: タスク完了後の更新方法ガイド作成
+**Changes**: タスク完亁E���E更新方法ガイド作�E
 
-## 概要
-- TASK_007（Worker完了レポートの必須ヘッダー自動補完）とTASK_008（Worker完了レポートの自動統合スクリプト作成）の実装完了後、どのように現在のプロジェクトで更新するかの手順を解説
+## 概要E- TASK_007�E�Eorker完亁E��ポ�Eト�E忁E���EチE��ー自動補完）とTASK_008�E�Eorker完亁E��ポ�Eト�E自動統合スクリプト作�E�E��E実裁E��亁E��、どのように現在のプロジェクトで更新するか�E手頁E��解説
 
 ## 現状
-- 2つの実装タスクを起票済み（TASK_007, TASK_008）
-- 各タスクはWorkerが実装し、完了後にリポジトリ更新依頼を出す流れで進める
+- 2つの実裁E��スクを起票済み�E�EASK_007, TASK_008�E�E- 吁E��スクはWorkerが実裁E��、完亁E��にリポジトリ更新依頼を�Eす流れで進める
 
 ## 次のアクション
 
-### タスク完了後の更新手順
-
-#### 1. Worker実装完了後の確認
-
-各Workerが実装を完了したら、以下を確認：
-
-**TASK_007完了時**:
-- [ ] `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` に「概要」「次のアクション」が追加されている
-- [ ] `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に必須ヘッダーの明記が追加されている
-- [ ] 既存のWorkerレポートで `report-validator.js` の警告が減少していることを確認
-
-**TASK_008完了時**:
-- [ ] `scripts/finalize-phase.js` にWorkerレポート統合機能が追加されている
-- [ ] `docs/HANDOVER.md` の「統合レポート」セクションにWorkerレポートのサマリーが自動追加されることを確認
-- [ ] 実際のWorkerレポートで動作確認が完了している
+### タスク完亁E���E更新手頁E
+#### 1. Worker実裁E��亁E���E確誁E
+各Workerが実裁E��完亁E��たら、以下を確認！E
+**TASK_007完亁E��**:
+- [ ] `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` に「概要」「次のアクション」が追加されてぁE��
+- [ ] `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に忁E���EチE��ーの明記が追加されてぁE��
+- [ ] 既存�EWorkerレポ�Eトで `report-validator.js` の警告が減少してぁE��ことを確誁E
+**TASK_008完亁E��**:
+- [ ] `scripts/finalize-phase.js` にWorkerレポ�Eト統合機�Eが追加されてぁE��
+- [ ] `docs/HANDOVER.md` の「統合レポ�Eト」セクションにWorkerレポ�Eト�Eサマリーが�E動追加されることを確誁E- [ ] 実際のWorkerレポ�Eトで動作確認が完亁E��てぁE��
 
 #### 2. リポジトリ更新依頼の出し方
 
-**shared-workflows リポジトリ（サブモジュール）への更新が必要な場合**:
+**shared-workflows リポジトリ�E�サブモジュール�E�への更新が忁E��な場吁E*:
 
-1. **変更ファイルの確認**:
-   - 変更が `.shared-workflows/` 配下のファイル（例: `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`）に含まれる場合
-   - または `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` など、サブモジュール内のファイル
+1. **変更ファイルの確誁E*:
+   - 変更ぁE`.shared-workflows/` 配下�Eファイル�E�侁E `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`�E�に含まれる場吁E   - また�E `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` など、サブモジュール冁E�Eファイル
 
-2. **サブモジュール内でコミット**:
+2. **サブモジュール冁E��コミッチE*:
    ```bash
    cd .shared-workflows
    git add <変更ファイル>
-   git commit -m "feat: Workerレポート必須ヘッダー自動補完機能追加 (TASK_007)"
-   # または
-   git commit -m "feat: Workerレポート自動統合機能追加 (TASK_008)"
+   git commit -m "feat: Workerレポ�Eト忁E���EチE��ー自動補完機�E追加 (TASK_007)"
+   # また�E
+   git commit -m "feat: Workerレポ�Eト�E動統合機�E追加 (TASK_008)"
    ```
 
 3. **サブモジュールのリモートにpush**:
@@ -53,27 +44,24 @@
    git push origin main
    ```
 
-4. **親リポジトリ（現在のプロジェクト）でサブモジュール参照を更新**:
+4. **親リポジトリ�E�現在のプロジェクト）でサブモジュール参�Eを更新**:
    ```bash
-   cd ..  # プロジェクトルートに戻る
-   git add .shared-workflows
-   git commit -m "chore: shared-workflows submodule更新 (TASK_007/TASK_008完了)"
+   cd ..  # プロジェクトルートに戻めE   git add .shared-workflows
+   git commit -m "chore: shared-workflows submodule更新 (TASK_007/TASK_008完亁E"
    ```
 
-5. **リポジトリ更新依頼の作成**:
-   - GitHubでPull Requestを作成
-   - タイトル: `[shared-workflows] Workerレポート改善機能追加 (TASK_007/TASK_008)`
-   - 説明: 実装内容、変更ファイル、動作確認結果を記載
+5. **リポジトリ更新依頼の作�E**:
+   - GitHubでPull Requestを作�E
+   - タイトル: `[shared-workflows] Workerレポ�Eト改喁E���E追加 (TASK_007/TASK_008)`
+   - 説昁E 実裁E�E容、変更ファイル、動作確認結果を記輁E
+**プロジェクト�E�E�現在のリポジトリ�E��Eみの更新の場吁E*:
 
-**プロジェクト側（現在のリポジトリ）のみの更新の場合**:
-
-1. **変更ファイルの確認**:
-   - 変更が `scripts/finalize-phase.js` など、プロジェクト側のファイルのみの場合
-
-2. **プロジェクト側でコミット**:
+1. **変更ファイルの確誁E*:
+   - 変更ぁE`scripts/finalize-phase.js` など、�Eロジェクト�Eのファイルのみの場吁E
+2. **プロジェクト�EでコミッチE*:
    ```bash
    git add scripts/finalize-phase.js
-   git commit -m "feat: Workerレポート自動統合機能追加 (TASK_008)"
+   git commit -m "feat: Workerレポ�Eト�E動統合機�E追加 (TASK_008)"
    ```
 
 3. **リモートにpush**:
@@ -81,33 +69,29 @@
    git push origin main
    ```
 
-#### 3. 更新後の検証
+#### 3. 更新後�E検証
 
-リポジトリ更新後、以下を確認：
-
-1. **システム健全性チェック**:
+リポジトリ更新後、以下を確認！E
+1. **シスチE��健全性チェチE��**:
    ```bash
    node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
    ```
 
-2. **実装機能の動作確認**:
-   - TASK_007: 新しいWorkerレポートで `report-validator.js` を実行し、警告が減少していることを確認
-   - TASK_008: `finalize-phase.js` を実行し、HANDOVER.mdにWorkerレポートが自動統合されることを確認
-
+2. **実裁E���Eの動作確誁E*:
+   - TASK_007: 新しいWorkerレポ�Eトで `report-validator.js` を実行し、警告が減少してぁE��ことを確誁E   - TASK_008: `finalize-phase.js` を実行し、HANDOVER.mdにWorkerレポ�Eトが自動統合されることを確誁E
 3. **ドキュメント更新**:
-   - `docs/HANDOVER.md` のバックログから完了した項目を削除
-   - `AI_CONTEXT.md` のタスク管理セクションを更新
+   - `docs/HANDOVER.md` のバックログから完亁E��た頁E��を削除
+   - `AI_CONTEXT.md` のタスク管琁E��クションを更新
 
-#### 4. 他プロジェクトへの展開
+#### 4. 他�Eロジェクトへの展開
 
-shared-workflows リポジトリに更新が反映された場合、他のプロジェクトでも更新を取得：
-
+shared-workflows リポジトリに更新が反映された場合、他�Eプロジェクトでも更新を取得！E
 ```bash
 # サブモジュールを更新
 git submodule sync --recursive
 git submodule update --init --recursive --remote
 
-# または、特定のサブモジュールのみ更新
+# また�E、特定�Eサブモジュールのみ更新
 cd .shared-workflows
 git pull origin main
 cd ..
@@ -115,51 +99,38 @@ git add .shared-workflows
 git commit -m "chore: shared-workflows submodule更新"
 ```
 
-## ガイド
-
-### 各エージェントへの依頼方法
-
-**Worker実装依頼**:
+## ガイチE
+### 吁E��ージェントへの依頼方況E
+**Worker実裁E��頼**:
 - TASK_007 と TASK_008 をそれぞれWorkerに割り当て
 - Workerプロンプトに以下を含める:
-  - 実装対象ファイル
-  - 参考にする既存コード（`report-orch-cli.js` など）
-  - 完了後の検証方法
-
+  - 実裁E��象ファイル
+  - 参老E��する既存コード！Ereport-orch-cli.js` など�E�E  - 完亁E���E検証方況E
 **リポジトリ更新依頼**:
-- Worker実装完了後、変更内容を確認
-- サブモジュール更新が必要な場合は、shared-workflows リポジトリへのPR作成を依頼
-- プロジェクト側のみの更新の場合は、現在のリポジトリへのPR作成を依頼
+- Worker実裁E��亁E��、変更冁E��を確誁E- サブモジュール更新が忁E��な場合�E、shared-workflows リポジトリへのPR作�Eを依頼
+- プロジェクト�Eのみの更新の場合�E、現在のリポジトリへのPR作�Eを依頼
 
-### 注意事項
-
-1. **後方互換性の維持**:
-   - 既存のレポートフォーマットとの整合性を確認
-   - 既存のスクリプトの動作を破壊しない
-
-2. **テストの実施**:
-   - 実装後、実際のWorkerレポートで動作確認
-   - `sw-doctor.js` でシステム健全性を確認
-
+### 注意事頁E
+1. **後方互換性の維持E*:
+   - 既存�Eレポ�Eトフォーマットとの整合性を確誁E   - 既存�Eスクリプトの動作を破壊しなぁE
+2. **チE��ト�E実施**:
+   - 実裁E��、実際のWorkerレポ�Eトで動作確誁E   - `sw-doctor.js` でシスチE��健全性を確誁E
 3. **ドキュメント更新**:
-   - 変更内容を `docs/HANDOVER.md` に反映
-   - `AI_CONTEXT.md` のタスク管理セクションを更新
+   - 変更冁E��めE`docs/HANDOVER.md` に反映
+   - `AI_CONTEXT.md` のタスク管琁E��クションを更新
 
 ## メタプロンプト再投入条件
 
-- TASK_007 と TASK_008 の実装完了後、動作確認が完了した時点で再投入
+- TASK_007 と TASK_008 の実裁E��亁E��、動作確認が完亁E��た時点で再投入
 
-## 改善提案（New Feature Proposal）
-
-- **Workerレポートテンプレートの自動生成機能（優先度: Low）**: Workerプロンプト生成時に、必須ヘッダーを含むテンプレートを自動生成する機能を追加することで、さらに警告を事前に防げる可能性がある
-
+## 改喁E��案！Eew Feature Proposal�E�E
+- **Workerレポ�Eトテンプレート�E自動生成機�E�E�優先度: Low�E�E*: Workerプロンプト生�E時に、忁E���EチE��ーを含むチE��プレートを自動生成する機�Eを追加することで、さらに警告を事前に防げる可能性があめE
 ## Verification
 
-- `node scripts/report-validator.js docs/inbox/REPORT_TASK_UPDATE_GUIDE_20250103.md` → 実行予定
-- `git status -sb` → クリーン
+- `node scripts/report-validator.js docs/inbox/REPORT_TASK_UPDATE_GUIDE_20250103.md` ↁE実行予宁E- `git status -sb` ↁEクリーン
 - push: pending
 
 ## Integration Notes
 
-- 本レポートはタスク完了後の更新方法を解説
-- TASK_007 と TASK_008 の実装完了後、このガイドに従って更新を実施
+- 本レポ�Eト�Eタスク完亁E���E更新方法を解説
+- TASK_007 と TASK_008 の実裁E��亁E��、このガイドに従って更新を実施

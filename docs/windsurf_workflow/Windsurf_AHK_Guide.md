@@ -1,52 +1,27 @@
 # Windsurf Autopilot Guide
 
-Windsurf IDE の自律走行を補助する AutoHotkey スクリプト（`scripts/ahk/windsurf_autopilot.ahk`）の利用ガイド。IDE オーケストレーション中でも参照しやすいよう「導入・操作・安全」ポイントを 1 枚にまとめています。
-
-## 1. 概要
-- **入力自動化**: Alt+Enter 送信、ファイル指示の投下、不要タブの自動クローズ。
-- **マルチスレッド巡回**: Cascade の各スレッドを巡回し、オレンジ色の Run ボタンを検出してフォーカス。
-- **ユーザー操作優先**: `A_TimeIdlePhysical` を監視し、マウス/キー操作中は介入を抑止。
-- **安全トグル**: 右→左同時クリックまたは（任意設定の）F8/F9 で ON/OFF。
-
-## 2. 導入手順
-1. **管理者権限で実行**: AHK v1.1 をインストール後、`windsurf_autopilot.ahk` をダブルクリック。UAC プロンプトは「はい」。
-2. **UTF-8(BOM) 保存**: 日本語は使っていないが、要件に合わせ編集時は UTF-8(BOM) を維持。
-3. **設定値編集**: ファイル先頭の `global` 定義で挙動を調整（例: `AutoStartWhenWindsurfRunning := true`）。
-
-## 3. 操作方法
-| 操作 | 既定値 | 説明 |
+Windsurf IDE の自律走行を補助する AutoHotkey スクリプト�E�Escripts/ahk/windsurf_autopilot.ahk`�E��E利用ガイド、EDE オーケストレーション中でも参照しやすいよう「導�E・操作�E安�E」�Eイントを 1 枚にまとめてぁE��す、E
+## 1. 概要E- **入力�E動化**: Alt+Enter 送信、ファイル持E��の投下、不要タブ�E自動クローズ、E- **マルチスレチE��巡囁E*: Cascade の吁E��レチE��を巡回し、オレンジ色の Run ボタンを検�Eしてフォーカス、E- **ユーザー操作優允E*: `A_TimeIdlePhysical` を監視し、�Eウス/キー操作中は介�Eを抑止、E- **安�Eトグル**: 右→左同時クリチE��また�E�E�任意設定�E�E�F8/F9 で ON/OFF、E
+## 2. 導�E手頁E1. **管琁E��E��限で実衁E*: AHK v1.1 をインスト�Eル後、`windsurf_autopilot.ahk` をダブルクリチE��。UAC プロンプトは「�EぁE��、E2. **UTF-8(BOM) 保孁E*: 日本語�E使ってぁE��ぁE��、要件に合わせ編雁E��は UTF-8(BOM) を維持、E3. **設定値編雁E*: ファイル先頭の `global` 定義で挙動を調整�E�侁E `AutoStartWhenWindsurfRunning := true`�E�、E
+## 3. 操作方況E| 操佁E| 既定値 | 説昁E|
 | --- | --- | --- |
-| 自動開始 | `AutoStartWhenWindsurfRunning := false` | true にすると Windsurf プロセス検知で自動 ON |
-| 右→左クリック | 有効 | マウスのみで AUTO ON/OFF を切替。`RequireRightFirstForToggle` で制御 |
-| F8/F9 | `EnableKeyboardHotkeys := false` | true にすれば F8=開始、F9=停止（Windsurf アクティブ時のみ） |
-| Shift+Esc | `EnableResetHotkey := true` | 緊急停止＆状態リセット。不要なら false |
+| 自動開姁E| `AutoStartWhenWindsurfRunning := false` | true にすると Windsurf プロセス検知で自勁EON |
+| 右→左クリチE�� | 有効 | マウスのみで AUTO ON/OFF を�E替。`RequireRightFirstForToggle` で制御 |
+| F8/F9 | `EnableKeyboardHotkeys := false` | true にすれば F8=開始、F9=停止�E�Eindsurf アクチE��ブ時のみ�E�E|
+| Shift+Esc | `EnableResetHotkey := true` | 緊急停止�E�E��態リセチE��。不要なめEfalse |
 
-HUD は画面右上（`HudAnchorRightPx`, `HudAnchorTopPx`）に常駐し、状態を色で表示します。
-
-## 4. Timers / 主な機能
-- **TimerPulse**: オレンジ検知結果を基に Alt+Enter 送信。最小間隔、バースト上限、クールダウンを内蔵。
-- **TimerPatrol**: 各 Windsurf ウィンドウを巡回し、Run ボタンを広範囲（右下中心）で PixelSearch。見つからない場合はタブ巡回を呼び出し。
-- **TimerFileWatch**: `docs/inbox/next_instruction.txt` を監視し、内容を貼り付け→Alt+Enter→ファイル削除。
-- **TimerCloseTabs**: `Commit/Index/Merge` 等の一時タブを自動で `Ctrl+W`。
-
-## 5. タブ巡回（Cascade 対応）
-- `EnableTabCycle := true` で有効。
-- Run ボタンが見当たらない場合、`Ctrl+PgDn` を最大 `TabCycleMaxSteps` 回送信し、起点タブへ戻る。
-- `TabCycleCooldownMs` により頻繁な切替を抑止。
-
-## 6. 安全上の注意
-- `IdleThresholdMs` を短くしすぎると手動操作と競合します。700ms〜1s を推奨。
-- `ClickOrangeBeforeAltEnter` を false にすると、フォーカスだけ当てて Alt+Enter を送るモードになります。
-- タブ巡回中も `IsSafeToAct()` を再チェックするため、ユーザー操作が入ったら即停止します。
-
-## 7. トラブルシューティング
-| 症状 | 対応 |
+HUD は画面右上！EHudAnchorRightPx`, `HudAnchorTopPx`�E�に常駐し、状態を色で表示します、E
+## 4. Timers / 主な機�E
+- **TimerPulse**: オレンジ検知結果を基に Alt+Enter 送信。最小間隔、バースト上限、クールダウンを�E蔵、E- **TimerPatrol**: 吁EWindsurf ウィンドウを巡回し、Run ボタンを庁E��E���E�右下中忁E��で PixelSearch。見つからなぁE��合�Eタブ巡回を呼び出し、E- **TimerFileWatch**: `docs/inbox/next_instruction.txt` を監視し、�E容を貼り付け→Alt+Enter→ファイル削除、E- **TimerCloseTabs**: `Commit/Index/Merge` 等�E一時タブを自動で `Ctrl+W`、E
+## 5. タブ巡回！Eascade 対応！E- `EnableTabCycle := true` で有効、E- Run ボタンが見当たらなぁE��合、`Ctrl+PgDn` を最大 `TabCycleMaxSteps` 回送信し、起点タブへ戻る、E- `TabCycleCooldownMs` により頻繁な刁E��を抑止、E
+## 6. 安�E上�E注愁E- `IdleThresholdMs` を短くしすぎると手動操作と競合します、E00ms、Es を推奨、E- `ClickOrangeBeforeAltEnter` めEfalse にすると、フォーカスだけ当てて Alt+Enter を送るモードになります、E- タブ巡回中めE`IsSafeToAct()` を�EチェチE��するため、ユーザー操作が入ったら即停止します、E
+## 7. トラブルシューチE��ング
+| 痁E�� | 対忁E|
 | --- | --- |
-| HUD が現れない / `Invalid option` | 先頭の `HudAnchor*` を編集後、`Gui, Show` を直接計算せず変数を挟んでいるか確認 |
-| Alt+Enter が連打される | `MinAltEnterIntervalMs` を上げる、`MaxAltEnterBurstCount` を下げる |
-| Run ボタンを見失う | `SearchArea*` 比率を調整し、右下寄りのエリアを広げる |
-| タブ巡回が止まらない | `TabCycleMaxSteps` を増減し、終了時に HUD が OFF になるか確認 |
+| HUD が現れなぁE/ `Invalid option` | 先頭の `HudAnchor*` を編雁E��、`Gui, Show` を直接計算せず変数を挟んでぁE��か確誁E|
+| Alt+Enter が連打される | `MinAltEnterIntervalMs` を上げる、`MaxAltEnterBurstCount` を下げめE|
+| Run ボタンを見失ぁE| `SearchArea*` 比率を調整し、右下寁E��のエリアを庁E��めE|
+| タブ巡回が止まらなぁE| `TabCycleMaxSteps` を増減し、終亁E��に HUD ぁEOFF になるか確誁E|
 
-## 8. 参考
-- スクリプト: `scripts/ahk/windsurf_autopilot.ahk`
-- キーマップ・設計資料: `Windsurf_AHK_Keymap.md`, `Windsurf_AHK_Design.md`
+## 8. 参老E- スクリプト: `scripts/ahk/windsurf_autopilot.ahk`
+- キーマップ�E設計賁E��: `Windsurf_AHK_Keymap.md`, `Windsurf_AHK_Design.md`

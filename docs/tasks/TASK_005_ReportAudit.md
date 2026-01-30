@@ -1,5 +1,4 @@
-# Task: レポート欠損調査（docs/inbox / HANDOVER 整合性）
-
+# Task: レポ�Eト欠損調査�E�Eocs/inbox / HANDOVER 整合性�E�E
 Status: DONE
 Tier: 1
 Branch: main
@@ -8,43 +7,29 @@ Created: 2025-12-22T02:59+09:00
 Report: docs/reports/REPORT_TASK_005_20251226_1345.md
 ## Objective
 
-- docs/inbox/ の REPORT_* と docs/HANDOVER.md（Latest Orchestrator Report / Progress 欄）の内容を突き合わせ、欠損・重複・未統合レポートを洗い出す。
-- Orchestrator レポートの保存～検証～HANDOVER 反映までの手順がメタプロンプト通り機能しているかを確認し、問題があれば最小修正を行う。
-
+- docs/inbox/ の REPORT_* と docs/HANDOVER.md�E�Eatest Orchestrator Report / Progress 欁E���E冁E��を突き合わせ、欠損�E重褁E�E未統合レポ�Eトを洗い出す、E- Orchestrator レポ�Eト�E保存～検証�E�HANDOVER 反映までの手頁E��メタプロンプト通り機�EしてぁE��かを確認し、問題があれば最小修正を行う、E
 ## Context
 
-- 最新セッションで `REPORT_ORCH_20251222T015500.md` を統合後、新しいセッション分のレポートがまだ作成されていない。
-- “レポート欠損” が Phase 1 のブロッカーとして挙がっており、docs/tasks/ にチケットが存在しなかったため本チケットで追跡する。
-- report-validator.js の引数指定（config/path）が遵守されているかも合わせて点検する。
-
+- 最新セチE��ョンで `REPORT_ORCH_20251222T015500.md` を統合後、新しいセチE��ョン刁E�Eレポ�Eトがまだ作�EされてぁE��ぁE��E- “レポ�Eト欠損 EぁEPhase 1 のブロチE��ーとして挙がっており、docs/tasks/ にチケチE��が存在しなかったため本チケチE��で追跡する、E- report-validator.js の引数持E��！Eonfig/path�E�が遵守されてぁE��かも合わせて点検する、E
 ## Focus Area
 
 - `docs/inbox/`
 - `docs/HANDOVER.md`
 - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md`
 - `scripts/report-validator.js`
-- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`（Phase 6 の手順確認）
-
+- `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`�E�Ehase 6 の手頁E��認！E
 ## Forbidden Area
 
-- Worker 納品物の内容改変（オリジナルレポート本文を書き換えない）
-- プロジェクトコード（src/ 配下）の実装変更
-- 不要なテンプレ追加・削除
+- Worker 納品物の冁E��改変（オリジナルレポ�Eト本斁E��書き換えなぁE��E- プロジェクトコード！Erc/ 配下）�E実裁E��更
+- 不要なチE��プレ追加・削除
 
 ## Constraints
 
-- テスト: `node .shared-workflows/scripts/report-validator.js <report>` または `node scripts/report-validator.js <report> REPORT_CONFIG.yml .` を用いて検証ログを残す。
-- フォールバック: レポートが存在しない場合は、HANDOVER 側に “該当レポート未作成” と TODO を明示し、空のレポートを捏造しない。
-- 結果はドキュメント（Markdown）更新とログに限定する。PDF/外部配布は不要。
-
+- チE��チE `node .shared-workflows/scripts/report-validator.js <report>` また�E `node scripts/report-validator.js <report> REPORT_CONFIG.yml .` を用ぁE��検証ログを残す、E- フォールバック: レポ�Eトが存在しなぁE��合�E、HANDOVER 側に “該当レポ�Eト未作�E Eと TODO を�E示し、空のレポ�Eトを捏造しなぁE��E- 結果はドキュメント！Earkdown�E�更新とログに限定する。PDF/外部配币E�E不要、E
 ## DoD
 
-- [ ] docs/inbox/ にある全レポートについて、HANDOVER への反映状況を確認し、不足していれば統合 or TODO 記載を完了
-- [ ] report-validator 実行結果（コマンド・ログ・config パス）をレポートに記載
-- [ ] レポート欠損に関する原因と次アクション（例: レポート作成、テンプレ修正）を列挙
-- [ ] チケット Report 欄に `docs/inbox/REPORT_TASK_005_*.md` のパスを追記
-
+- [ ] docs/inbox/ にある全レポ�EトにつぁE��、HANDOVER への反映状況を確認し、不足してぁE��ば統吁Eor TODO 記載を完亁E- [ ] report-validator 実行結果�E�コマンド�Eログ・config パス�E�をレポ�Eトに記輁E- [ ] レポ�Eト欠損に関する原因と次アクション�E�侁E レポ�Eト作�E、テンプレ修正�E�を列挙
+- [ ] チケチE�� Report 欁E�� `docs/inbox/REPORT_TASK_005_*.md` のパスを追訁E
 ## Notes
 
-- Orchestrator レポート作成フロー（Phase 6）で CLI が使えない場合の代替手順も整理し、HANDOVER に “手動で実施した” というログを残す。
-- docs/tasks/ との整合性チェック用に `node scripts/todo-sync.js` を実行し、AI_CONTEXT の Next セクションにも反映させる。
+- Orchestrator レポ�Eト作�Eフロー�E�Ehase 6�E�で CLI が使えなぁE��合�E代替手頁E��整琁E��、HANDOVER に “手動で実施した EとぁE��ログを残す、E- docs/tasks/ との整合性チェチE��用に `node scripts/todo-sync.js` を実行し、AI_CONTEXT の Next セクションにも反映させる、E
