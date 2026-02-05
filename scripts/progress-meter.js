@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const { loadTasks } = require('./progress-dashboard');
+const { loadPresentationConfig, createProgressBar: createProgressBarFromConfig } = require('./utils/presentation');
 
 function parseArg(flag, defaultValue) {
   const args = process.argv.slice(2);
@@ -36,30 +37,34 @@ function findProjectRoot(startPath = process.cwd()) {
 }
 
 function createProgressBar(percentage, width = 20) {
-  const filled = Math.round((percentage / 100) * width);
-  const empty = width - filled;
-  return '█'.repeat(filled) + '░'.repeat(empty);
+  const { config } = loadPresentationConfig();
+  return createProgressBarFromConfig(percentage, width, config);
 }
 
 function formatProgressMeterForChat(tasks, projectRoot) {
   // チャット上で表示するためのコンパクトな形式
+  const { config } = loadPresentationConfig({ projectRoot });
   const doneCount = tasks.filter(t => t.status === 'DONE').length;
   const totalCount = tasks.length;
-  const overallProgress = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+  const sumProgress = tasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const overallProgress = totalCount > 0 ? Math.round(sumProgress / totalCount) : 0;
   
   const lines = [];
-  lines.push(`📊 進捗: ${createProgressBar(overallProgress, 15)} ${overallProgress}% (${doneCount}/${totalCount})`);
+  const barWidth = config?.progress?.chat_width ?? 15;
+  lines.push(`進捗: ${createProgressBarFromConfig(overallProgress, barWidth, config)} ${overallProgress}% (${doneCount}/${totalCount})`);
   return lines.join('\n');
 }
 
 function formatProgressMeter(tasks, projectRoot) {
   // 統計情報
+  const { config } = loadPresentationConfig({ projectRoot });
   const doneCount = tasks.filter(t => t.status === 'DONE').length;
   const inProgressCount = tasks.filter(t => t.status === 'IN_PROGRESS').length;
   const openCount = tasks.filter(t => t.status === 'OPEN').length;
   const blockedCount = tasks.filter(t => t.status === 'BLOCKED').length;
   const totalCount = tasks.length;
-  const overallProgress = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+  const sumProgress = tasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const overallProgress = totalCount > 0 ? Math.round(sumProgress / totalCount) : 0;
   
   // 優先度別統計
   const highTasks = tasks.filter(t => t.priority === 'High');
@@ -69,10 +74,14 @@ function formatProgressMeter(tasks, projectRoot) {
   const highDone = highTasks.filter(t => t.status === 'DONE').length;
   const mediumDone = mediumTasks.filter(t => t.status === 'DONE').length;
   const lowDone = lowTasks.filter(t => t.status === 'DONE').length;
-  
-  const highProgress = highTasks.length > 0 ? Math.round((highDone / highTasks.length) * 100) : 0;
-  const mediumProgress = mediumTasks.length > 0 ? Math.round((mediumDone / mediumTasks.length) * 100) : 0;
-  const lowProgress = lowTasks.length > 0 ? Math.round((lowDone / lowTasks.length) * 100) : 0;
+
+  const highSum = highTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const mediumSum = mediumTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const lowSum = lowTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+
+  const highProgress = highTasks.length > 0 ? Math.round(highSum / highTasks.length) : 0;
+  const mediumProgress = mediumTasks.length > 0 ? Math.round(mediumSum / mediumTasks.length) : 0;
+  const lowProgress = lowTasks.length > 0 ? Math.round(lowSum / lowTasks.length) : 0;
   
   // 最近の完了タスク（日付順）
   const recentDone = tasks
@@ -87,9 +96,10 @@ function formatProgressMeter(tasks, projectRoot) {
   const lines = [];
   
   lines.push('');
-  lines.push('📊 プロジェクト進捗');
-  lines.push('━'.repeat(40));
-  lines.push(`全体進捗: ${createProgressBar(overallProgress)} ${overallProgress}%`);
+  lines.push('プロジェクト進捗');
+  lines.push('-'.repeat(40));
+  const barWidth = config?.progress?.default_width ?? 20;
+  lines.push(`全体進捗: ${createProgressBarFromConfig(overallProgress, barWidth, config)} ${overallProgress}%`);
   lines.push(`完了タスク: ${doneCount}/${totalCount}`);
   lines.push(`進行中: ${inProgressCount}`);
   lines.push(`未着手: ${openCount}`);
@@ -100,22 +110,22 @@ function formatProgressMeter(tasks, projectRoot) {
   
   // 優先度別進捗
   if (highTasks.length > 0 || mediumTasks.length > 0 || lowTasks.length > 0) {
-    lines.push('🎯 優先度別進捗');
+    lines.push('優先度別進捗');
     if (highTasks.length > 0) {
-      lines.push(`High:   ${createProgressBar(highProgress)} ${highProgress}% (${highDone}/${highTasks.length})`);
+      lines.push(`High:   ${createProgressBarFromConfig(highProgress, barWidth, config)} ${highProgress}% (${highDone}/${highTasks.length})`);
     }
     if (mediumTasks.length > 0) {
-      lines.push(`Medium: ${createProgressBar(mediumProgress)} ${mediumProgress}% (${mediumDone}/${mediumTasks.length})`);
+      lines.push(`Medium: ${createProgressBarFromConfig(mediumProgress, barWidth, config)} ${mediumProgress}% (${mediumDone}/${mediumTasks.length})`);
     }
     if (lowTasks.length > 0) {
-      lines.push(`Low:    ${createProgressBar(lowProgress)} ${lowProgress}% (${lowDone}/${lowTasks.length})`);
+      lines.push(`Low:    ${createProgressBarFromConfig(lowProgress, barWidth, config)} ${lowProgress}% (${lowDone}/${lowTasks.length})`);
     }
     lines.push('');
   }
   
   // 最近の完了タスク
   if (recentDone.length > 0) {
-    lines.push('📈 最近の完了タスク');
+    lines.push('最近の完了タスク');
     for (const task of recentDone) {
       const date = task.created ? task.created.split('T')[0] : '（日付不明）';
       const objective = task.objective ? (task.objective.length > 50 ? task.objective.substring(0, 50) + '...' : task.objective) : '（目的未記載）';
@@ -125,12 +135,12 @@ function formatProgressMeter(tasks, projectRoot) {
   }
   
   // 状態別サマリ
-  lines.push('📋 状態別サマリ');
-  lines.push(`✅ 完了: ${doneCount}`);
-  lines.push(`🔄 進行中: ${inProgressCount}`);
-  lines.push(`📝 未着手: ${openCount}`);
+  lines.push('状態別サマリ');
+  lines.push(`完了: ${doneCount}`);
+  lines.push(`進行中: ${inProgressCount}`);
+  lines.push(`未着手: ${openCount}`);
   if (blockedCount > 0) {
-    lines.push(`🚫 ブロック: ${blockedCount}`);
+    lines.push(`ブロック: ${blockedCount}`);
   }
   lines.push('');
   
@@ -143,7 +153,8 @@ function formatProgressMeterJson(tasks, projectRoot) {
   const openCount = tasks.filter(t => t.status === 'OPEN').length;
   const blockedCount = tasks.filter(t => t.status === 'BLOCKED').length;
   const totalCount = tasks.length;
-  const overallProgress = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+  const sumProgress = tasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const overallProgress = totalCount > 0 ? Math.round(sumProgress / totalCount) : 0;
   
   const highTasks = tasks.filter(t => t.priority === 'High');
   const mediumTasks = tasks.filter(t => t.priority === 'Medium');
@@ -152,10 +163,14 @@ function formatProgressMeterJson(tasks, projectRoot) {
   const highDone = highTasks.filter(t => t.status === 'DONE').length;
   const mediumDone = mediumTasks.filter(t => t.status === 'DONE').length;
   const lowDone = lowTasks.filter(t => t.status === 'DONE').length;
-  
-  const highProgress = highTasks.length > 0 ? Math.round((highDone / highTasks.length) * 100) : 0;
-  const mediumProgress = mediumTasks.length > 0 ? Math.round((mediumDone / mediumTasks.length) * 100) : 0;
-  const lowProgress = lowTasks.length > 0 ? Math.round((lowDone / lowTasks.length) * 100) : 0;
+
+  const highSum = highTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const mediumSum = mediumTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+  const lowSum = lowTasks.reduce((sum, t) => sum + (Number.isFinite(t.progress) ? t.progress : 0), 0);
+
+  const highProgress = highTasks.length > 0 ? Math.round(highSum / highTasks.length) : 0;
+  const mediumProgress = mediumTasks.length > 0 ? Math.round(mediumSum / mediumTasks.length) : 0;
+  const lowProgress = lowTasks.length > 0 ? Math.round(lowSum / lowTasks.length) : 0;
   
   const recentDone = tasks
     .filter(t => t.status === 'DONE')

@@ -48,7 +48,9 @@ function parseTaskFile(taskPath) {
       objective: null,
       owner: null,
       created: null,
-      report: null
+      report: null,
+      dodTotal: 0,
+      dodDone: 0
     };
     
     for (let i = 0; i < lines.length; i++) {
@@ -84,10 +86,34 @@ function parseTaskFile(taskPath) {
         task.objective = objectiveLines.join(' ').substring(0, 100) + (objectiveLines.join(' ').length > 100 ? '...' : '');
       }
     }
-    
+
+    // DoD進捗の抽出
+    let inDod = false;
+    let dodTotal = 0;
+    let dodDone = 0;
+    for (const rawLine of lines) {
+      const trimmed = rawLine.trim();
+      if (trimmed.startsWith('## ')) {
+        inDod = trimmed === '## DoD';
+        continue;
+      }
+      if (!inDod) continue;
+
+      const m = trimmed.match(/^- \[( |x|X)\]\s+/);
+      if (!m) continue;
+      dodTotal += 1;
+      if (m[1].toLowerCase() === 'x') {
+        dodDone += 1;
+      }
+    }
+    task.dodTotal = dodTotal;
+    task.dodDone = dodDone;
+
     // 進捗率の計算
     if (task.status === 'DONE') {
       task.progress = 100;
+    } else if (dodTotal > 0) {
+      task.progress = Math.round((dodDone / dodTotal) * 100);
     } else if (task.status === 'IN_PROGRESS') {
       task.progress = 50;
     } else if (task.status === 'BLOCKED') {

@@ -386,7 +386,7 @@ function appendValidationResultsToReport(reportPath, validationResults) {
 
   // 検証結果をフォーマット
   const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-  const status = isValid ? '✅ OK' : '❌ Errors found';
+  const status = isValid ? 'OK' : 'ERROR';
   
   let validationOutput = `- \`node scripts/report-validator.js\` (${timestamp}): ${status}`;
   

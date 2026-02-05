@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "policy": {
+    "no_emoji": true,
+    "allowed_symbols": {
+      "rating": {
+        "filled": "★",
+        "empty": "☆"
+      },
+      "progress_bar": {
+        "filled": "■",
+        "empty": "□"
+      }
+    }
+  },
+  "progress": {
+    "default_width": 20,
+    "chat_width": 15
+  },
+  "recommendation": {
+    "max_level": 3,
+    "format": {
+      "3": "★★★",
+      "2": "★★☆",
+      "1": "★☆☆"
+    }
+  },
+  "task_types": {
+    "blocked": {
+      "label": "[BLOCKED]"
+    },
+    "ui": {
+      "label": "[UI]"
+    },
+    "test": {
+      "label": "[TEST]"
+    },
+    "bugfix": {
+      "label": "[BUG]"
+    },
+    "docs": {
+      "label": "[DOCS]"
+    },
+    "refactor": {
+      "label": "[REFACTOR]"
+    },
+    "feature": {
+      "label": "[FEATURE]"
+    },
+    "cicd": {
+      "label": "[CI/CD]"
+    },
+    "task": {
+      "label": "[TASK]"
+    }
+  }
+}

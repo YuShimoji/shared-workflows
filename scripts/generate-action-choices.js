@@ -11,7 +11,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { requireSharedWorkflowsPath } = require('./utils/sw-path');
+const {
+  loadPresentationConfig,
+  formatRecommendation,
+  getTaskTypeLabel,
+} = require('./utils/presentation');
 
 function parseArg(flag, defaultValue) {
   const args = process.argv.slice(2);
@@ -41,57 +45,57 @@ function detectTaskType(task) {
   
   // ブロッカー
   if (task.status === 'BLOCKED') {
-    return { icon: '🚫', label: 'ブロッカー', type: 'blocked' };
+    return { type: 'blocked' };
   }
   
   // UI関連
   if (text.includes('ui') || text.includes('画面') || text.includes('ブラウザ') || 
       text.includes('インターフェース') || text.includes('interface') || 
       text.includes('ユーザー') || text.includes('user') || text.includes('ux')) {
-    return { icon: '🎨', label: 'UI', type: 'ui' };
+    return { type: 'ui' };
   }
   
   // テスト関連
   if (text.includes('テスト') || text.includes('test') || text.includes('検証') || 
       text.includes('verification') || text.includes('テストケース') || 
       text.includes('test case')) {
-    return { icon: '🧪', label: 'テスト', type: 'test' };
+    return { type: 'test' };
   }
   
   // バグ修正
   if (text.includes('バグ') || text.includes('bug') || text.includes('修正') || 
       text.includes('fix') || text.includes('不具合') || text.includes('エラー') || 
       text.includes('error')) {
-    return { icon: '🐛', label: 'バグ修正', type: 'bugfix' };
+    return { type: 'bugfix' };
   }
   
   // ドキュメント
   if (text.includes('ドキュメント') || text.includes('documentation') || 
       text.includes('readme') || text.includes('docs') || text.includes('文書') || 
       text.includes('テンプレート') || text.includes('template')) {
-    return { icon: '📝', label: 'ドキュメント', type: 'docs' };
+    return { type: 'docs' };
   }
   
   // リファクタリング
   if (text.includes('リファクタ') || text.includes('refactor') || 
       text.includes('整理') || text.includes('改善') || text.includes('最適化')) {
-    return { icon: '🔧', label: 'リファクタリング', type: 'refactor' };
+    return { type: 'refactor' };
   }
   
   // 機能実装
   if (text.includes('実装') || text.includes('implement') || text.includes('機能') || 
       text.includes('feature') || text.includes('追加') || text.includes('add')) {
-    return { icon: '✨', label: '機能実装', type: 'feature' };
+    return { type: 'feature' };
   }
   
   // CI/CD
   if (text.includes('ci') || text.includes('cd') || text.includes('パイプライン') || 
       text.includes('pipeline') || text.includes('ワークフロー') || text.includes('workflow')) {
-    return { icon: '⚙️', label: 'CI/CD', type: 'cicd' };
+    return { type: 'cicd' };
   }
   
   // デフォルト
-  return { icon: '📋', label: 'タスク', type: 'task' };
+  return { type: 'task' };
 }
 
 function parseTaskFile(taskPath) {
@@ -175,7 +179,7 @@ function loadTasks(projectRoot) {
     if (file.endsWith('.md') && file.startsWith('TASK_')) {
       const taskPath = path.join(tasksDir, file);
       const task = parseTaskFile(taskPath);
-      if (task && (task.status === 'OPEN' || task.status === 'IN_PROGRESS')) {
+      if (task && (task.status === 'OPEN' || task.status === 'IN_PROGRESS' || task.status === 'BLOCKED')) {
         tasks.push(task);
       }
     }
@@ -185,6 +189,7 @@ function loadTasks(projectRoot) {
 }
 
 function generateActionChoices(tasks) {
+  const { config } = loadPresentationConfig();
   // 優先度でソート（High > Medium > Low）
   const priorityOrder = { High: 3, Medium: 2, Low: 1 };
   tasks.sort((a, b) => {
@@ -208,14 +213,17 @@ function generateActionChoices(tasks) {
   
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
+    const recommendationLevel = i < 2 ? (i === 0 ? 3 : 2) : 1;
     const choice = {
       number: i + 1,
       taskId: task.id,
       priority: task.priority,
       status: task.status,
       objective: task.objective || '（目的未記載）',
-      taskType: task.taskType || { icon: '📋', label: 'タスク', type: 'task' },
-      recommendation: i < 2 ? (i === 0 ? '⭐⭐⭐' : '⭐⭐') : '⭐'
+      taskType: task.taskType || { type: 'task' },
+      taskTypeLabel: getTaskTypeLabel(task.taskType?.type || 'task', config),
+      recommendationLevel,
+      recommendation: formatRecommendation(recommendationLevel, config)
     };
     
     if (i < 2) {
@@ -234,23 +242,23 @@ function formatAsText(choices, allTasks) {
   if (choices.recommended.length === 0 && choices.others.length === 0) {
     lines.push('### 推奨アクション');
     lines.push('');
-    lines.push('（現在、OPEN/IN_PROGRESS のタスクがありません）');
+    lines.push('（現在、OPEN/IN_PROGRESS/BLOCKED のタスクがありません）');
     lines.push('');
     return lines.join('\n');
   }
   
   lines.push('### 推奨アクション');
   for (const choice of choices.recommended) {
-    const typeInfo = choice.taskType || { icon: '📋', label: 'タスク' };
-    lines.push(`${choice.number}) ${typeInfo.icon} ${choice.recommendation} 「選択肢${choice.number}を実行して」: [${typeInfo.label}] ${choice.objective} - 優先度: ${choice.priority}, 状態: ${choice.status}`);
+    const typeLabel = choice.taskTypeLabel || '[TASK]';
+    lines.push(`${choice.number}) ${choice.recommendation} 「選択肢${choice.number}を実行して」: ${typeLabel} ${choice.objective} - 優先度: ${choice.priority}, 状態: ${choice.status}`);
   }
   
   if (choices.others.length > 0) {
     lines.push('');
     lines.push('### その他の選択肢');
     for (const choice of choices.others) {
-      const typeInfo = choice.taskType || { icon: '📋', label: 'タスク' };
-      lines.push(`${choice.number}) ${typeInfo.icon} ${choice.recommendation} 「選択肢${choice.number}を実行して」: [${typeInfo.label}] ${choice.objective} - 優先度: ${choice.priority}, 状態: ${choice.status}`);
+      const typeLabel = choice.taskTypeLabel || '[TASK]';
+      lines.push(`${choice.number}) ${choice.recommendation} 「選択肢${choice.number}を実行して」: ${typeLabel} ${choice.objective} - 優先度: ${choice.priority}, 状態: ${choice.status}`);
     }
   }
   
