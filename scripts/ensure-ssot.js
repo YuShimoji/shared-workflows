@@ -96,11 +96,13 @@ function main() {
 
 Options:
   --project-root <path>   Copy destination project root (default: cwd)
+  --no-fail               Warn instead of exit 1 on missing sources
   --help, -h              Show help
 `);
     return;
   }
 
+  const noFail = hasFlag('--no-fail');
   const projectRootArg = parseArg('--project-root', '');
   const initialProjectRoot = resolveProjectRoot(projectRootArg);
   const swRoot = detectSwRoot(initialProjectRoot);

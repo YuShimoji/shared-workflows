@@ -2,7 +2,7 @@
 
 ## 基本情報
 
-- **最終更新**: 2026-02-06T12:30:00+09:00
+- **最終更新**: 2026-02-06T15:15:00+09:00
 - **更新者**: Cascade
 
 ## レポート設定（推奨）
@@ -13,8 +13,8 @@
 
 ## 現在のミッション
 
-- **タイトル**: Repository Modernization & Cleanup
-- **Issue**: リポジトリ全体の効率化・高度化
+- **タイトル**: Submodule Safety & SemVer
+- **Issue**: サブモジュール運用安定化（互換性ゲート・SemVer・更新ガイド・エンコーディング強化）
 - **ブランチ**: main
 - **関連PR**: なし
 - **進捗**: 完了
@@ -28,12 +28,14 @@
 - Orchestrator レポートは `report-orch-cli.js` を使用して生成し、`HANDOVER.md` を自動同期する。
 - SSOT は `docs/Windsurf_AI_Collab_Rules_latest.md` を唯一のエントリポイントとし、プロンプト指示をこれに一本化する。
 - 過去のバージョン（v1.1/v2.0）は「内部実装」として扱い、AI の表層的な指示からは隠蔽する。
-- 表示ルールは `data/presentation.json` を SSOT とする（v2→v3 移行中）。
+- 表示ルールは `data/presentation.json` を SSOT とする（v3 移行完了）。
+- サブモジュール更新前に `compat-check.js` で互換性検証を行う。
+- SemVer 軽運用（`docs/VERSIONING.md`）。Breaking Change 時は MAJOR を上げる。
 
 ## リスク/懸念
 
-- プロンプト体系が分散しコンテキストウィンドウを浪費している（簡素化で対応中）。
-- docs/ 直下にレガシードキュメントが混在し、新規参入者が迷う。
+- サブモジュール更新時に親プロジェクトが壊れるリスク（`compat-check.js` で緩和）。
+- エンコーディング事故（Windows 環境での BOM/Shift-JIS 混在）。
 
 ## Worker完了ステータス
 
@@ -52,7 +54,7 @@
 
 ### 短期（Next）
 
-- リポジトリ近代化（プロンプト簡素化、docs 構造整理、presentation.json v3、README 刷新）
+- サブモジュール運用安定化完了（v1.0.0 タグ付与済み）
 
 ### 中期（Later）
 
@@ -73,3 +75,4 @@
 - 2025-12-21 01:05: AI_CONTEXT.md を初期化
 - 2026-02-06 12:30: リポジトリ近代化に伴い全面クリーンアップ
 - 2026-02-06 12:45: Repository Modernization 完了（8 Phase、9 commits）
+- 2026-02-06 15:15: Submodule Safety 改善（compat-check / SUBMODULE_GUIDE / VERSIONING / encoding CI / ensure-ssot fix）

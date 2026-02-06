@@ -63,6 +63,8 @@ graph TD
 | **チケット雛形** | `templates/TASK_TICKET_TEMPLATE.md` |
 | **設計原則** | `templates/DESIGN_PRINCIPLES.md` |
 | **スクリプト一覧** | `scripts/README.md` |
+| **サブモジュール運用** | `docs/SUBMODULE_GUIDE.md` |
+| **バージョニング指針** | `docs/VERSIONING.md` |
 
 ## 参照ナビ
 
@@ -73,6 +75,7 @@ graph TD
 | タスク委譲 | `EVERY_SESSION.md` §3 / `worker-dispatch.js` |
 | レポート検証 | `node scripts/report-validator.js <REPORT>` |
 | 環境診断 | `node scripts/sw-doctor.js` |
+| 互換性チェック | `node scripts/compat-check.js` |
 | 巡回監査 | `node scripts/orchestrator-audit.js` |
 | CI 失敗 | `templates/ROLE_PROMPT_CI_HANDLER.md` |
 
@@ -85,11 +88,21 @@ graph TD
 - [協調開発ルール（SSOT）](./docs/Windsurf_AI_Collab_Rules_latest.md)
 - [Issue 同期バックログ](./docs/ISSUES.md)
 - [文字化け修正ガイド](./docs/ENCODING_FIX_GUIDE.md)
+- [サブモジュール運用ガイド](./docs/SUBMODULE_GUIDE.md)
+- [バージョニング指針（SemVer）](./docs/VERSIONING.md)
 
 <details>
-<summary>v2.0 → v3.0 変更履歴</summary>
+<summary>v2.0 → v4.0 変更履歴</summary>
 
-### v3.0（現在）
+### v4.0（現在 / v1.0.0 タグ）
+
+- 互換性ゲート `compat-check.js` 新設（Breaking Change 検知）
+- サブモジュール運用ガイド `SUBMODULE_GUIDE.md` 新設
+- SemVer 軽運用ポリシー `VERSIONING.md` 新設
+- CI smoke に encoding チェックと compat-check 追加
+- `ensure-ssot.js` の `--no-fail` バグ修正
+
+### v3.0
 - プロンプト体系簡素化（DRIVER 86→44行、METAPROMPT.md をリファレンス降格、WORKER_METAPROMPT 107→51行）
 - docs/ 構造整理（レガシー10件を archive/、AHK 3件を ahk/ に移動）
 - presentation.json v3（テンプレスニペット、fallback_templates 追加）

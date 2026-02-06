@@ -28,6 +28,24 @@ jobs:
         run: |
           if [ -f "DRAFT_COMMIT" ]; then echo "Draft mode: Skip full tests"; else echo "Full mode: Run all tests"; fi
 
+      - name: Compatibility gate
+        run: node scripts/compat-check.js
+
+      - name: Encoding check (BOM-free UTF-8)
+        run: |
+          FAIL=0
+          for f in $(find docs prompts templates data -type f \( -name '*.md' -o -name '*.txt' -o -name '*.json' -o -name '*.yml' \) 2>/dev/null); do
+            HEAD=$(xxd -l 3 -p "$f" 2>/dev/null || true)
+            if [ "$HEAD" = "efbbbf" ]; then
+              echo "BOM detected: $f"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" = "1" ]; then
+            echo "::warning::Some files contain UTF-8 BOM. Run scripts/fix-encoding.ps1 or re-save as UTF-8 (no BOM)."
+          fi
+          echo "Encoding check complete."
+
       - name: Conditional tests
         if: '!contains(github.event.head_commit.message, "draft")'
         run: node scripts/dev-check.js

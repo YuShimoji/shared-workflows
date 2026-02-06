@@ -8,6 +8,7 @@ shared-workflows のスクリプト一覧。カテゴリ別に整理。
 |-----------|------|--------|
 | `sw-doctor.js` | 環境診断 | `node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text` |
 | `sw-update-check.js` | submodule 更新チェック | `node scripts/sw-update-check.js` |
+| `compat-check.js` | 互換性ゲート（Breaking Change 検知） | `node scripts/compat-check.js` |
 | `session-end-check.js` | 終了時チェック | `node scripts/session-end-check.js --project-root .` |
 | `ensure-ssot.js` | SSOT 補完 | `node scripts/ensure-ssot.js --project-root .` |
 | `apply-cursor-rules.ps1` | Cursor ルール適用 | `pwsh -NoProfile -File scripts/apply-cursor-rules.ps1 -ProjectRoot .` |
