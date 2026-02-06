@@ -6,8 +6,11 @@
 
 ## 0. 最重要ルール
 
-- 返信は日本語。絵文字は禁止。装飾表現は禁止。
-  - 例外: 進捗/推奨度の表示は `data/presentation.json` の定義に限り許可（サブモジュール運用なら `.shared-workflows/data/presentation.json`）
+- 返信は日本語。装飾的絵文字は禁止。
+  - 表示ルールは `data/presentation.json`（v2）をSSOTとする（サブモジュール運用なら `.shared-workflows/data/presentation.json`）
+  - **チャット出力**: タスクアイコン（🎨🧪🐛等）と進捗バー（★■）を使用可
+  - **ファイル保存レポート**: テキストラベル `[UI]` `[TEST]` 等のみ
+  - **図表**: Mermaid を優先。ASCII art は原則禁止。テンプレは `templates/diagrams/` を参照
 - 実装は Worker に委譲（Orchestrator は分割/統制/統合が主）。
 - ファイルパスはハードコードしない。存在確認してから参照する。
 - **順序を飛ばさない**。フェーズは MISSION_LOG の `Current Phase` に従う。
@@ -54,6 +57,8 @@
 ### Step C: 実行 → MISSION_LOG 更新 → チャット出力
 
 1. モジュールの手順を実行する。
+   - **Worker委譲のショートカット**: ユーザーが「TASK_XXXを実行して」と指定した場合、チケット全文コピペ不要。Orchestratorはチケットを読み取り、Worker Promptを自動生成する。
+   - 詳細は `docs/windsurf_workflow/EVERY_SESSION.md` の「3. タスク委譲のショートカット運用」を参照。
 2. `.cursor/MISSION_LOG.md` を更新する（完了/未完了・次フェーズ・次アクション）。
 3. チャット出力は **固定5セクション**（順番厳守）:
    1. `## 現状`

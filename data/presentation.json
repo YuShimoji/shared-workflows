@@ -1,7 +1,19 @@
 {
-  "version": 1,
+  "version": 2,
   "policy": {
-    "no_emoji": true,
+    "emoji": {
+      "chat": {
+        "task_icons": true,
+        "progress_symbols": true,
+        "decorative": false
+      },
+      "file": {
+        "task_icons": false,
+        "progress_symbols": true,
+        "decorative": false
+      },
+      "note": "チャット出力ではタスクアイコン(task_types.icon)を使用可。ファイル保存レポートではテキストラベル(task_types.label)のみ使用"
+    },
     "allowed_symbols": {
       "rating": {
         "filled": "★",
@@ -12,6 +24,31 @@
         "empty": "□"
       }
     }
+  },
+  "diagram": {
+    "preferred": "mermaid",
+    "fallback": "markdown-table",
+    "ascii_art": false,
+    "usage": {
+      "task_progress": "gantt or pie",
+      "change_map": "graph TD",
+      "architecture": "graph TD or C4Context",
+      "data_flow": "flowchart LR",
+      "sequence": "sequenceDiagram"
+    },
+    "templates_dir": "templates/diagrams/",
+    "note": "Mermaid非対応IDE（Visual Studio等）ではfallbackのmarkdown-tableを使用。ASCII artは原則禁止"
+  },
+  "ide_compatibility": {
+    "mermaid_supported": {
+      "windsurf": true,
+      "google_antigravity": true,
+      "cursor": true,
+      "vscode": true,
+      "visual_studio": false
+    },
+    "fallback_strategy": "Mermaid非対応環境ではMarkdownテーブル + インデントリストで代替。templates/diagrams/ にfallback版を併置",
+    "visual_studio_note": "XMLドキュメントコメント形式を補足的に使用。Markdownプレビューは拡張機能依存"
   },
   "progress": {
     "default_width": 20,
@@ -27,31 +64,68 @@
   },
   "task_types": {
     "blocked": {
-      "label": "[BLOCKED]"
+      "label": "[BLOCKED]",
+      "icon": "🚫"
     },
     "ui": {
-      "label": "[UI]"
+      "label": "[UI]",
+      "icon": "🎨"
     },
     "test": {
-      "label": "[TEST]"
+      "label": "[TEST]",
+      "icon": "🧪"
     },
     "bugfix": {
-      "label": "[BUG]"
+      "label": "[BUG]",
+      "icon": "🐛"
     },
     "docs": {
-      "label": "[DOCS]"
+      "label": "[DOCS]",
+      "icon": "📝"
     },
     "refactor": {
-      "label": "[REFACTOR]"
+      "label": "[REFACTOR]",
+      "icon": "🔧"
     },
     "feature": {
-      "label": "[FEATURE]"
+      "label": "[FEATURE]",
+      "icon": "✨"
     },
     "cicd": {
-      "label": "[CI/CD]"
+      "label": "[CI/CD]",
+      "icon": "⚙️"
     },
     "task": {
-      "label": "[TASK]"
+      "label": "[TASK]",
+      "icon": "📋"
+    }
+  },
+  "chat_output": {
+    "orchestrator": {
+      "sections": [
+        "## 現状",
+        "## 次のアクション",
+        "## ガイド",
+        "## メタプロンプト再投入条件",
+        "## 改善提案（New Feature Proposal）"
+      ],
+      "required_diagrams": {
+        "現状": "タスク進捗（mermaid pie or gantt）",
+        "ガイド": "作業フロー図（mermaid flowchart）"
+      },
+      "progress_bar": true
+    },
+    "worker": {
+      "sections": [
+        "## 結果",
+        "## 変更マップ",
+        "## 次の選択肢"
+      ],
+      "required_diagrams": {
+        "変更マップ": "変更ファイル間の依存関係（mermaid graph TD）"
+      },
+      "progress_bar": true,
+      "note": "Worker のチャット報告を1行から3セクションに拡張。詳細はレポートファイルに記載"
     }
   }
 }

@@ -4,6 +4,14 @@
 - **Orchestrator は分割/統制/統合のみ**。実装は Worker に委譲する。
 - ただし「プロンプト体系の保守」（このリポジトリ内の docs/prompts/templates の整備）は Orchestrator が実施してよい。
 
+## 表示ポリシー（presentation.json 準拠）
+- 表示ルールは `data/presentation.json`（submodule: `.shared-workflows/data/presentation.json`）をSSOTとする。
+- **チャット出力**: タスクアイコン（🎨🧪等）と進捗バー（★■）を使用可。装飾的絵文字は禁止。
+- **ファイル保存レポート**: テキストラベル `[UI]` `[TEST]` 等のみ。アイコン絵文字は使用禁止。
+- **図表**: Mermaid を優先。ASCII art は原則禁止。Mermaid非対応環境（Visual Studio等）では Markdown テーブルにフォールバック。
+- **`## 現状`** にはタスク進捗の Mermaid 図（pie or gantt）を含める。
+- **`## ガイド`** には作業フロー図（Mermaid flowchart）を含める。
+
 ## 禁止事項
 - 調査・分析・原因究明は Worker に委譲する。
 - 「調査」「分析」「原因」「予防策」「git history」「missing」が含まれるタスクの Status を DONE に更新しない。

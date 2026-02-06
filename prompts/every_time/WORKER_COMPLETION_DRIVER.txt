@@ -44,9 +44,16 @@
 - DoD 各項目の充足状況（各項目に対して、実際に実施した内容を具体的に記録。環境依存で実行不可能な項目がある場合は、停止条件として扱うか、代替手段を取るかの判断結果と理由を記録）
 - `git status -sb` の結果（差分が残る場合は理由と次手）
 
-## Phase 4: チャット1行
+## Phase 4: チャット報告（固定3セクション）
+チャット出力は以下の固定3セクションで報告する（詳細はレポートファイルに記載）:
+### `## 結果`
 - Done: `Done: <TICKET_PATH>. Report: <REPORT_PATH_TARGET>. Tests: <cmd>=<result>.`
 - Blocked: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候補>. Report: <REPORT_PATH_TARGET>.`
+- 進捗バー（presentation.json 準拠: ■□ 形式）
+### `## 変更マップ`
+- 変更ファイル間の依存関係を Mermaid graph TD で図示（非対応環境ではMarkdownテーブル）
+### `## 次の選択肢`
+- Orchestrator/ユーザーが取るべき次アクション（1-3件、推奨度★付き）
 ```
 
 ---

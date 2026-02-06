@@ -102,7 +102,34 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ---
 
-## 3. “同期が不要な仕組み”へ寄せる方針（散逸対策）
+## 3. タスク委譲のショートカット運用
+
+目的: Orchestrator→Worker のタスク委譲で「チケット全文コピペ」を不要にし、最小の操作で Worker を起動する。
+
+### 方法A: チケット番号指定（推奨）
+
+ユーザーが Worker スレッドに次の1行を貼るだけで、Worker が自律的にチケットを読み取り実行する:
+
+```text
+TASK_007 を実行してください。Worker Metaprompt: .shared-workflows/prompts/every_time/WORKER_METAPROMPT.txt
+```
+
+Worker は以下を自動で行う:
+1. `docs/tasks/TASK_007*.md` を検索・読み込み
+2. `WORKER_METAPROMPT.txt` の Phase 0〓5 に従い実行
+3. 結果を固定3セクションで報告
+
+### 方法B: スクリプトで自動生成（任意）
+
+```powershell
+node .shared-workflows/scripts/worker-dispatch.js --ticket docs/tasks/TASK_007.md
+```
+
+生成された Worker Prompt がクリップボードにコピーされる。`--unity` フラグで Unity 版テンプレートを使用。`--dry-run` で確認のみ。
+
+---
+
+## 4. "同期が不要な仕組み"へ寄せる方針（散逸対策）
 
 散逸しやすい情報（運用まとめ/ルール/手順/テンプレ）を「手で同期」しないため、次を原則とする:
 
@@ -115,7 +142,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ---
 
-## 4. 終了時テンプレ（毎回ブレない / ユーザー返信用）
+## 5. 終了時テンプレ（毎回ブレない / ユーザー返信用）
 
 作業終了時（完了でも未完了でも）に、必ずこのテンプレを提示する。  
 テンプレは **コピーしてそのまま送れる**ことが要件（内容が薄い場合は「未完了」を選ぶ）。
@@ -155,9 +182,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ---
 
-## 5. 改善提案（提案するべき“類する機能”）
+## 6. 改善提案（提案するべき"類する機能"）
 
 - **(導入済み) session-end-check**: 終了時テンプレの有無 / git clean / push pending を検査し、NOT OK を出す簡易チェッカー（`scripts/session-end-check.js`）
 - **(提案) docs-entrypoint-check**: `OPEN_HERE` が本ファイルと Runbook を参照しているか、Driver が固定5セクションと終了テンプレを要求しているかを検査する（散逸の早期検知）
-
-

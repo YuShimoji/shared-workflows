@@ -29,6 +29,10 @@ Report:
   - `Assets/` 構造への制約（ProjectSettings/Packages変更禁止等）を明記する
   - EditorOnlyコード（`#if UNITY_EDITOR`）の適切な分離を考慮する
   - ScriptableObject、AssetDatabase等のUnity API使用時の注意点を明記する
+- **データ分離（`templates/DESIGN_PRINCIPLES.md` 参照）**:
+  - テキストは ScriptableObject or Localization Table に外部化
+  - パラメータは ScriptableObject に外部化
+  - ハードコードされた文字列・数値がないことをDoDで確認
 - 
 
 ## DoD
@@ -37,6 +41,7 @@ Report:
 - [ ] **Unity Editor上での動作確認が完了している**（Unity Editorを起動し、実際に動作を確認した結果を記録）
 - [ ] **Unity Test Runnerでのテストが成功している**（テスト実行結果を記録: `<テストクラス名>=<成功/失敗>`, `<テスト数>=<成功数>/<総数>`）
 - [ ] **コンパイルエラーがない**（Unity Editorで確認: `Unity Editor=コンパイル成功`）
+- [ ] **データ分離チェック**: ハードコードされたテキスト・設定値がなく、SO/Localizationに外部化されていることを確認
 - [ ] docs/inbox/ にレポート（REPORT_...md）が作成されている
 - [ ] 本チケットの Report 欄にレポートパスが追記されている
 

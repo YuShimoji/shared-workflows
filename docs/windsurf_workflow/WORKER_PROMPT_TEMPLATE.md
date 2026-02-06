@@ -210,6 +210,20 @@ Phase 2: 境界
 ## Changes
 - <file>: <詳細変更内容（何をどう変更したか）>
 
+## 変更マップ（Mermaid）
+変更ファイル間の依存関係を Mermaid graph TD で図示（`templates/diagrams/change-map.md` 参照）:
+```mermaid
+graph TD
+    A[<変更ファイル1>] -->|<関係>| B[<変更ファイル2>]
+```
+Mermaid非対応環境では Markdown テーブルにフォールバック。
+
+## Before/After（任意・重要な変更のみ）
+コード差分の抽出（3行以内）を記載し、「どこを変えるとどう動くか」を明示:
+- Before: `<変更前コード抽出>`
+- After: `<変更後コード抽出>`
+- 影響: <この変更による動作の変化>
+
 ## Decisions
 - <decision>: <理由>
 

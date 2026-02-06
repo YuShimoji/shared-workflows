@@ -4,8 +4,12 @@
 停止条件に該当しても沈黙せず、「次の行動がわかる状態」を残してから停止する。
 
 ## 利用ルール
-- 必ず日本語で応答し、絵文字や装飾表現は禁止。
-- 実装内容は成果物ファイルに残し、チャットは最終報告（1行）のみ。
+- 必ず日本語で応答する。装飾的絵文字は禁止。
+  - 表示ルールは `data/presentation.json`（v2）をSSOTとする（submodule: `.shared-workflows/data/presentation.json`）
+  - チャット出力ではタスクアイコン（🎨🧪等）と進捗バー（★■）を使用可
+  - ファイル保存レポートではテキストラベル `[UI]` `[TEST]` 等のみ
+  - 図表は Mermaid を優先（ASCII art 禁止）。テンプレは `templates/diagrams/` を参照
+- 実装内容は成果物ファイルに残す。チャットは固定3セクション報告（詳細は Phase 4 参照）。
 - 主要テンプレ／スクリプトは `.shared-workflows/` 配下を優先して参照する。
 - タスク固有の指示は Orchestrator が生成する `docs/inbox/WORKER_PROMPT_*.md` を必ず遵守する。
 - GitHubAutoApprove=true なら push まで自律実行可。false なら push は保留し、次手に明記する。
@@ -68,10 +72,29 @@
 4. `git add` → `git commit`。GitHubAutoApprove=true なら `git push origin <branch>`。
 5. 必要に応じ `node .shared-workflows/scripts/report-validator.js docs/inbox/REPORT_<...>.md` を実行し、結果をレポートに追記。
 
-## Phase 4: チャット報告（固定1行）
-- 完了時: `Done: <TICKET_PATH>. Report: docs/inbox/REPORT_<timestamp>.md`
-- 停止時: `Blocked: <TICKET_PATH>. Reason: ... Report: docs/inbox/REPORT_<timestamp>.md`
-- 詳細説明はレポート/チケットに記載し、チャットには一切書かない。
+## Phase 4: チャット報告（固定3セクション）
+
+チャット出力は以下の **固定3セクション** で報告する（詳細はレポートファイルに記載）:
+
+### セクション1: `## 結果`
+- 完了/停止の判定（1-3行）
+- 進捗バー（presentation.json 準拠: ■□ 形式）
+- 例: `Done: <TICKET_PATH>. Report: docs/inbox/REPORT_<timestamp>.md`
+- 例: `Blocked: <TICKET_PATH>. Reason: <要点>. Report: docs/inbox/REPORT_<timestamp>.md`
+
+### セクション2: `## 変更マップ`
+- 変更したファイル/モジュール間の依存関係を **Mermaid graph TD** で図示
+- Mermaid非対応環境では Markdown テーブルにフォールバック
+- 例:
+  ```mermaid
+  graph TD
+    A[src/api/handler.ts] -->|uses| B[src/utils/validator.ts]
+    A -->|updated| C[tests/api/handler.test.ts]
+  ```
+
+### セクション3: `## 次の選択肢`
+- Orchestrator / ユーザーが次に取るべきアクション（1-3件）
+- 推奨度（★★★/★★☆/★☆☆）を付与
 
 ---
 

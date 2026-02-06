@@ -53,6 +53,10 @@ Global Rules（エディタごとの統一）:
 - **Worker起動判定（準備ループ防止）**: `.shared-workflows/docs/windsurf_workflow/WORKER_ACTIVATION_CHECKLIST.md`
   - Worker 投入の直前に GO/NO-GO を判断し、整合取りで停滞するループを防ぐ
 
+- **タスク委譲ショートカット**: `EVERY_SESSION.md` の「3. タスク委譲のショートカット運用」を参照
+  - チケット全文コピペ不要。`TASK_007 を実行して` だけで Worker が自律的に動く
+  - スクリプト版: `node .shared-workflows/scripts/worker-dispatch.js --ticket docs/tasks/TASK_XXX.md`
+
 - **実運用手順（成功/失敗判定つき）**: `.shared-workflows/docs/windsurf_workflow/OPERATIONS_RUNBOOK.md`
 
 - **デモ（WritingPage等の消費側でどう使うか）**: `.shared-workflows/docs/windsurf_workflow/DEMO_SCENARIOS.md`
@@ -89,6 +93,11 @@ Global Rules（エディタごとの統一）:
 - オーケストレーション手順（参照）: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
 - コピペ用プロンプト集（貼るだけ）: `.shared-workflows/prompts/`
 - 進行の全体像（任意）: プロジェクトルート `ORCHESTRATION_PROMPT.md`（採用している場合のみ）
+- **設計原則（データ分離等）**: `.shared-workflows/templates/DESIGN_PRINCIPLES.md`
+- **Mermaid図テンプレ集**: `.shared-workflows/templates/diagrams/`
+- **サンプルリファレンス**: `.shared-workflows/docs/references/`
+- **IDE互換ガイド**: `.shared-workflows/docs/windsurf_workflow/IDE_COMPATIBILITY.md`
+- **表示ポリシー（v2）**: `.shared-workflows/data/presentation.json`
 - SSOTファイル（`docs/Windsurf_AI_Collab_Rules_latest.md`）がプロジェクトに無い場合は、作業開始前に以下いずれかで `scripts/ensure-ssot.js --project-root .` を実行して補完する:
   1. Submodule推奨: `node .shared-workflows/scripts/ensure-ssot.js --project-root .`
   2. 共有ディレクトリを直接参照: `node ../shared-workflows/scripts/ensure-ssot.js --project-root .` 等
