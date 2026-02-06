@@ -27,6 +27,7 @@
 - **Kickstart再開（セットアップが途中で止まった場合）**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART_RESUME.txt`
 
 補足:
+
 - 以前の `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` と `ORCHESTRATOR_RESUME.txt` は互換ラッパー（Deprecated）。貼っても Driver へ誘導される。
 
 Global Rules（エディタごとの統一）:

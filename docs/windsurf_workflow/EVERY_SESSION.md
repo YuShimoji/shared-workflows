@@ -12,6 +12,7 @@
 - **具体シナリオ（WritingPage等）**: `docs/windsurf_workflow/DEMO_SCENARIOS.md`
 
 Submodule 運用（推奨）の場合は、上記パスの先頭に `.shared-workflows/` を付けて読む:
+
 - 例: `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`
 
 ---
@@ -36,6 +37,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 - `node .shared-workflows/scripts/sw-update-check.js`
 
 期待結果:
+
 - `Behind origin/main: 0` なら最新
 - `Behind origin/main: N` なら更新が必要（更新してから着手）
 
@@ -44,6 +46,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
 
 期待結果:
+
 - 重大な ERROR が無い
 - WARN は「理由が分かっていて許容できる」ものだけ
 
@@ -52,6 +55,7 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 - `pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .`
 
 期待結果:
+
 - `.cursorrules` と `.cursor/rules.md` が配置される
 
 ### Step D: Orchestrator 起動（毎回これだけ）
@@ -66,9 +70,11 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 - `node .shared-workflows/scripts/session-end-check.js --project-root .`
 
 期待結果:
+
 - `Result: OK`
 
 補足:
+
 - `--no-fetch` を付けると外部通信（fetch）を抑制できる
 
 ---
