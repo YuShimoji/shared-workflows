@@ -12,9 +12,31 @@ flowchart LR
 
 1. **初回のみ**: `prompts/first_time/PROJECT_KICKSTART.txt` で `.shared-workflows/` を Submodule 導入
 2. **毎回**: `prompts/every_time/ORCHESTRATOR_DRIVER.txt` を Orchestrator スレッドに貼る（**これだけ**）
-3. **Worker 委譲**: 「TASK_007 を実行して」の1行で Worker が自律実行（詳細: `EVERY_SESSION.md` §3）
+3. **Worker 委譲**: 「TASK_XXX を実行して」の1行で Worker が自律実行（詳細: `EVERY_SESSION.md` §3）
 
 端末統一（推奨）: `prompts/global/WINDSURF_GLOBAL_RULES.txt` を Windsurf Global Rules に設定。
+
+## サブモジュール利用者向け（最短で迷わない）
+
+前提: 親プロジェクトに `.shared-workflows/` が submodule として存在する。
+
+更新（推奨 / ワンライナー）:
+
+```bash
+git submodule update --remote --merge .shared-workflows \
+  && git add .shared-workflows \
+  && git commit -m "chore: update shared-workflows submodule"
+```
+
+クローン直後の初期化（チームメンバー向け）:
+
+```bash
+git submodule update --init --recursive
+```
+
+詳細手順（互換性チェック/トラブルシュート）:
+
+- `docs/SUBMODULE_GUIDE.md` の「クイックコマンド」
 
 ## リポジトリ構造
 

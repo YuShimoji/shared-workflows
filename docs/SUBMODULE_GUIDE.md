@@ -24,6 +24,22 @@ git commit -m "feat: add shared-workflows submodule"
 
 ## サブモジュール更新手順（定期運用）
 
+### クイックコマンド
+
+更新（推奨 / 親リポジトリ側から）:
+
+```bash
+git submodule update --remote --merge .shared-workflows \
+  && git add .shared-workflows \
+  && git commit -m "chore: update shared-workflows submodule"
+```
+
+クローン直後の初期化（チームメンバー向け）:
+
+```bash
+git submodule update --init --recursive
+```
+
 ### ステップ 1: 互換性チェック（推奨）
 
 更新前に、破壊的変更がないか検証します。

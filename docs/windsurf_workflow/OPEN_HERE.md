@@ -65,6 +65,8 @@ Global Rules（エディタごとの統一）:
 - **更新チェック（推奨）**: `.shared-workflows/scripts/sw-update-check.js`
   - 例: `node .shared-workflows/scripts/sw-update-check.js`
 
+- **サブモジュール更新（クイックコマンド）**: `.shared-workflows/docs/SUBMODULE_GUIDE.md`
+
 - **終了時チェック（推奨）**: `.shared-workflows/scripts/session-end-check.js`
   - 例: `node .shared-workflows/scripts/session-end-check.js --project-root .`
 
