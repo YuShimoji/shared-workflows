@@ -2,7 +2,7 @@
 
 このドキュメントは、**shared-workflows を運用する人間**が「どのフォルダを開いて、どのテンプレをコピペするか」を迷わないための入口です。
 
-- プロジェクdト側（Submodule運用）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.m`
+- プロジェクト側（Submodule運用）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
 - このリポジトリ直読み: `docs/windsurf_workflow/OPEN_HERE.md`
 
 ---

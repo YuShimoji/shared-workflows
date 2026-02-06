@@ -31,7 +31,8 @@
 
 ## 4. Chat Guard
 
-- Worker/Orchestrator とも、チャットは **1行レポート** のみ（Done/Blocked + Reportパス）。
+- **Orchestrator**: チャット出力は固定5セクション（`data/presentation.json` の `chat_output.orchestrator` 準拠）。
+- **Worker**: チャット出力は固定3セクション（結果 / 変更マップ / 次の選択肢。`data/presentation.json` の `chat_output.worker` 準拠）。
 - チャット送信前に必ず本チェックリストを再確認し、「未反映の依頼」が残っていないかを `docs/tasks/` と `git status` で再確認する。
 
 ---
