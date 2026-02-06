@@ -104,28 +104,23 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 
 ## 3. タスク委譲のショートカット運用
 
-目的: Orchestrator→Worker のタスク委譲で「チケット全文コピペ」を不要にし、最小の操作で Worker を起動する。
+### 方法A: 1行指定（推奨）
 
-### 方法A: チケット番号指定（推奨）
-
-ユーザーが Worker スレッドに次の1行を貼るだけで、Worker が自律的にチケットを読み取り実行する:
+Worker スレッドに貼るだけ:
 
 ```text
 TASK_007 を実行してください。Worker Metaprompt: .shared-workflows/prompts/every_time/WORKER_METAPROMPT.txt
 ```
 
-Worker は以下を自動で行う:
-1. `docs/tasks/TASK_007*.md` を検索・読み込み
-2. `WORKER_METAPROMPT.txt` の Phase 0〓5 に従い実行
-3. 結果を固定3セクションで報告
+Worker が `docs/tasks/TASK_007*.md` を読み取り、WORKER_METAPROMPT に従って実行→固定3セクションで報告。
 
-### 方法B: スクリプトで自動生成（任意）
+### 方法B: スクリプト生成（任意）
 
 ```powershell
 node .shared-workflows/scripts/worker-dispatch.js --ticket docs/tasks/TASK_007.md
 ```
 
-生成された Worker Prompt がクリップボードにコピーされる。`--unity` フラグで Unity 版テンプレートを使用。`--dry-run` で確認のみ。
+オプション: `--unity`（Unity版）/ `--dry-run`（確認のみ）/ `--output <path>`（ファイル出力）
 
 ---
 
