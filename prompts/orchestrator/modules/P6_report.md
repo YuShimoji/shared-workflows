@@ -1,27 +1,53 @@
-# Phase 6: Orchestrator Report�E�保孁E検証/提案！E
-## 目皁E
-- 状態を確定させ、次の行動が迷わなぁE��で残す�E�“一度きりで終わる”を防ぐ！E- Complete Gate 相当�E検証を通し、虚偽完亁E��防ぁE
-## 手頁E
-1. レポ�Eト保存（ファイル�E�E   - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` を�Eースに `docs/inbox/REPORT_ORCH_<ISO8601>.md` を作�E
+# Phase 6: Orchestrator Report（保存/検証/提案）
 
-2. 検証�E�忁E��！E   - `report-validator.js` を実行し、�E劁E失敁E警告をレポ�Eトへ追訁E   - HANDOVER も検証対象にする�E�可能なめE`--profile handover`�E�E
-3. Inbox整琁E��可能なら！E   - `finalize-phase.js` が使える場合�E優允E   - 使えなぁE��合�E `docs/inbox/REPORT_*.md` めE`docs/reports/` に移動（忁E��なめEcommit�E�E
-4. MISSION_LOG 更新�E�忁E��！E   - Phase 6 完亁E��して記録
-   - 次フェーズ/次アクション�E�担当込み�E�を忁E��記録
-   - 改喁E��案も記録�E��Eロジェクト�EとShared Workflow側を�E離�E�E
-5. 改喁E��案�E生�E�E�忁E��！E   - プロジェクト�Eの改喁E��桁E プロジェクト固有�E機�E改喁E��要件を対象とする
-   - Shared Workflow側の改喁E��桁E 共通ワークフローめE��ールの改喁E��対象とする
-   - 吁E��案には優先度�E�Eigh/Medium/Low�E�と状態（設計済み/準備完亁E未着手など�E�を明訁E
-6. 次のアクション選択肢の生�E�E�忁E��！E   - `docs/tasks/` からOPEN/IN_PROGRESSタスクを読み込み
-   - 優先度と依存関係を老E�Eして選択肢を生戁E   - 推奨度をランク付け�E�⭐⭐⭁E推奨 / ⭐⭁E検訁E/ ⭁E低優先度�E�E   - タスクの性質に応じたアイコンを付与（🎨 UI, 🧪 チE��チE 🚫 ブロチE��ー, 🐛 バグ修正, ✨ 機�E実裁E 📝 ドキュメンチE 🔧 リファクタリング, ⚙︁ECI/CD, 📋 そ�E他！E   - 現在積み上がってぁE��タスクとの連携を�E訁E
-7. 進捗バーの生�E�E�推奨�E�E   - `scripts/progress-meter.js` を実行し、E��捗情報を取征E   - チャチE��出力�E「現状」セクションに進捗バーを埋め込む�E�Earkdown形式！E   - また�E、レポ�Eトファイルの「現状」セクションに進捗バーを追加
+## 目的
 
-## チャチE��出力（固宁Eセクションのみ�E�E
-忁E��以下�E5セクションだけを、この頁E��で出力する。追加セクションは禁止、E
+- 状態を確定させ、次の行動が迷わない形で残す（“一度きりで終わる”を防ぐ）
+- Complete Gate 相当の検証を通し、虚偽完了を防ぐ
+
+## 手順
+
+1. レポート保存（ファイル）
+   - `templates/ORCHESTRATOR_REPORT_TEMPLATE.md` をベースに `docs/inbox/REPORT_ORCH_<ISO8601>.md` を作成
+
+2. 検証（必須）
+   - `report-validator.js` を実行し、成功/失敗/警告をレポートへ追記
+   - HANDOVER も検証対象にする（可能なら `--profile handover`）
+
+3. Inbox整理（可能なら）
+   - `finalize-phase.js` が使える場合は優先
+   - 使えない場合は `docs/inbox/REPORT_*.md` を `docs/reports/` に移動（必要なら commit）
+
+4. MISSION_LOG 更新（必須）
+   - Phase 6 完了として記録
+   - 次フェーズ/次アクション（担当込み）を必ず記録
+   - 改善提案も記録（プロジェクト側とShared Workflow側を分離）
+
+5. 改善提案の生成（必須）
+   - プロジェクト側の改善提案: プロジェクト固有の機能改善や要件を対象とする
+   - Shared Workflow側の改善提案: 共通ワークフローやツールの改善を対象とする
+   - 各提案には優先度（High/Medium/Low）と状態（設計済み/準備完了/未着手など）を明記
+
+6. 次のアクション選択肢の生成（必須）
+   - `docs/tasks/` からOPEN/IN_PROGRESSタスクを読み込み
+   - 優先度と依存関係を考慮して選択肢を生成
+   - 推奨度をランク付け（⭐⭐⭐ 推奨 / ⭐⭐ 検討 / ⭐ 低優先度）
+   - タスクの性質に応じたアイコンを付与（🎨 UI, 🧪 テスト, 🚫 ブロッカー, 🐛 バグ修正, ✨ 機能実装, 📝 ドキュメント, 🔧 リファクタリング, ⚙️ CI/CD, 📋 その他）
+   - 現在積み上がっているタスクとの連携を明記
+
+7. 進捗バーの生成（推奨）
+   - `scripts/progress-meter.js` を実行し、進捗情報を取得
+   - チャット出力の「現状」セクションに進捗バーを埋め込む（Markdown形式）
+   - または、レポートファイルの「現状」セクションに進捗バーを追加
+
+## チャット出力（固定5セクションのみ）
+
+必ず以下の5セクションだけを、この順番で出力する。追加セクションは禁止。
+
 1. `## 現状`
 2. `## 次のアクション`
 3. `## ガイド`
 4. `## メタプロンプト再投入条件`
-5. `## 改喁E��案！Eew Feature Proposal�E�`
+5. `## 改善提案（New Feature Proposal）`
 
 

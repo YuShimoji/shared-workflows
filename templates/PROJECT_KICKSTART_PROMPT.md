@@ -1,52 +1,77 @@
-# Project Kickstart Prompt�E�Eubmodule運用 / 参�E�E�E
-## 目皁E
-こ�Eファイルは、新規�Eロジェクト（また�E既存�Eロジェクト）に **shared-workflows めESubmodule として取り込み**、Orchestrator/Worker が「中央リポジトリの存在を示唁E��ず」に **共通ファイルを確実に参�E**できる状態を作るための、�E回用プロンプトです、E
-- 使ぁE��ころ: プロジェクト�E回セチE��アチE�E / 参�Eが不安定なプロジェクト�E立て直ぁE- 成果物: プロジェクト�Eに `.shared-workflows/` と、E��用に忁E��な最小ファイル�E�EAI_CONTEXT.md` 等）を揁E��めE
-コピ�E用�E�推奨�E�E
+# Project Kickstart Prompt（Submodule運用 / 参照）
+
+## 目的
+
+このファイルは、新規プロジェクト（または既存プロジェクト）に **shared-workflows を Submodule として取り込み**、Orchestrator/Worker が「中央リポジトリの存在を示唆せず」に **共通ファイルを確実に参照**できる状態を作るための、初回用プロンプトです。
+
+- 使いどころ: プロジェクト初回セットアップ / 参照が不安定なプロジェクトの立て直し
+- 成果物: プロジェクト側に `.shared-workflows/` と、運用に必要な最小ファイル（`AI_CONTEXT.md` 等）を揃える
+
+コピペ用（推奨）:
 - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
 
 ---
 
-## 毎回のプロンプト�E�キチE��スタート用 / コピ�E用�E�E
+## 毎回のプロンプト（キックスタート用 / コピペ用）
+
 ```text
-あなた�Eこ�Eプロジェクト�EセチE��アチE�E拁E��です、E
-最優先で読むも�E:
-- �E�このプロジェクト�Eに存在する�E�Eshared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
-- プロジェクトルート�E AI_CONTEXT.md�E�無ければ作�E�E�E
-目皁E
-- shared-workflows めESubmodule として .shared-workflows/ に取り込み、以降�E Orchestrator/Worker が常に共通ファイルを参照できる状態にする、E
+あなたはこのプロジェクトのセットアップ担当です。
+
+最優先で読むもの:
+- （このプロジェクト内に存在する）.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+- プロジェクトルートの AI_CONTEXT.md（無ければ作成）
+
+目的:
+- shared-workflows を Submodule として .shared-workflows/ に取り込み、以降の Orchestrator/Worker が常に共通ファイルを参照できる状態にする。
+
 前提:
-- 外部通信�E�Eit submodule add / fetch 等）が発生しぁE��。運用が「外部通信は都度承認」なら、最初に承認を取ってからまとめて実行する、E
-めE��こと:
-1) 現状確誁E- .shared-workflows/ が存在するか確誁E- git status -sb で作業チE��ー確誁E
-2) Submodule 導�E�E�未導�Eの場合！E- 推奨パスは .shared-workflows
+- 外部通信（git submodule add / fetch 等）が発生しうる。運用が「外部通信は都度承認」なら、最初に承認を取ってからまとめて実行する。
+
+やること:
+1) 現状確認
+- .shared-workflows/ が存在するか確認
+- git status -sb で作業ツリー確認
+
+2) Submodule 導入（未導入の場合）
+- 推奨パスは .shared-workflows
 - リポジトリ: https://github.com/YuShimoji/shared-workflows.git
 
-3) 運用ストレージ�E��Eロジェクト�E�E��E最小セチE��を作�E
-- プロジェクトルーチE AI_CONTEXT.md
-- プロジェクトルート（任意！E ORCHESTRATION_PROMPT.md
+3) 運用ストレージ（プロジェクト側）の最小セットを作成
+- プロジェクトルート: AI_CONTEXT.md
+- プロジェクトルート（任意）: ORCHESTRATION_PROMPT.md
 - docs/HANDOVER.md
-- docs/tasks/�E�空でもよぁE��E- docs/inbox/�E�空でもよぁE��E
-空チE��レクトリをGit管琁E��たい場合�E、次を作る�E�任意！E
+- docs/tasks/（空でもよい）
+- docs/inbox/（空でもよい）
+
+空ディレクトリをGit管理したい場合は、次を作る（任意）:
 - docs/tasks/.gitkeep
 - docs/inbox/.gitkeep
 
-4) チE��プレ配置�E�忁E��な場合�Eみ�E�E- AI_CONTEXT.md は .shared-workflows/templates/AI_CONTEXT.md をコピ�Eして初期匁E- ORCHESTRATION_PROMPT.md は .shared-workflows/templates/ORCHESTRATION_PROMPT.md をコピ�E�E�任意！E
-5) 参�Eの固定化�E�重要E��E- 今後、Orchestrator/Worker は次を参照する:
-  - SSOT�E�Eatest�E�E .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
-  - 運用老E�E入口: .shared-workflows/docs/windsurf_workflow/OPEN_HERE.md
-  - オーケストレーション�E�毎回コピ�E�E�E .shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt
-  - オーケストレーション手頁E��参照�E�E .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
-  - �E�任意）�EロジェクトルーチE ORCHESTRATION_PROMPT.md
-  - Worker用プロンプトは Orchestrator がチケチE��冁E���E�Eier/Focus/Forbidden 等）に合わせて動的生�Eする
+4) テンプレ配置（必要な場合のみ）
+- AI_CONTEXT.md は .shared-workflows/templates/AI_CONTEXT.md をコピーして初期化
+- ORCHESTRATION_PROMPT.md は .shared-workflows/templates/ORCHESTRATION_PROMPT.md をコピー（任意）
 
-運用フラグ�E�重要E��E
-- GitHub 操作を承認無しで高速に回したい場合、�Eロジェクト�E `docs/HANDOVER.md` に
+5) 参照の固定化（重要）
+- 今後、Orchestrator/Worker は次を参照する:
+  - SSOT（latest）: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md
+  - 運用者の入口: .shared-workflows/docs/windsurf_workflow/OPEN_HERE.md
+  - オーケストレーション（毎回コピペ）: .shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt
+  - オーケストレーション手順（参照）: .shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md
+  - （任意）プロジェクトルート: ORCHESTRATION_PROMPT.md
+  - Worker用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+
+運用フラグ（重要）:
+- GitHub 操作を承認無しで高速に回したい場合、プロジェクト側 `docs/HANDOVER.md` に
   - `GitHubAutoApprove: true`
-  を記載して判断根拠を固定する（未記載なめEOrchestrator ぁE回だけ確認して追記する）、E
-6) 変更をコミッチE- セチE��アチE�E差刁E��Eubmodule追加、ファイル追加�E�をコミットして共有可能にする�E�忁E��なめEpush�E�E
-完亁E��呁E
-- どのファイル/チE��レクトリを作�EしたぁE- 次に貼るべき�Eロンプト�E�通常は Orchestrator Metaprompt�E�E
-次のユーザー依頼を�E琁E��てください:
+  を記載して判断根拠を固定する（未記載なら Orchestrator が1回だけ確認して追記する）。
+
+6) 変更をコミット
+- セットアップ差分（submodule追加、ファイル追加）をコミットして共有可能にする（必要なら push）
+
+完了報告:
+- どのファイル/ディレクトリを作成したか
+- 次に貼るべきプロンプト（通常は Orchestrator Metaprompt）
+
+次のユーザー依頼を処理してください:
 <USER_REQUEST>
 ```

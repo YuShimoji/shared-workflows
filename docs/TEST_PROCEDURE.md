@@ -1,37 +1,40 @@
 # Test Procedure for Shared Workflows
 
-## 目皁Eshared-workflows の自己修復スクリプト群が、他�Eロジェクトでも正常に動作することを確認する、E
+## 目的
+shared-workflows の自己修復スクリプト群が、他プロジェクトでも正常に動作することを確認する。
+
 ## 前提条件
-- Node.js がインスト�EルされてぁE��
-- Git がインスト�EルされてぁE��
-- PowerShell また�E bash が利用可能
+- Node.js がインストールされている
+- Git がインストールされている
+- PowerShell または bash が利用可能
 
-## チE��ト環墁E�E準備
+## テスト環境の準備
 
-### 1. チE��ト用プロジェクトディレクトリの作�E
+### 1. テスト用プロジェクトディレクトリの作成
 ```powershell
 # PowerShell
 New-Item -ItemType Directory -Path C:\temp\test-project\docs\tasks -Force
 New-Item -ItemType Directory -Path C:\temp\test-project\docs\inbox -Force
 
-# また�E bash
+# または bash
 mkdir -p /tmp/test-project/docs/{tasks,inbox}
 ```
 
-### 2. チE��プレートファイルのコピ�E
+### 2. テンプレートファイルのコピー
 ```powershell
 # PowerShell
 Copy-Item "shared-workflows-1\templates\AI_CONTEXT.md" "C:\temp\test-project\AI_CONTEXT.md"
 Copy-Item "shared-workflows-1\docs\windsurf_workflow\HANDOVER_TEMPLATE.md" "C:\temp\test-project\docs\HANDOVER.md"
 Copy-Item "shared-workflows-1\REPORT_CONFIG.yml" "C:\temp\test-project\REPORT_CONFIG.yml"
 
-# また�E bash
+# または bash
 cp shared-workflows-1/templates/AI_CONTEXT.md /tmp/test-project/AI_CONTEXT.md
 cp shared-workflows-1/docs/windsurf_workflow/HANDOVER_TEMPLATE.md /tmp/test-project/docs/HANDOVER.md
 cp shared-workflows-1/REPORT_CONFIG.yml /tmp/test-project/REPORT_CONFIG.yml
 ```
 
-### 3. Git リポジトリの初期匁E```powershell
+### 3. Git リポジトリの初期化
+```powershell
 # PowerShell
 cd C:\temp\test-project
 git init
@@ -41,8 +44,10 @@ git add .
 git commit -m "Initial commit"
 ```
 
-## チE��ト実衁E
-### Test 0: Cursor ルール適用�E�推奨�E�E
+## テスト実行
+
+### Test 0: Cursor ルール適用（推奨）
+
 ```powershell
 cd C:\temp\test-project
 pwsh -NoProfile -File "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\apply-cursor-rules.ps1" -ProjectRoot .
@@ -50,72 +55,99 @@ Test-Path .cursorrules
 Test-Path .cursor/rules.md
 ```
 
-**期征E��果:**
+**期待結果:**
 - `.cursorrules=True`, `.cursor/rules.md=True`
 
-### Test 1: sw-doctor.js の動作確誁E```powershell
+### Test 1: sw-doctor.js の動作確認
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\sw-doctor.js" --profile shared-orch-bootstrap --format text
 ```
 
-**期征E��果:**
-- Environment Check で全頁E��ぁE`✓` で表示されめE- Script Availability で全スクリプトが見つからなぁE��告が出る（テスト用プロジェクトには scripts/ がなぁE��めE��E- Repair Suggestions で「No issues detected」が表示されめE
-### Test 2: orchestrator-audit.js の動作確誁E```powershell
+**期待結果:**
+- Environment Check で全項目が `✓` で表示される
+- Script Availability で全スクリプトが見つからない警告が出る（テスト用プロジェクトには scripts/ がないため）
+- Repair Suggestions で「No issues detected」が表示される
+
+### Test 2: orchestrator-audit.js の動作確認
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\orchestrator-audit.js" --no-fail
 ```
 
-**期征E��果:**
-- Orchestrator Audit Results が表示されめE- tasks: 0, reports: 0 と表示されめE- OK で終亁E��めE
-### Test 3: report-validator.js の動作確誁E```powershell
+**期待結果:**
+- Orchestrator Audit Results が表示される
+- tasks: 0, reports: 0 と表示される
+- OK で終了する
+
+### Test 3: report-validator.js の動作確認
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\report-validator.js" docs/HANDOVER.md REPORT_CONFIG.yml .
 ```
 
-**期征E��果:**
-- Validation for docs/HANDOVER.md: OK が表示されめE- handover プロファイルが�E動適用され、標準�EチE��ー警告が出なぁE
-### Test 4: ensure-ssot.js の動作確認！E-no-fail フラグ�E�E```powershell
+**期待結果:**
+- Validation for docs/HANDOVER.md: OK が表示される
+- handover プロファイルが自動適用され、標準ヘッダー警告が出ない
+
+### Test 4: ensure-ssot.js の動作確認（--no-fail フラグ）
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\ensure-ssot.js" --no-fail
 ```
 
-**期征E��果:**
-- shared-workflows が見つからなぁE��告が出めE- --no-fail フラグにより、エラーで終亁E��ず警告で継続すめE- Exit code: 0
+**期待結果:**
+- shared-workflows が見つからない警告が出る
+- --no-fail フラグにより、エラーで終了せず警告で継続する
+- Exit code: 0
 
-### Test 5: todo-leak-preventer.js の動作確誁E```powershell
+### Test 5: todo-leak-preventer.js の動作確認
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\todo-leak-preventer.js"
 ```
 
-**期征E��果:**
-- AI_CONTEXT.md の Backlog セクションを解极E- 未完亁E��スク�E�E- [ ]` 形式）を検�Eして警告を出ぁE
-### Test 6: dev-check.js の動作確誁E```powershell
+**期待結果:**
+- AI_CONTEXT.md の Backlog セクションを解析
+- 未完了タスク（`- [ ]` 形式）を検出して警告を出す
+
+### Test 6: dev-check.js の動作確認
+```powershell
 # PowerShell
 cd C:\temp\test-project
 node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\dev-check.js"
 ```
 
-**期征E��果:**
-- Running shared workflow diagnostics... が表示されめE- 褁E��のスクリプトが頁E��実行される
-- 個別スクリプトが失敗しても�E体�E継続すめE- All shared workflow scripts executed successfully. で終亁E��めE
-## トラブルシューチE��ング
+**期待結果:**
+- Running shared workflow diagnostics... が表示される
+- 複数のスクリプトが順序実行される
+- 個別スクリプトが失敗しても全体は継続する
+- All shared workflow scripts executed successfully. で終了する
 
-### Test が失敗した場吁E1. **スクリプトが見つからなぁE*
-   - shared-workflows-1 のパスが正しいか確誁E   - Node.js がインスト�EルされてぁE��か確誁E `node --version`
+## トラブルシューティング
+
+### Test が失敗した場合
+1. **スクリプトが見つからない**
+   - shared-workflows-1 のパスが正しいか確認
+   - Node.js がインストールされているか確認: `node --version`
 
 2. **Git エラー**
-   - チE��ト用プロジェクトが Git リポジトリか確誁E `git status`
-   - Git ユーザーが設定されてぁE��か確誁E `git config user.name`
+   - テスト用プロジェクトが Git リポジトリか確認: `git status`
+   - Git ユーザーが設定されているか確認: `git config user.name`
 
-3. **ファイルが見つからなぁE*
-   - チE��プレートファイルがコピ�EされてぁE��か確誁E   - パスが正しいか確認！EowerShell では大斁E��小文字を区別しなぁE��E
-## 運用ループ�E確誁E
-### 完�Eなワークフロー�E�本番環墁E��の使用�E�E1. **初期化フェーズ**
+3. **ファイルが見つからない**
+   - テンプレートファイルがコピーされているか確認
+   - パスが正しいか確認（PowerShell では大文字小文字を区別しない）
+
+## 運用ループの確認
+
+### 完全なワークフロー（本番環境での使用）
+1. **初期化フェーズ**
    ```powershell
    node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
    ```
@@ -126,7 +158,7 @@ node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\
    node scripts/dev-check.js
    ```
 
-3. **修復フェーズ�E�忁E��に応じて�E�E*
+3. **修復フェーズ（必要に応じて）**
    ```powershell
    node scripts/ensure-ssot.js --no-fail
    git submodule sync --recursive
@@ -138,11 +170,19 @@ node "c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\scripts\
    node scripts/report-validator.js docs/HANDOVER.md REPORT_CONFIG.yml .
    ```
 
-5. **Orchestrator 運用開始（毎回�E�E*
-   - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を貼る（毎回これだけ！E
-## 成功基溁E- [ ] sw-doctor.js が環墁E��ェチE��を完亁E- [ ] orchestrator-audit.js ぁE--no-fail で動佁E- [ ] report-validator.js ぁEhandover プロファイルを�E動適用
-- [ ] ensure-ssot.js ぁE--no-fail で警告で継綁E- [ ] todo-leak-preventer.js ぁEBacklog を正確に解极E- [ ] dev-check.js が�Eスクリプトを頁E��実衁E- [ ] チE��ト用プロジェクトで全チE��トが成功
+5. **Orchestrator 運用開始（毎回）**
+   - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を貼る（毎回これだけ）
 
-## 注訁E- チE��ト用プロジェクト�E本番環墁E��はなく、動作確認用のみ
-- 実際の運用では、shared-workflows めEsubmodule として導�Eすることを推奨
-- 吁E��クリプトは --no-fail フラグで警告で継続する設計になってぁE��
+## 成功基準
+- [ ] sw-doctor.js が環境チェックを完了
+- [ ] orchestrator-audit.js が --no-fail で動作
+- [ ] report-validator.js が handover プロファイルを自動適用
+- [ ] ensure-ssot.js が --no-fail で警告で継続
+- [ ] todo-leak-preventer.js が Backlog を正確に解析
+- [ ] dev-check.js が全スクリプトを順序実行
+- [ ] テスト用プロジェクトで全テストが成功
+
+## 注記
+- テスト用プロジェクトは本番環境ではなく、動作確認用のみ
+- 実際の運用では、shared-workflows を submodule として導入することを推奨
+- 各スクリプトは --no-fail フラグで警告で継続する設計になっている

@@ -1,58 +1,84 @@
-# サブモジュール復旧ガイド（中途半端ロード状態から�E修復�E�E
-こ�Eガイド�E、`.shared-workflows` サブモジュールが中途半端にロードされた状態（ファイルが見つからなぁE��スクリプトが実行できなぁE��から最新状態に復旧する手頁E��説明します、E
-## 痁E��の確誁E
-以下�Eようなエラーが発生してぁE��場合、サブモジュールが中途半端にロードされてぁE��す！E
-```powershell
-# エラー侁E: スクリプトが見つからなぁEpwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
-# ↁEThe argument '.shared-workflows/scripts/apply-cursor-rules.ps1' is not recognized
+# サブモジュール復旧ガイド（中途半端ロード状態からの修復）
 
-# エラー侁E: Node.jsスクリプトが見つからなぁEnode .shared-workflows/scripts/sw-update-check.js
-# ↁEError: Cannot find module 'C:\...\.shared-workflows\scripts\sw-update-check.js'
+このガイドは、`.shared-workflows` サブモジュールが中途半端にロードされた状態（ファイルが見つからない、スクリプトが実行できない）から最新状態に復旧する手順を説明します。
+
+## 症状の確認
+
+以下のようなエラーが発生している場合、サブモジュールが中途半端にロードされています：
+
+```powershell
+# エラー例1: スクリプトが見つからない
+pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
+# → The argument '.shared-workflows/scripts/apply-cursor-rules.ps1' is not recognized
+
+# エラー例2: Node.jsスクリプトが見つからない
+node .shared-workflows/scripts/sw-update-check.js
+# → Error: Cannot find module 'C:\...\.shared-workflows\scripts\sw-update-check.js'
 ```
 
-## 修復手頁E��段階的アプローチE��E
-### スチE��チE: サブモジュールの状態確誁E
-まず、現在のサブモジュールの状態を確認します！E
+## 修復手順（段階的アプローチ）
+
+### ステップ1: サブモジュールの状態確認
+
+まず、現在のサブモジュールの状態を確認します：
+
 ```powershell
-# サブモジュールの状態を確誁Egit submodule status --recursive
+# サブモジュールの状態を確認
+git submodule status --recursive
 
-# サブモジュール冁E�EGit状態を確誁Egit -C .shared-workflows status -sb
+# サブモジュール内のGit状態を確認
+git -C .shared-workflows status -sb
 
-# 現在のブランチとコミットを確誁Egit -C .shared-workflows rev-parse --abbrev-ref HEAD
+# 現在のブランチとコミットを確認
+git -C .shared-workflows rev-parse --abbrev-ref HEAD
 git -C .shared-workflows rev-parse HEAD
 
-# チE��レクトリの存在確誁ETest-Path .shared-workflows
+# ディレクトリの存在確認
+Test-Path .shared-workflows
 Test-Path .shared-workflows/scripts
 Test-Path .shared-workflows/scripts/apply-cursor-rules.ps1
 ```
 
-### スチE��チE: サブモジュールの同期と更新�E�推奨�E�まずこれを試す！E
-サブモジュールの設定を同期し、最新状態に更新します！E
+### ステップ2: サブモジュールの同期と更新（推奨：まずこれを試す）
+
+サブモジュールの設定を同期し、最新状態に更新します：
+
 ```powershell
-# プロジェクトルートで実衁Egit submodule sync --recursive
+# プロジェクトルートで実行
+git submodule sync --recursive
 git submodule update --init --recursive --remote
 ```
 
-**重要E*: `--remote` オプションを付けることで、リモートリポジトリの最新コミットを取得します、E
-### スチE��チE: 更新後�E確誁E
-更新後、忁E��なファイルが存在することを確認します！E
+**重要**: `--remote` オプションを付けることで、リモートリポジトリの最新コミットを取得します。
+
+### ステップ3: 更新後の確認
+
+更新後、必要なファイルが存在することを確認します：
+
 ```powershell
-# スクリプトの存在確誁ETest-Path .shared-workflows/scripts/apply-cursor-rules.ps1
+# スクリプトの存在確認
+Test-Path .shared-workflows/scripts/apply-cursor-rules.ps1
 Test-Path .shared-workflows/scripts/sw-update-check.js
 Test-Path .shared-workflows/scripts/ensure-ssot.js
 
-# 更新チェチE��スクリプトを実行（動作確認！Enode .shared-workflows/scripts/sw-update-check.js --no-fetch
+# 更新チェックスクリプトを実行（動作確認）
+node .shared-workflows/scripts/sw-update-check.js --no-fetch
 ```
 
-### スチE��チE: 完�E再�E期化�E�スチE��チEで解決しなぁE��合！E
-サブモジュールが完�Eに壊れてぁE��場合�E、一度削除して再追加します！E
+### ステップ4: 完全再初期化（ステップ2で解決しない場合）
+
+サブモジュールが完全に壊れている場合は、一度削除して再追加します：
+
 ```powershell
-# ⚠�E�E注愁E こ�E手頁E�Eサブモジュール冁E�Eローカル変更を失ぁE��ぁE
-# 1. サブモジュールを非初期匁Egit submodule deinit -f .shared-workflows
+# ⚠️ 注意: この手順はサブモジュール内のローカル変更を失います
 
-# 2. サブモジュールを削除�E�Eit管琁E��ら外す�E�Egit rm -f .shared-workflows
+# 1. サブモジュールを非初期化
+git submodule deinit -f .shared-workflows
 
-# 3. サブモジュールを�E追加
+# 2. サブモジュールを削除（Git管理から外す）
+git rm -f .shared-workflows
+
+# 3. サブモジュールを再追加
 git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows
 
 # 4. 同期と更新
@@ -60,71 +86,102 @@ git submodule sync --recursive
 git submodule update --init --recursive --remote
 ```
 
-**注愁E*: スチE��チEを実行すると、親リポジトリの `.gitmodules` と `.shared-workflows` の参�Eが更新されます。変更をコミットする忁E��があります！E
-```powershell
-# 変更を確誁Egit status -sb
+**注意**: ステップ4を実行すると、親リポジトリの `.gitmodules` と `.shared-workflows` の参照が更新されます。変更をコミットする必要があります：
 
-# コミット（忁E��に応じて�E�Egit add .shared-workflows .gitmodules
-git commit -m "chore: shared-workflows submodule再�E期化"
+```powershell
+# 変更を確認
+git status -sb
+
+# コミット（必要に応じて）
+git add .shared-workflows .gitmodules
+git commit -m "chore: shared-workflows submodule再初期化"
 ```
 
-### スチE��チE: 親リポジトリでの参�E更新�E�重要E��E
-サブモジュールを更新した後�E、E*忁E��親リポジトリ側で参�Eコミットを更新**する忁E��があります！E
+### ステップ5: 親リポジトリでの参照更新（重要）
+
+サブモジュールを更新した後は、**必ず親リポジトリ側で参照コミットを更新**する必要があります：
+
 ```powershell
-# サブモジュールの参�Eが更新されてぁE��ことを確誁Egit status -sb
-# ↁE.shared-workflows が変更対象として表示される�EぁE
-# 変更をスチE�Eジング
+# サブモジュールの参照が更新されていることを確認
+git status -sb
+# → .shared-workflows が変更対象として表示されるはず
+
+# 変更をステージング
 git add .shared-workflows
 
-# コミット（他�E変更と一緒でも可�E�Egit commit -m "chore: shared-workflows submodule更新"
+# コミット（他の変更と一緒でも可）
+git commit -m "chore: shared-workflows submodule更新"
 
-# プッシュ�E�忁E��に応じて�E�Egit push origin main
+# プッシュ（必要に応じて）
+git push origin main
 ```
 
-**禁止事頁E*: `git -C .shared-workflows pull` だけで「更新完亁E��と判断しなぁE��と。親側の参�Eコミットが更新されず、他�E環墁E��再現できなくなります、E
-## トラブルシューチE��ング
+**禁止事項**: `git -C .shared-workflows pull` だけで「更新完了」と判断しないこと。親側の参照コミットが更新されず、他の環境で再現できなくなります。
 
-### 問顁E: `git submodule update` が何も出力しなぁE
-**原因**: サブモジュールが既に最新と判断されてぁE��、また�E設定が壊れてぁE��可能性があります、E
+## トラブルシューティング
+
+### 問題1: `git submodule update` が何も出力しない
+
+**原因**: サブモジュールが既に最新と判断されている、または設定が壊れている可能性があります。
+
 **対処**:
 ```powershell
-# 強制皁E��再取征Egit submodule update --init --recursive --remote --force
+# 強制的に再取得
+git submodule update --init --recursive --remote --force
 ```
 
-### 問顁E: サブモジュールチE��レクトリは存在するが、中身が空
+### 問題2: サブモジュールディレクトリは存在するが、中身が空
 
-**原因**: サブモジュールのワークチE��ーが欠損してぁE��す、E
-**対処**: スチE��チE�E�完�E再�E期化�E�を実行してください、E
-### 問顁E: ネットワークエラーでリモートから取得できなぁE
-**対処**: ローカルに共有クローンがある場合�E、一時的にパスを直接持E��してスクリプトを実行できます！E
+**原因**: サブモジュールのワークツリーが欠損しています。
+
+**対処**: ステップ4（完全再初期化）を実行してください。
+
+### 問題3: ネットワークエラーでリモートから取得できない
+
+**対処**: ローカルに共有クローンがある場合は、一時的にパスを直接指定してスクリプトを実行できます：
+
 ```powershell
-# 侁E 親チE��レクトリに shared-workflows のクローンがある場吁Enode ../shared-workflows/scripts/sw-update-check.js --project-root .
+# 例: 親ディレクトリに shared-workflows のクローンがある場合
+node ../shared-workflows/scripts/sw-update-check.js --project-root .
 ```
 
-ただし、これ�E一時的な回避策です。可能な限りサブモジュールを正しく修復してください、E
-### 問顁E: PowerShellでパスが認識されなぁE
-**原因**: パスの持E��方法や実行�Eリシーの問題です、E
+ただし、これは一時的な回避策です。可能な限りサブモジュールを正しく修復してください。
+
+### 問題4: PowerShellでパスが認識されない
+
+**原因**: パスの指定方法や実行ポリシーの問題です。
+
 **対処**:
 ```powershell
-# 絶対パスで実衁Epwsh -NoProfile -File "$PWD\.shared-workflows\scripts\apply-cursor-rules.ps1" -ProjectRoot .
+# 絶対パスで実行
+pwsh -NoProfile -File "$PWD\.shared-workflows\scripts\apply-cursor-rules.ps1" -ProjectRoot .
 
-# また�E、�EにチE��レクトリに移勁Ecd .shared-workflows/scripts
+# または、先にディレクトリに移動
+cd .shared-workflows/scripts
 pwsh -NoProfile -File apply-cursor-rules.ps1 -ProjectRoot ../..
 ```
 
-## 検証チェチE��リスチE
-修復が完亁E��たら、以下を確認してください�E�E
-- [ ] `git submodule status --recursive` でサブモジュールが正常に表示されめE- [ ] `.shared-workflows/scripts/apply-cursor-rules.ps1` が存在する
+## 検証チェックリスト
+
+修復が完了したら、以下を確認してください：
+
+- [ ] `git submodule status --recursive` でサブモジュールが正常に表示される
+- [ ] `.shared-workflows/scripts/apply-cursor-rules.ps1` が存在する
 - [ ] `.shared-workflows/scripts/sw-update-check.js` が存在する
 - [ ] `node .shared-workflows/scripts/sw-update-check.js --no-fetch` が正常に実行される
 - [ ] `pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .` が正常に実行される
-- [ ] `git status -sb` で `.shared-workflows` が更新対象として表示される（更新した場合！E
-## 参老E��キュメンチE
-- **運用入口**: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
-- **初回セチE��アチE�E**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
-- **他�Eロジェクト適用**: `docs/APPLY_TO_OTHER_PROJECTS.md`
-- **更新ガイチE*: `docs/inbox/REPORT_OTHER_PROJECTS_UPDATE_GUIDE_20250105.md`
+- [ ] `git status -sb` で `.shared-workflows` が更新対象として表示される（更新した場合）
 
-## まとめE
-1. **まず試ぁE*: `git submodule sync --recursive` ↁE`git submodule update --init --recursive --remote`
-2. **それでもダメ**: サブモジュールを完�Eに削除して再追加�E�スチE��チE�E�E3. **忁E��実衁E*: 親リポジトリで参�Eコミットを更新�E�スチE��チE�E�E4. **検証**: スクリプトが正常に実行できることを確誁E
+## 参考ドキュメント
+
+- **運用入口**: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+- **初回セットアップ**: `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
+- **他プロジェクト適用**: `docs/APPLY_TO_OTHER_PROJECTS.md`
+- **更新ガイド**: `docs/inbox/REPORT_OTHER_PROJECTS_UPDATE_GUIDE_20250105.md`
+
+## まとめ
+
+1. **まず試す**: `git submodule sync --recursive` → `git submodule update --init --recursive --remote`
+2. **それでもダメ**: サブモジュールを完全に削除して再追加（ステップ4）
+3. **必ず実行**: 親リポジトリで参照コミットを更新（ステップ5）
+4. **検証**: スクリプトが正常に実行できることを確認

@@ -1,76 +1,104 @@
-# Report: 改喁E��案検証レポ�EチE
+# Report: 改善提案検証レポート
+
 **Timestamp**: 2025-01-03T00:00:00+09:00
 **Actor**: Orchestrator
 **Type**: Orchestrator
 **Duration**: 0.5h
-**Changes**: 改喁E��案�E検証と評価
+**Changes**: 改善提案の検証と評価
 
-## 概要E- Worker完亁E��ポ�Eト�E忁E���EチE��ー自動補完（優先度: Medium�E��E検証
-- Worker完亁E��ポ�Eト�E自動統合スクリプト作�E�E�優先度: Medium�E��E検証
-- 実裁E��況と忁E��性の評価
+## 概要
+- Worker完了レポートの必須ヘッダー自動補完（優先度: Medium）の検証
+- Worker完了レポートの自動統合スクリプト作成（優先度: Medium）の検証
+- 実装状況と必要性の評価
 
 ## 現状
 
-### 提桁E: Worker完亁E��ポ�Eト�E忁E���EチE��ー自動補宁E
-**検証結果**: ✁E**提案�E妥当で実裁E��値が高い**
+### 提案1: Worker完了レポートの必須ヘッダー自動補完
+
+**検証結果**: ✅ **提案は妥当で実装価値が高い**
 
 **根拠**:
-1. **現状の問顁E*:
-   - `REPORT_CONFIG.yml` の `standard` スタイルには「概要」「現状」「次のアクション」が忁E���EチE��ーとして定義されてぁE���E�E4-26行目�E�E   - `report-validator.js` は `strict_mode: true` の場合、これらのヘッダーをチェチE��し、不足時に警告を出す！E99行目�E�E   - しかし、`docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` セクション�E�E96-230行目�E�には「概要」と「次のアクション」が含まれてぁE��ぁE   - `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` にも忁E���EチE��ーの明記がなぁE
-2. **実裁E��みの類似機�E**:
-   - `scripts/report-orch-cli.js` の242-254行目で、Orchestratorレポ�Eトに「概要」「現状」「次のアクション」を自動補完してぁE��
-   - Workerレポ�Eトには同様�E機�EがなぁE
-3. **影響篁E��**:
-   - TASK_010 と TASK_011 のレポ�Eトで忁E���EチE��ー不足が発生（報告より！E   - `report-validator.js` で警告�E検�Eできるが、事前に防げてぁE��ぁE
-**推奨実裁E*:
+1. **現状の問題**:
+   - `REPORT_CONFIG.yml` の `standard` スタイルには「概要」「現状」「次のアクション」が必須ヘッダーとして定義されている（24-26行目）
+   - `report-validator.js` は `strict_mode: true` の場合、これらのヘッダーをチェックし、不足時に警告を出す（299行目）
+   - しかし、`docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` セクション（196-230行目）には「概要」と「次のアクション」が含まれていない
+   - `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` にも必須ヘッダーの明記がない
+
+2. **実装済みの類似機能**:
+   - `scripts/report-orch-cli.js` の242-254行目で、Orchestratorレポートに「概要」「現状」「次のアクション」を自動補完している
+   - Workerレポートには同様の機能がない
+
+3. **影響範囲**:
+   - TASK_010 と TASK_011 のレポートで必須ヘッダー不足が発生（報告より）
+   - `report-validator.js` で警告は検出できるが、事前に防げていない
+
+**推奨実装**:
 - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` セクションに「概要」と「次のアクション」を追加
-- `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に忁E���EチE��ーの明記を追加
-- `report-validator.js` の警告を事前に防ぐため、Workerプロンプト生�E時に忁E���EチE��ーを�E示
+- `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に必須ヘッダーの明記を追加
+- `report-validator.js` の警告を事前に防ぐため、Workerプロンプト生成時に必須ヘッダーを明示
 
-### 提桁E: Worker完亁E��ポ�Eト�E自動統合スクリプト作�E
+### 提案2: Worker完了レポートの自動統合スクリプト作成
 
-**検証結果**: ✁E**提案�E妥当で実裁E��値が高い**
+**検証結果**: ✅ **提案は妥当で実装価値が高い**
 
 **根拠**:
-1. **現状の問顁E*:
-   - `scripts/finalize-phase.js` は既に存在し、レポ�Eト�Eアーカイブ！Edocs/inbox/` ↁE`docs/reports/`�E��E実裁E��み�E�E8-81行目�E�E   - しかし、`docs/HANDOVER.md` への自動統合機�Eは実裁E��れてぁE��ぁE   - Orchestratorは手動でWorkerレポ�Eトを読み取り、HANDOVER.mdに統合する忁E��がある
+1. **現状の問題**:
+   - `scripts/finalize-phase.js` は既に存在し、レポートのアーカイブ（`docs/inbox/` → `docs/reports/`）は実装済み（48-81行目）
+   - しかし、`docs/HANDOVER.md` への自動統合機能は実装されていない
+   - Orchestratorは手動でWorkerレポートを読み取り、HANDOVER.mdに統合する必要がある
 
-2. **実裁E��みの類似機�E**:
-   - `scripts/report-orch-cli.js` には `updateHandoverLatest` 関数があり、Orchestratorレポ�Eト用のHANDOVER更新は実裁E��み�E�E9-107行目�E�E   - Workerレポ�EトをHANDOVERに統合する機�Eは未実裁E
-3. **影響篁E��**:
-   - Orchestratorの作業負荷が高い�E�手動統合が忁E��E��E   - 統合漏れのリスクがあめE   - `docs/HANDOVER.md` の36行目に「`finalize-phase.js` の HANDOVER 自動更新機�E追加�E�現在は Task のみ�E�」とぁE��バックログ頁E��が既に存在
+2. **実装済みの類似機能**:
+   - `scripts/report-orch-cli.js` には `updateHandoverLatest` 関数があり、Orchestratorレポート用のHANDOVER更新は実装済み（79-107行目）
+   - WorkerレポートをHANDOVERに統合する機能は未実装
 
-**推奨実裁E*:
-- `scripts/finalize-phase.js` にWorkerレポ�Eト統合機�Eを追加
-- `docs/HANDOVER.md` の「統合レポ�Eト」セクションにWorkerレポ�Eト�Eサマリーを�E動追加
-- Orchestratorレポ�Eトと同様に、Workerレポ�Eト�E主要情報�E�Eicket、Changes、Handover�E�を抽出してHANDOVERに統吁E
+3. **影響範囲**:
+   - Orchestratorの作業負荷が高い（手動統合が必要）
+   - 統合漏れのリスクがある
+   - `docs/HANDOVER.md` の36行目に「`finalize-phase.js` の HANDOVER 自動更新機能追加（現在は Task のみ）」というバックログ項目が既に存在
+
+**推奨実装**:
+- `scripts/finalize-phase.js` にWorkerレポート統合機能を追加
+- `docs/HANDOVER.md` の「統合レポート」セクションにWorkerレポートのサマリーを自動追加
+- Orchestratorレポートと同様に、Workerレポートの主要情報（Ticket、Changes、Handover）を抽出してHANDOVERに統合
+
 ## 次のアクション
 
-1. **提桁Eの実裁E*:
-   - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を更新し、忁E���EチE��ー「概要」「次のアクション」を追加
-   - `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に忁E���EチE��ーの明記を追加
-   - 実裁E��、`report-validator.js` の警告が減少することを確誁E
-2. **提桁Eの実裁E*:
-   - `scripts/finalize-phase.js` にWorkerレポ�Eト統合機�Eを追加
-   - Workerレポ�Eトから主要情報�E�Eicket、Changes、Handover�E�を抽出し、HANDOVER.mdの「統合レポ�Eト」セクションに追加
-   - 実裁E��、Orchestratorの作業負荷が軽減されることを確誁E
+1. **提案1の実装**:
+   - `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を更新し、必須ヘッダー「概要」「次のアクション」を追加
+   - `prompts/every_time/WORKER_COMPLETION_DRIVER.txt` に必須ヘッダーの明記を追加
+   - 実装後、`report-validator.js` の警告が減少することを確認
+
+2. **提案2の実装**:
+   - `scripts/finalize-phase.js` にWorkerレポート統合機能を追加
+   - Workerレポートから主要情報（Ticket、Changes、Handover）を抽出し、HANDOVER.mdの「統合レポート」セクションに追加
+   - 実装後、Orchestratorの作業負荷が軽減されることを確認
+
 3. **検証**:
-   - 両方の実裁E��、実際のWorkerレポ�Eトで動作確誁E   - `report-validator.js` の警告が減少することを確誁E   - HANDOVER.mdの自動更新が正常に動作することを確誁E
-## ガイチE
-- 実裁E�E既存�Eコードパターン�E�Ereport-orch-cli.js` の `updateHandoverLatest` など�E�を参老E��する
-- 後方互換性を保つため、既存�Eレポ�Eトフォーマットとの整合性を確認すめE- 実裁E���E `sw-doctor.js` でシスチE��健全性を確認すめE
+   - 両方の実装後、実際のWorkerレポートで動作確認
+   - `report-validator.js` の警告が減少することを確認
+   - HANDOVER.mdの自動更新が正常に動作することを確認
+
+## ガイド
+
+- 実装は既存のコードパターン（`report-orch-cli.js` の `updateHandoverLatest` など）を参考にする
+- 後方互換性を保つため、既存のレポートフォーマットとの整合性を確認する
+- 実装後は `sw-doctor.js` でシステム健全性を確認する
+
 ## メタプロンプト再投入条件
 
-- 実裁E��亁E��、動作確認が完亁E��た時点で再投入
+- 実装完了後、動作確認が完了した時点で再投入
 
-## 改喁E��案！Eew Feature Proposal�E�E
-- **Workerレポ�Eトテンプレート�E自動生成機�E�E�優先度: Low�E�E*: Workerプロンプト生�E時に、忁E���EチE��ーを含むチE��プレートを自動生成する機�Eを追加することで、さらに警告を事前に防げる可能性があめE
+## 改善提案（New Feature Proposal）
+
+- **Workerレポートテンプレートの自動生成機能（優先度: Low）**: Workerプロンプト生成時に、必須ヘッダーを含むテンプレートを自動生成する機能を追加することで、さらに警告を事前に防げる可能性がある
+
 ## Verification
 
-- `node scripts/report-validator.js docs/inbox/REPORT_IMPROVEMENT_VALIDATION_20250103.md` ↁE実行予宁E- `git status -sb` ↁEクリーン
+- `node scripts/report-validator.js docs/inbox/REPORT_IMPROVEMENT_VALIDATION_20250103.md` → 実行予定
+- `git status -sb` → クリーン
 - push: pending
 
 ## Integration Notes
 
-- 本レポ�Eト�E改喁E��案�E検証結果を記録
-- 実裁E��スクとして `docs/tasks/` に起票することを推奨
+- 本レポートは改善提案の検証結果を記録
+- 実装タスクとして `docs/tasks/` に起票することを推奨

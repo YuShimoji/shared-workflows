@@ -1,114 +1,178 @@
 # shared-workflows
 
-共通�E開発ワークフローと AI 協調開発ルール�E�Eingle Source of Truth�E�を提供する中央リポジトリです、E
+共通の開発ワークフローと AI 協調開発ルール（Single Source of Truth）を提供する中央リポジトリです。
+
 ## 最新ルール
 
-- **ルール本体（最新牁E/ SSOT�E�E*: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - v1.1/v2.0 の改喁E��取り込んだ単一のエントリポインチE  - 実行フローの完�E明確化、クリーンアチE�Eの義務化を定義
+- **ルール本体（最新版 / SSOT）**: `docs/Windsurf_AI_Collab_Rules_latest.md`
+  - v1.1/v2.0 の改善を取り込んだ単一のエントリポイント
+  - 実行フローの完全明確化、クリーンアップの義務化を定義
 
-## 吁E�Eロジェクトでの運用
+## 各プロジェクトでの運用
 
-吁E�Eロジェクト�E本リポジトリのルールを参照し、�Eロジェクト直下�E `AI_CONTEXT.md` を運用してください、E
-### チE��プレーチE
-- `templates/AI_CONTEXT.md` - AI作業状態記録用チE��プレーチE- `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト�E�任意！E- `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セチE��アチE�E用プロンプト�E�参照。説明付き / フォールバック�E�E- `docs/windsurf_workflow/OPEN_HERE.md` - 運用老E�E入口�E�参照。どのフォルダを開ぁE/ どれをコピ�Eする、を1枚に雁E��E��E- `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用�E�参照�E�E- `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生�Eする Worker 起動用プロンプトのチE��プレ�E�Eつ目のチE��プレ / 参�E用�E�E- `prompts/first_time/PROJECT_KICKSTART.txt` - 初回セチE��アチE�E用プロンプト�E�コピ�E用�E�E- `prompts/every_time/ORCHESTRATOR_DRIVER.txt` - Orchestrator起勁E再開�E�毎回コピ�E用 / **1つに統一**�E�E- `prompts/global/WINDSURF_GLOBAL_RULES.txt` - Windsurf Global Rules�E�端末ごとの統一 / コピ�E用�E�E- `prompts/role/ROLE_PROMPT_*.txt` - 役割別プロンプト�E�コピ�E用 / 参老E�Eフォールバック�E�E- `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形�E�ErchestratorがチケチE��発行時に使用�E�E- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト�E�実裁E��E/ 参�E。説明�EチE��付き�E�E- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト�E�レビュア / 参�E。説明�EチE��付き�E�E- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト�E�EI対忁E/ 参�E。説明�EチE��付き�E�E- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト�E�リリース拁E��E/ 参�E。説明�EチE��付き�E�E- `templates/ISSUE_TEMPLATE.md` - Issue作�E用チE��プレーチE- `templates/PR_TEMPLATE.md` - PR作�E用チE��プレーチE- `templates/cleanup.sh` - クリーンアチE�EチェチE��スクリプト
+各プロジェクトは本リポジトリのルールを参照し、プロジェクト直下の `AI_CONTEXT.md` を運用してください。
 
-## v2.0 の主な改喁E��
+### テンプレート
 
-### 問顁E: 自動PR・自動�Eージ直前での停止 ↁE解決
+- `templates/AI_CONTEXT.md` - AI作業状態記録用テンプレート
+- `templates/ORCHESTRATION_PROMPT.md` - オーケストレーション用プロンプト（任意）
+- `templates/PROJECT_KICKSTART_PROMPT.md` - 初回セットアップ用プロンプト（参照。説明付き / フォールバック）
+- `docs/windsurf_workflow/OPEN_HERE.md` - 運用者の入口（参照。どのフォルダを開く / どれをコピペする、を1枚に集約）
+- `docs/windsurf_workflow/ORCHESTRATOR_METAPROMPT.md` - Orchestrator起動用（参照）
+- `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` - Orchestrator が毎回生成する Worker 起動用プロンプトのテンプレ（3つ目のテンプレ / 参照用）
+- `prompts/first_time/PROJECT_KICKSTART.txt` - 初回セットアップ用プロンプト（コピペ用）
+- `prompts/every_time/ORCHESTRATOR_DRIVER.txt` - Orchestrator起動/再開（毎回コピペ用 / **1つに統一**）
+- `prompts/global/WINDSURF_GLOBAL_RULES.txt` - Windsurf Global Rules（端末ごとの統一 / コピペ用）
+- `prompts/role/ROLE_PROMPT_*.txt` - 役割別プロンプト（コピペ用 / 参考・フォールバック）
+- `templates/TASK_TICKET_TEMPLATE.md` - docs/tasks/TASK_*.md の雛形（Orchestratorがチケット発行時に使用）
+- `templates/ROLE_PROMPT_IMPLEMENTER.md` - 役割別プロンプト（実装者 / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_REVIEWER.md` - 役割別プロンプト（レビュア / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_CI_HANDLER.md` - 役割別プロンプト（CI対応 / 参照。説明・デモ付き）
+- `templates/ROLE_PROMPT_RELEASE_MANAGER.md` - 役割別プロンプト（リリース担当 / 参照。説明・デモ付き）
+- `templates/ISSUE_TEMPLATE.md` - Issue作成用テンプレート
+- `templates/PR_TEMPLATE.md` - PR作成用テンプレート
+- `templates/cleanup.sh` - クリーンアップチェックスクリプト
 
-- **CI成功 = 即座に自動�Eージ** の単純ルール
-- 中断禁止ゾーン�E�ER作�E�E��Eージ�E�で人間�E介�Eを排除
-- タイムアウト�E琁E�E明確匁E
-### 問顁E: 不要なコード（デバッグ、コメントアウト）�E残留 ↁE解決
+## v2.0 の主な改善点
 
-- **クリーンアチE�EチェチE��** の義務化�E�ER作�E前に忁E��！E- 自動検�Eスクリプト�E�Ecleanup.sh`�E��E提侁E- Pre-flightチェチE��の一部として絁E��込み
+### 問題1: 自動PR・自動マージ直前での停止 → 解決
 
-### 運用: コマンド実行�E事前承認（効玁E���E�E
-- 最新牁ESOT�E�Eatest�E�に **「コマンド実行�Eリシー�E�高速化�E�、E* の運用ルールを含みまぁE- 原則として、ローカルで安�Eなコマンド�E AI が�E律実行し、作業を止めずに進めまぁE- 外部通信/破壊的操佁E依存関係追加/長時間実行などは事前承認を取り、忁E��な場合�Eワンストップ！E回�E承認）でまとめて提示します（ただし、GitHub操作を普段から自動承認する運用なら承認征E��で停止しなぁE��E
-## クイチE��スターチE
-最小運用�E�推奨�E�E
+- **CI成功 = 即座に自動マージ** の単純ルール
+- 中断禁止ゾーン（PR作成～マージ）で人間の介入を排除
+- タイムアウト処理の明確化
 
-- 初回のみ `prompts/first_time/PROJECT_KICKSTART.txt` を使ぁE��各プロジェクトに `.shared-workflows/`�E�Eubmodule�E�を導�E
-- 運用老E�E入口�E�参照。どのフォルダを開ぁEどれをコピ�Eする�E�E `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
-- 毎回 `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` めEOrchestrator スレチE��に貼る！E*これだぁE*�E�E- Worker 用プロンプトは Orchestrator がチケチE��冁E���E�Eier/Focus/Forbidden 等）に合わせて動的生�Eする
-  - 生�Eベ�Eス�E�参照用チE��プレ�E�E `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+### 問題2: 不要なコード（デバッグ、コメントアウト）の残留 → 解決
 
-端末ごとの統一�E�推奨�E�E
+- **クリーンアップチェック** の義務化（PR作成前に必須）
+- 自動検出スクリプト（`cleanup.sh`）の提供
+- Pre-flightチェックの一部として組み込み
 
-- Windsurf の Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼めE
-1. プロジェクトルートに `AI_CONTEXT.md` を�E置�E�Etemplates/AI_CONTEXT.md` をコピ�E�E�E2. `scripts/cleanup.sh` を�E置�E�Etemplates/cleanup.sh` をコピ�Eしてカスタマイズ�E�E3. �E�任意）�Eロジェクトルートに `ORCHESTRATION_PROMPT.md` を�E置�E�Etemplates/ORCHESTRATION_PROMPT.md` をコピ�E�E�E4. CI設定にPre-flightチェチE��を絁E��込む
-5. AI に最新牁ESOT�E�E.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`�E�を参�EさせめE6. �E�任意）`docs/ISSUES.md` を起点にバックログを管琁E��、Issue同期ワークフロー�E�E.github/workflows/sync-issues.yml`�E�でGitHub Issueに反映する
+### 運用: コマンド実行の事前承認（効率化）
 
-役割が�E確な場合�E、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト�E�コピ�E用�E�」を使ぁE��、返信フォーマットとエチE��ケース対応まで一貫します（運用方針として固定テンプレを増やさなぁE��合�E、Orchestrator ぁEWorker 用の最小�Eロンプトを動皁E��成してもよぁE��、E
-## 参�Eナビ�E�いつ・何を見るか！E
+- 最新版SSOT（latest）に **「コマンド実行ポリシー（高速化）」** の運用ルールを含みます
+- 原則として、ローカルで安全なコマンドは AI が自律実行し、作業を止めずに進めます
+- 外部通信/破壊的操作/依存関係追加/長時間実行などは事前承認を取り、必要な場合はワンストップ（1回の承認）でまとめて提示します（ただし、GitHub操作を普段から自動承認する運用なら承認待ちで停止しない）
+
+## クイックスタート
+
+最小運用（推奨）:
+
+- 初回のみ `prompts/first_time/PROJECT_KICKSTART.txt` を使い、各プロジェクトに `.shared-workflows/`（Submodule）を導入
+- 運用者の入口（参照。どのフォルダを開く/どれをコピペする）: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+- 毎回 `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt` を Orchestrator スレッドに貼る（**これだけ**）
+- Worker 用プロンプトは Orchestrator がチケット内容（Tier/Focus/Forbidden 等）に合わせて動的生成する
+  - 生成ベース（参照用テンプレ）: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+
+端末ごとの統一（推奨）:
+
+- Windsurf の Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を貼る
+
+1. プロジェクトルートに `AI_CONTEXT.md` を配置（`templates/AI_CONTEXT.md` をコピー）
+2. `scripts/cleanup.sh` を配置（`templates/cleanup.sh` をコピーしてカスタマイズ）
+3. （任意）プロジェクトルートに `ORCHESTRATION_PROMPT.md` を配置（`templates/ORCHESTRATION_PROMPT.md` をコピー）
+4. CI設定にPre-flightチェックを組み込む
+5. AI に最新版SSOT（`.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`）を参照させる
+6. （任意）`docs/ISSUES.md` を起点にバックログを管理し、Issue同期ワークフロー（`.github/workflows/sync-issues.yml`）でGitHub Issueに反映する
+
+役割が明確な場合は、`templates/ROLE_PROMPT_*.md` の「毎回のプロンプト（コピペ用）」を使うと、返信フォーマットとエッジケース対応まで一貫します（運用方針として固定テンプレを増やさない場合は、Orchestrator が Worker 用の最小プロンプトを動的生成してもよい）。
+
+## 参照ナビ（いつ・何を見るか）
+
 <a id="reference-navigation" name="reference-navigation"></a>
 
-こ�Eリポジトリの参�E先�E多いので、E*「今�E状況」�E「見るべきファイル/見�Eし、E* をここに雁E��E��ます、E
-### 0) 迷ったらまずここ（毎回の基本�E�E
-- **運用老E�E入口�E�参照。どのフォルダを開ぁEどれをコピ�Eする�E�E*: `docs/windsurf_workflow/OPEN_HERE.md`�E�このリポジトリ冁E��E/ `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`�E��Eロジェクト�E / Submodule�E�E- **毎回の運用SSOT�E�最優先！E*: `docs/windsurf_workflow/EVERY_SESSION.md`�E�このリポジトリ冁E��E/ `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`�E��Eロジェクト�E / Submodule�E�E- **コピ�E用プロンプト雁E*: `prompts/`�E�このリポジトリ冁E��E/ `.shared-workflows/prompts/`�E��Eロジェクト�E / Submodule�E�E- **SSOT�E�最新版！E*: `docs/Windsurf_AI_Collab_Rules_latest.md`�E��Eロジェクト�E / Submodule�E�E  - 見る箁E��: `0. 起動シーケンス` / `1. 基本原則` / `3. 忁E��フロー�E�Eier 2の標準）`
-- **プロジェクト�E状慁E*: プロジェクトルーチE`AI_CONTEXT.md`
-  - 見る箁E��: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期！Eext�E�`
-- **全体進行（任意！E*: プロジェクトルーチE`ORCHESTRATION_PROMPT.md`
-  - 見る箁E��: `毎回のプロンプト�E�オーケストレーター用�E�` / `エチE��ケース早見表` / `チE��`
-- **タスク堁E��（忁E��！E*: `docs/tasks/` / `docs/inbox/` / `docs/HANDOVER.md`
-  - 見る箁E��:
-    - `docs/tasks/`: `Status: OPEN/IN_PROGRESS/DONE`�E�チケチE��のSSOT�E�E    - `docs/inbox/`: `REPORT_...md`�E�Eorker納品物。次回Orchestratorが回収！E    - `docs/HANDOVER.md`: 全体進捗、ブロチE��ー、E��用フラグ�E�侁E `GitHubAutoApprove: true`�E�E- **巡回監査�E�任意！E*: `node .shared-workflows/scripts/orchestrator-audit.js`
-  - 見る箁E��: Warnings/Anomalies�E�報告漏れ/乖離の検知�E�E
-### 1) 作業開始（新要E再開�E�E
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`�E�このリポジトリ冁E��E/ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`�E��Eロジェクト�E / Submodule�E�E  - 見る箁E��: `0. 起動シーケンス`
+このリポジトリの参照先は多いので、**「今の状況」→「見るべきファイル/見出し」** をここに集約します。
+
+### 0) 迷ったらまずここ（毎回の基本）
+
+- **運用者の入口（参照。どのフォルダを開く/どれをコピペする）**: `docs/windsurf_workflow/OPEN_HERE.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（プロジェクト側 / Submodule）
+- **毎回の運用SSOT（最優先）**: `docs/windsurf_workflow/EVERY_SESSION.md`（このリポジトリ内） / `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`（プロジェクト側 / Submodule）
+- **コピペ用プロンプト集**: `prompts/`（このリポジトリ内） / `.shared-workflows/prompts/`（プロジェクト側 / Submodule）
+- **SSOT（最新版）**: `docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
+  - 見る箇所: `0. 起動シーケンス` / `1. 基本原則` / `3. 必須フロー（Tier 2の標準）`
+- **プロジェクトの状態**: プロジェクトルート `AI_CONTEXT.md`
+  - 見る箇所: `現在のミッション` / `次の中断可能点` / `リスク/懸念` / `短期（Next）`
+- **全体進行（任意）**: プロジェクトルート `ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `毎回のプロンプト（オーケストレーター用）` / `エッジケース早見表` / `デモ`
+- **タスク堆積（必須）**: `docs/tasks/` / `docs/inbox/` / `docs/HANDOVER.md`
+  - 見る箇所:
+    - `docs/tasks/`: `Status: OPEN/IN_PROGRESS/DONE`（チケットのSSOT）
+    - `docs/inbox/`: `REPORT_...md`（Worker納品物。次回Orchestratorが回収）
+    - `docs/HANDOVER.md`: 全体進捗、ブロッカー、運用フラグ（例: `GitHubAutoApprove: true`）
+- **巡回監査（任意）**: `node .shared-workflows/scripts/orchestrator-audit.js`
+  - 見る箇所: Warnings/Anomalies（報告漏れ/乖離の検知）
+
+### 1) 作業開始（新規/再開）
+
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`（このリポジトリ内） / `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（プロジェクト側 / Submodule）
+  - 見る箇所: `0. 起動シーケンス`
 - **AI_CONTEXT.md**
-  - 見る箁E��: `進捗` / `次の中断可能点`
+  - 見る箇所: `進捗` / `次の中断可能点`
 
-### 2) Issue化�E計画�E�Eoal/DoDの明文化！E
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 見る箁E��: `3. 忁E��フロー�E�Eier 2の標準）` の `Step 1: Issue作�E`
-- **チE��プレ**: `templates/ISSUE_TEMPLATE.md`
-
-### 3) 実裁E��Eier 2の標準！E
-- **役割別プロンプト�E�実裁E��E��E*: `templates/ROLE_PROMPT_IMPLEMENTER.md`
-  - 見る箁E��: `毎回のプロンプト�E�コピ�E用�E�` / `チE��`
-- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 見る箁E��: `Step 3: 実裁E ↁE`Step 4: クリーンアチE�EチェチE��` ↁE`Step 5: Pre-flight Check` ↁE`Step 6: コミッチE
-- **クリーンアチE�E**: `templates/cleanup.sh`�E�各プロジェクトで `scripts/cleanup.sh` に配置�E�E
-### 4) PR作�E・レビュー
+### 2) Issue化・計画（Goal/DoDの明文化）
 
 - **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 見る箁E��: `Step 7: PR自動作�E` / `Step 8: CI実行！EIは征E��）` / `Step 9: 自動�Eージ`
-- **役割別プロンプト�E�レビュア�E�E*: `templates/ROLE_PROMPT_REVIEWER.md`
-- **チE��プレ**: `templates/PR_TEMPLATE.md`
+  - 見る箇所: `3. 必須フロー（Tier 2の標準）` の `Step 1: Issue作成`
+- **テンプレ**: `templates/ISSUE_TEMPLATE.md`
 
-### 5) CIが失敗した（最優先で復旧�E�E
-- **役割別プロンプト�E�EI対応！E*: `templates/ROLE_PROMPT_CI_HANDLER.md`
-  - 見る箁E��: `毎回のプロンプト�E�コピ�E用�E�` / `判断基準` / `チE��`
+### 3) 実装（Tier 2の標準）
+
+- **役割別プロンプト（実装者）**: `templates/ROLE_PROMPT_IMPLEMENTER.md`
+  - 見る箇所: `毎回のプロンプト（コピペ用）` / `デモ`
 - **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 見る箁E��: `Step 5: Pre-flight Check` / `Step 8: CI実行！EIは征E��）`
-- **オーケストレーションチE��プレ**: `templates/ORCHESTRATION_PROMPT.md`
-  - 見る箁E��: `チE��3: CIが失敗する` / `チE��5: 権限不足` / `チE��7: Secrets/環墁E��数が足りない`
+  - 見る箇所: `Step 3: 実装` → `Step 4: クリーンアップチェック` → `Step 5: Pre-flight Check` → `Step 6: コミット`
+- **クリーンアップ**: `templates/cleanup.sh`（各プロジェクトで `scripts/cleanup.sh` に配置）
 
-�E�補足�E�Worker起動�Eロンプトの作り方は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を参照、E
-### 6) リリース�E�本番系はTier 3になりやすい�E�E
-- **役割別プロンプト�E�リリース拁E��！E*: `templates/ROLE_PROMPT_RELEASE_MANAGER.md`
+### 4) PR作成・レビュー
+
 - **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
-  - 見る箁E��: `2. 簡素化されたTier刁E��` の `Tier 3�E�人間承認忁E��）`
+  - 見る箇所: `Step 7: PR自動作成` / `Step 8: CI実行（AIは待機）` / `Step 9: 自動マージ`
+- **役割別プロンプト（レビュア）**: `templates/ROLE_PROMPT_REVIEWER.md`
+- **テンプレ**: `templates/PR_TEMPLATE.md`
 
-### 7) よくある詰まり（まとめE��E
-- **オーケストレーションチE��プレ**: `templates/ORCHESTRATION_PROMPT.md`
-  - 見る箁E��: `エチE��ケース早見表` / `チE��2: pushが拒否される` / `チE��6: PR自動�Eージが働かない`
+### 5) CIが失敗した（最優先で復旧）
 
-## バックログ管琁E��Essue同期�E�E
-こ�Eリポジトリでは、`docs/ISSUES.md` を起点にバックログを管琁E��、GitHub Actions のワークフロー�E�E.github/workflows/sync-issues.yml`�E�で自動的に GitHub Issue に同期します、E
-### 使ぁE��
+- **役割別プロンプト（CI対応）**: `templates/ROLE_PROMPT_CI_HANDLER.md`
+  - 見る箇所: `毎回のプロンプト（コピペ用）` / `判断基準` / `デモ`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
+  - 見る箇所: `Step 5: Pre-flight Check` / `Step 8: CI実行（AIは待機）`
+- **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `デモ3: CIが失敗する` / `デモ5: 権限不足` / `デモ7: Secrets/環境変数が足りない`
 
-1. **バックログの更新**: `docs/ISSUES.md` を編雁E��各セクション�E�E##` 見�Eし）が1つのIssueに対応！E2. **自動同朁E*: `docs/ISSUES.md` めE`main` ブランチに push すると自動実衁E3. **手動実衁E*: GitHub Actions の「Reusable Sync Issues from docs」ワークフローを手動実行！Eworkflow_dispatch`�E�も可能
+（補足）Worker起動プロンプトの作り方は `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` を参照。
+
+### 6) リリース（本番系はTier 3になりやすい）
+
+- **役割別プロンプト（リリース担当）**: `templates/ROLE_PROMPT_RELEASE_MANAGER.md`
+- **SSOT**: `docs/Windsurf_AI_Collab_Rules_latest.md`
+  - 見る箇所: `2. 簡素化されたTier分類` の `Tier 3（人間承認必須）`
+
+### 7) よくある詰まり（まとめ）
+
+- **オーケストレーションテンプレ**: `templates/ORCHESTRATION_PROMPT.md`
+  - 見る箇所: `エッジケース早見表` / `デモ2: pushが拒否される` / `デモ6: PR自動マージが働かない`
+
+## バックログ管理（Issue同期）
+
+このリポジトリでは、`docs/ISSUES.md` を起点にバックログを管理し、GitHub Actions のワークフロー（`.github/workflows/sync-issues.yml`）で自動的に GitHub Issue に同期します。
+
+### 使い方
+
+1. **バックログの更新**: `docs/ISSUES.md` を編集（各セクション（`##` 見出し）が1つのIssueに対応）
+2. **自動同期**: `docs/ISSUES.md` を `main` ブランチに push すると自動実行
+3. **手動実行**: GitHub Actions の「Reusable Sync Issues from docs」ワークフローを手動実行（`workflow_dispatch`）も可能
 
 ### 運用ルール
 
-- **更新**: 見�Eしタイトルを変えなければ同じIssueが更新されまぁE- **削除**: `docs/ISSUES.md` から削除された見�Eし�E、`managed:docs-sync` ラベル付きの既存Issueが�E動でクローズされまぁE- **実行方況E*: `docs/ISSUES.md` 更新時に自動実行！Eainのみ�E�し、忁E��なら手動実行！Eorkflow_dispatch�E�もできまぁE
-詳細は [`docs/ISSUES.md`](./docs/ISSUES.md) を参照してください、E
+- **更新**: 見出しタイトルを変えなければ同じIssueが更新されます
+- **削除**: `docs/ISSUES.md` から削除された見出しは、`managed:docs-sync` ラベル付きの既存Issueが自動でクローズされます
+- **実行方法**: `docs/ISSUES.md` 更新時に自動実行（mainのみ）し、必要なら手動実行（workflow_dispatch）もできます
+
+詳細は [`docs/ISSUES.md`](./docs/ISSUES.md) を参照してください。
+
 ## 関連リンク
 
-- [Windsurf AI 協調開発ルール�E�最新牁E/ SSOT�E�](./docs/Windsurf_AI_Collab_Rules_latest.md)
-- [変更履歴�E�E2.0�E�](./docs/Windsurf_AI_Collab_Rules_v2.0.md#変更履歴)
-- [Issue同期用バックログ�E�Eocs/ISSUES.md�E�](./docs/ISSUES.md)
-- [参�Eナビ�E�いつ・何を見るか）](#reference-navigation)
-- [斁E��化け修正ガイド](./docs/ENCODING_FIX_GUIDE.md) - 斁E��化けが発生した場合�E対処�
+- [Windsurf AI 協調開発ルール（最新版 / SSOT）](./docs/Windsurf_AI_Collab_Rules_latest.md)
+- [変更履歴（v2.0）](./docs/Windsurf_AI_Collab_Rules_v2.0.md#変更履歴)
+- [Issue同期用バックログ（docs/ISSUES.md）](./docs/ISSUES.md)
+- [参照ナビ（いつ・何を見るか）](#reference-navigation)
+- [文字化け修正ガイド](./docs/ENCODING_FIX_GUIDE.md) - 文字化けが発生した場合の対処法

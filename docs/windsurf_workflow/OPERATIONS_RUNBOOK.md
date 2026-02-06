@@ -1,57 +1,88 @@
-# Operations Runbook�E�実稼働手頁E/ 成功・失敗判定！E
-**毎回の運用SSOT�E�最優先！E*: `docs/windsurf_workflow/EVERY_SESSION.md`  
-こ�E Runbook は「詳細手頁E背景/侁Eトラブルシュート」を扱ぁE��毎回の判断めE��亁E��チE��プレは SSOT に従う、E
-目皁E shared-workflows を他�Eロジェクトへ適用し、E*再現性のある運用**�E�止まりにくい・壊れにくい�E�を実現する、E
+# Operations Runbook（実稼働手順 / 成功・失敗判定）
+
+**毎回の運用SSOT（最優先）**: `docs/windsurf_workflow/EVERY_SESSION.md`  
+この Runbook は「詳細手順/背景/例/トラブルシュート」を扱う。毎回の判断や終了時テンプレは SSOT に従う。
+
+目的: shared-workflows を他プロジェクトへ適用し、**再現性のある運用**（止まりにくい・壊れにくい）を実現する。
+
 ---
 
-## 1) ユーザー�E�運用老E��がめE��こと
+## 1) ユーザー（運用者）がやること
 
-### 初回�E��Eロジェクト導�E�E�E
-1. `.shared-workflows/` を導�E�E�Eubmodule 推奨�E�E2. Cursor ルールを適用�E�推奨�E�E   - `pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .`
-3. Kickstart を実行（�E回�Eみ�E�E   - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
+### 初回（プロジェクト導入）
 
-### 毎回�E�セチE��ョン開始！E
-1. �E�推奨�E�診断
+1. `.shared-workflows/` を導入（submodule 推奨）
+2. Cursor ルールを適用（推奨）
+   - `pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .`
+3. Kickstart を実行（初回のみ）
+   - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
+
+### 毎回（セッション開始）
+
+1. （推奨）診断
    - `node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text`
-2. Orchestrator Driver を貼る！E*毎回これだぁE*�E�E   - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
+2. Orchestrator Driver を貼る（**毎回これだけ**）
+   - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 
 ---
 
-## 2) Orchestrator が毎回めE��こと�E�運用の骨格�E�E
-### 入力！Erchestratorへの持E���E�E
-- **投�Eするのは Driver だぁE*: `ORCHESTRATOR_DRIVER.txt`
+## 2) Orchestrator が毎回やること（運用の骨格）
+
+### 入力（Orchestratorへの指示）
+
+- **投入するのは Driver だけ**: `ORCHESTRATOR_DRIVER.txt`
 - 状態SSOT: `.cursor/MISSION_LOG.md`
 - タスクSSOT: `docs/tasks/`
-- 納品: `docs/inbox/` ↁE次回Orchestratorが回収して `docs/HANDOVER.md` へ統吁E
-### 期征E��れる成果物�E�ファイル�E�E
-- `.cursor/MISSION_LOG.md` が更新され続ける！Eurrent Phase/Blockers/Next�E�E- `docs/tasks/TASK_*.md` ぁEStatus/DoD/Report で整吁E- `docs/inbox/REPORT_*.md`�E�Eorker納品�E��E回収後�E `docs/reports/` へアーカイチE- `docs/HANDOVER.md` が最新に反映されめE
-### 期征E��れるチャチE��出力（�E功時�E�E
-Orchestrator のチャチE��出力�E **固宁Eセクション**:
+- 納品: `docs/inbox/` → 次回Orchestratorが回収して `docs/HANDOVER.md` へ統合
+
+### 期待される成果物（ファイル）
+
+- `.cursor/MISSION_LOG.md` が更新され続ける（Current Phase/Blockers/Next）
+- `docs/tasks/TASK_*.md` が Status/DoD/Report で整合
+- `docs/inbox/REPORT_*.md`（Worker納品）→回収後は `docs/reports/` へアーカイブ
+- `docs/HANDOVER.md` が最新に反映される
+
+### 期待されるチャット出力（成功時）
+
+Orchestrator のチャット出力は **固定5セクション**:
 1. `## 現状`
 2. `## 次のアクション`
 3. `## ガイド`
 4. `## メタプロンプト再投入条件`
-5. `## 改喁E��案！Eew Feature Proposal�E�`
+5. `## 改善提案（New Feature Proposal）`
 
-追加セクション�E�作業評価/結諁E等）が混ざってぁE��ら失敗、E
-### 中間報告（長大作業の安定化�E�E
-- チE�Eル呼び出ぁE0回ごと、また�Eファイル編雁E回ごとに **中間報呁E*を�EぁE- 中間報告には「次のメチE��ージでユーザーが返すべき選択肢�E�E-3件�E�」を含める
+追加セクション（作業評価/結論 等）が混ざっていたら失敗。
 
----
+### 中間報告（長大作業の安定化）
 
-## 3) 成功判定！Eefinition of Success�E�E
-最低限、以下が満たされてぁE��ば成功:
-
-- Driver どおりにフェーズが進み、MISSION_LOG が更新されてぁE��
-- `docs/tasks/` と `docs/HANDOVER.md` の整合が取れてぁE��
-- `report-validator.js` ぁEOK�E�少なくとめEHANDOVER と最新レポ�Eト！E- チャチE��出力が固宁Eセクションで、改喁E��案が含まれる
+- ツール呼び出し10回ごと、またはファイル編集5回ごとに **中間報告**を出す
+- 中間報告には「次のメッセージでユーザーが返すべき選択肢（1-3件）」を含める
 
 ---
 
-## 4) 失敗判定！Eailure Signals�E�E
-以下�E “要修正 Eの失敗シグナル:
+## 3) 成功判定（Definition of Success）
 
-- Driver を貼った�Eに、Orchestrator ぁE**一度きりで終亁E*し次の行動が残らなぁE- 固宁Eセクションが崩れる�E�改喁E��案欠落、セクション追加など�E�E- `docs/tasks` ぁEDONE なのに DoD根拠が無ぁE/ report が無ぁE- `docs/inbox` が回収されず残り続けめE- `.shared-workflows/scripts/apply-cursor-rules.ps1` など **新ファイルぁEsubmodule に無ぁE*�E�E 更新遁E���E�E
-対忁E
-- `sw-doctor` を実行し、WARN/ERROR を潰ぁE- submodule を更新�E�親repo側で `git submodule update --init --recursive --remote` 等！E
+最低限、以下が満たされていれば成功:
+
+- Driver どおりにフェーズが進み、MISSION_LOG が更新されている
+- `docs/tasks/` と `docs/HANDOVER.md` の整合が取れている
+- `report-validator.js` が OK（少なくとも HANDOVER と最新レポート）
+- チャット出力が固定5セクションで、改善提案が含まれる
+
+---
+
+## 4) 失敗判定（Failure Signals）
+
+以下は “要修正” の失敗シグナル:
+
+- Driver を貼ったのに、Orchestrator が **一度きりで終了**し次の行動が残らない
+- 固定5セクションが崩れる（改善提案欠落、セクション追加など）
+- `docs/tasks` が DONE なのに DoD根拠が無い / report が無い
+- `docs/inbox` が回収されず残り続ける
+- `.shared-workflows/scripts/apply-cursor-rules.ps1` など **新ファイルが submodule に無い**（= 更新遅れ）
+
+対応:
+- `sw-doctor` を実行し、WARN/ERROR を潰す
+- submodule を更新（親repo側で `git submodule update --init --recursive --remote` 等）
+
 

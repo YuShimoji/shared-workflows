@@ -1,8 +1,8 @@
-# Task: <タスク吁E
+# Task: <タスク名>
 Status: OPEN
 Tier: <1/2/3>
-Branch: <main また�E feature/...>
-Owner: <拁E��名>
+Branch: <main または feature/...>
+Owner: <担当名>
 Created: <ISO8601>
 Report: 
 
@@ -19,14 +19,16 @@ Report:
 - 
 
 ## Constraints
-- チE��チE 主要パスのみ�E�網羁E��スト�E後続タスクへ刁E���E�E- フォールバック: 新規追加禁止
+- テスト: 主要パスのみ（網羅テストは後続タスクへ分離）
+- フォールバック: 新規追加禁止
 - 
 
 ## DoD
-- [ ] 目皁E��達�EされてぁE��
-- [ ] 主要パスの検証が完亁E��てぁE��
-- [ ] docs/inbox/ にレポ�Eト！EEPORT_...md�E�が作�EされてぁE��
-- [ ] 本チケチE��の Report 欁E��レポ�Eトパスが追記されてぁE��
+- [ ] 目的が達成されている
+- [ ] 主要パスの検証が完了している
+- [ ] docs/inbox/ にレポート（REPORT_...md）が作成されている
+- [ ] 本チケットの Report 欄にレポートパスが追記されている
 
 ## Notes
-- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想宁E- BLOCKED の場合�E、事宁E根拠/次手（候補）を本斁E��追記し、Report に docs/inbox/REPORT_...md を忁E��設宁E
+- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想定
+- BLOCKED の場合は、事実/根拠/次手（候補）を本文に追記し、Report に docs/inbox/REPORT_...md を必ず設定

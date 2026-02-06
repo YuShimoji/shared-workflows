@@ -1,4 +1,5 @@
-# SSOT バ�Eジョンフォールバック対応レポ�EチE
+# SSOT バージョンフォールバック対応レポート
+
 **Report ID**: REPORT_TASK_SSOT_FALLBACK_20241226  
 **Timestamp**: 2024-12-26T14:00:00+09:00
 **Actor**: Worker
@@ -7,25 +8,29 @@
 **Duration**: 1.5h
 **Changes**: prompts/*.txt, scripts/ensure-ssot.js, scripts/sw-doctor.js, docs/CENTRAL_REPO_REF.md
 
-## 概要E
-shared-workflows サブモジュールのバ�Eジョン差異�E�E1.1 のみを持つ古ぁE��ミッチEvs v2.0/latest を持つ新しいコミット）により、Kickstart セチE��アチE�Eが「SSOT ファイルが見つからなぁE��エラーで失敗する問題を修正しました、E
-## 実施冁E��
+## 概要
+
+shared-workflows サブモジュールのバージョン差異（v1.1 のみを持つ古いコミット vs v2.0/latest を持つ新しいコミット）により、Kickstart セットアップが「SSOT ファイルが見つからない」エラーで失敗する問題を修正しました。
+
+## 実施内容
 
 ### 1. プロンプト群の修正
 
-全てのプロンプトファイルに SSOT バ�Eジョンフォールバック頁E��！Elatest` ↁE`v2.0` ↁE`v1.1`�E�を明記し、最初に見つかったファイルを基準ルールとして扱ぁE��ぁE��更、E
+全てのプロンプトファイルに SSOT バージョンフォールバック順序（`latest` → `v2.0` → `v1.1`）を明記し、最初に見つかったファイルを基準ルールとして扱うよう変更。
+
 **修正ファイル**:
 - `prompts/first_time/PROJECT_KICKSTART.txt`
 - `prompts/first_time/PROJECT_KICKSTART_RESUME.txt`
 - `prompts/every_time/ORCHESTRATOR_METAPROMPT.txt`
 - `prompts/every_time/ORCHESTRATOR_RESUME.txt`
 
-**変更冁E��**:
+**変更内容**:
 ```
-最優先で読むも�E�E�ESOT 参�E頁E��！E
-- サブモジュールがある場吁E `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` ↁE無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md` ↁE無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
-- サブモジュールが無ぁE��吁E `docs/Windsurf_AI_Collab_Rules_v2.0.md` ↁE無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`
-- **重要E*: 上訁ESSOT のぁE��最初に見つかったファイルを「このセチE��アチE�Eの基準ルール」として扱ぁE��バージョン違いでエラーにしなぁE```
+最優先で読むもの（SSOT 参照順序）:
+- サブモジュールがある場合: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `.shared-workflows/docs/Windsurf_AI_Collab_Rules_v1.1.md`
+- サブモジュールが無い場合: `docs/Windsurf_AI_Collab_Rules_v2.0.md` → 無ければ `docs/Windsurf_AI_Collab_Rules_v1.1.md`
+- **重要**: 上記 SSOT のうち最初に見つかったファイルを「このセットアップの基準ルール」として扱い、バージョン違いでエラーにしない
+```
 
 ### 2. スクリプトの修正
 
@@ -48,45 +53,65 @@ const ssotFiles = [
 ];
 ```
 
-### 3. ドキュメント�E更新
+### 3. ドキュメントの更新
 
 **`docs/CENTRAL_REPO_REF.md`**:
-- SSOT バ�Eジョンフォールバック頁E��セクションを追加
-- フォールバック戦略の詳細説明を記輁E
+- SSOT バージョンフォールバック順序セクションを追加
+- フォールバック戦略の詳細説明を記載
+
 **`docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`**:
-- SSOT ファイルのバ�Eジョン差異につぁE��の注意書きを追加
+- SSOT ファイルのバージョン差異についての注意書きを追加
 
-### 4. チE��ト結果
+### 4. テスト結果
 
-#### ローカルチE��ト！Ehared-workflows-1 リポジトリ冁E��E
+#### ローカルテスト（shared-workflows-1 リポジトリ内）
+
 ```bash
 # ensure-ssot.js のヘルプ表示
 $ node scripts/ensure-ssot.js --help
-✁E正常動作確誁E
-# sw-doctor.js の bootstrap プロファイル実衁E$ node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
-✁ESSOT docs/Windsurf_AI_Collab_Rules_latest.md exists
-✁ESSOT docs/Windsurf_AI_Collab_Rules_v2.0.md exists
-✁ENo issues detected. System is healthy.
+✓ 正常動作確認
+
+# sw-doctor.js の bootstrap プロファイル実行
+$ node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+✓ SSOT docs/Windsurf_AI_Collab_Rules_latest.md exists
+✓ SSOT docs/Windsurf_AI_Collab_Rules_v2.0.md exists
+✓ No issues detected. System is healthy.
 ```
 
-## 修正前�E問顁E
-### 痁E��
-- WritingPage などクライアント�Eロジェクトで Kickstart セチE��アチE�E実行時に、「`docs/Windsurf_AI_Collab_Rules_v2.0.md` が見つからなぁE��エラーが発甁E- 実際にはサブモジュールに `v1.1.md` のみが存在してぁE��
+## 修正前の問題
+
+### 症状
+- WritingPage などクライアントプロジェクトで Kickstart セットアップ実行時に、「`docs/Windsurf_AI_Collab_Rules_v2.0.md` が見つからない」エラーが発生
+- 実際にはサブモジュールに `v1.1.md` のみが存在していた
 
 ### 原因
-1. プロンプトぁE`v2.0.md` また�E `latest.md` を前提に記述されてぁE��
-2. クライアント�Eロジェクト�Eサブモジュールが古ぁE��ミット！E0.1.0 系�E�を持E��ており、`v1.1.md` しか含まれてぁE��かっぁE3. `ensure-ssot.js` と `sw-doctor.js` ぁE`v1.1.md` をフォールバック対象に含めてぁE��かっぁE
-## 修正後�E動佁E
-### 期征E��れる動佁E1. Kickstart プロンプト実行時、SSOT ファイルめE`latest` ↁE`v2.0` ↁE`v1.1` の頁E��探索
-2. 最初に見つかったファイルを「基準ルール」として扱ぁE��セチE��アチE�Eを続衁E3. `ensure-ssot.js` は利用可能な全バ�Eジョンのコピ�Eを試衁E4. `sw-doctor.js` は全バ�Eジョンの存在を確認し、少なくとめEつあれば正常と判宁E
-### 次のスチE��チE
-#### 忁E��E クライアント�Eロジェクトでの動作確誁E1. WritingPage プロジェクトで Kickstart プロンプト�E�EPROJECT_KICKSTART.txt`�E�を実衁E2. v1.1 のみを持つサブモジュールで正常にセチE��アチE�Eが完亁E��ることを確誁E3. エラーが発生しなぁE��とを確誁E
-#### オプション: サブモジュール更新戦略の検訁E- クライアント�Eロジェクト�Eサブモジュールを最新コミットに更新するぁE- v1.1 ベ�Eスでの運用を継続するか
+1. プロンプトが `v2.0.md` または `latest.md` を前提に記述されていた
+2. クライアントプロジェクトのサブモジュールが古いコミット（v0.1.0 系）を指しており、`v1.1.md` しか含まれていなかった
+3. `ensure-ssot.js` と `sw-doctor.js` が `v1.1.md` をフォールバック対象に含めていなかった
+
+## 修正後の動作
+
+### 期待される動作
+1. Kickstart プロンプト実行時、SSOT ファイルを `latest` → `v2.0` → `v1.1` の順で探索
+2. 最初に見つかったファイルを「基準ルール」として扱い、セットアップを続行
+3. `ensure-ssot.js` は利用可能な全バージョンのコピーを試行
+4. `sw-doctor.js` は全バージョンの存在を確認し、少なくとも1つあれば正常と判定
+
+### 次のステップ
+
+#### 必須: クライアントプロジェクトでの動作確認
+1. WritingPage プロジェクトで Kickstart プロンプト（`PROJECT_KICKSTART.txt`）を実行
+2. v1.1 のみを持つサブモジュールで正常にセットアップが完了することを確認
+3. エラーが発生しないことを確認
+
+#### オプション: サブモジュール更新戦略の検討
+- クライアントプロジェクトのサブモジュールを最新コミットに更新するか
+- v1.1 ベースでの運用を継続するか
 
 ## コミット履歴
 
 ```bash
-# Commit 1: プロンプトとドキュメント�E修正
+# Commit 1: プロンプトとドキュメントの修正
 commit 7ead429
 fix: add SSOT version fallback to all prompts (latest -> v2.0 -> v1.1)
 
@@ -107,13 +132,18 @@ fix: add v1.1 fallback support to ensure-ssot and sw-doctor
 - `@c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\docs\CENTRAL_REPO_REF.md:9-17`
 - `@c:\Users\thank\Storage\Media Contents Projects\shared-workflows-1\docs\CLIENT_PROJECT_DOCTOR_GUIDE.md:9`
 
-### 参�EドキュメンチE- `docs/CENTRAL_REPO_REF.md`: フォールバック戦略の詳細
-- `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`: クライアント�Eロジェクト向け利用ガイチE- `docs/windsurf_workflow/OPEN_HERE.md`: 運用老E��け�E口ガイチE
+### 参照ドキュメント
+- `docs/CENTRAL_REPO_REF.md`: フォールバック戦略の詳細
+- `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`: クライアントプロジェクト向け利用ガイド
+- `docs/windsurf_workflow/OPEN_HERE.md`: 運用者向け入口ガイド
+
 ## Risk
-- クライアント�Eロジェクト�Eサブモジュールが極端に古ぁE��合、`ensure-ssot.js` 自体が存在しなぁE��能性があり、その場合�E手動でのファイルコピ�Eが忁E��になる、E
+- クライアントプロジェクトのサブモジュールが極端に古い場合、`ensure-ssot.js` 自体が存在しない可能性があり、その場合は手動でのファイルコピーが必要になる。
+
 ## Proposals
-- `ensure-ssot.js` めE`curl` 等で直接ダウンロードして実行できるワンライナ�Eの提供、E
+- `ensure-ssot.js` を `curl` 等で直接ダウンロードして実行できるワンライナーの提供。
+
 ---
 
-**Report Status**: ✁ECOMPLETED  
-**Next Action**: WritingPage プロジェクトでの動作確誁E
+**Report Status**: ✓ COMPLETED  
+**Next Action**: WritingPage プロジェクトでの動作確認

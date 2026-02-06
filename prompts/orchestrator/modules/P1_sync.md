@@ -1,11 +1,18 @@
 # Phase 1: Sync & Merge
 
-## 目皁Eリモートと同期し、Worker レポ�Eトを回収する、E
-## 手頁E1. `git fetch origin` ↁE`git status -sb`
-2. `docs/inbox/` を確認し、レポ�Eトがあれば `docs/HANDOVER.md` に統吁E3. 統合済みレポ�Eト�E `docs/reports/` へアーカイチE4. MISSION_LOG.md を更新�E�Ehase 1 完亁E��記録�E�E
-## 完亁E��件
+## 目的
+リモートと同期し、Worker レポートを回収する。
+
+## 手順
+1. `git fetch origin` → `git status -sb`
+2. `docs/inbox/` を確認し、レポートがあれば `docs/HANDOVER.md` に統合
+3. 統合済みレポートは `docs/reports/` へアーカイブ
+4. MISSION_LOG.md を更新（Phase 1 完了を記録）
+
+## 完了条件
 - `docs/inbox/` は `.gitkeep` のみ
-- 統合済みレポ�Eトが HANDOVER に反映されてぁE��
+- 統合済みレポートが HANDOVER に反映されている
 
 ## 次フェーズ
-P1.5�E�巡回監査�E�E
+P1.5（巡回監査）
+

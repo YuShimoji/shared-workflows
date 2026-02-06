@@ -1,90 +1,133 @@
-# Worker再開ガイチE
+# Worker再開ガイド
+
 ## 状況判断
 
-Workerが停止した場合、以下�E2つの方法で再開できます！E
-### 方況E: WORKER_COMPLETION_DRIVER.txt を使用�E�推奨�E�E
+Workerが停止した場合、以下の2つの方法で再開できます：
+
+### 方法1: WORKER_COMPLETION_DRIVER.txt を使用（推奨）
+
 **適用条件**:
-- 作業は進んでぁE��が、DoDの達�E確認が不十刁E- レポ�Eト�E作�EされてぁE��が、検証が完亁E��てぁE��ぁE- タスクのStatus更新は完亁E��てぁE��が、DoDチェチE��リストが未検証
+- 作業は進んでいるが、DoDの達成確認が不十分
+- レポートは作成されているが、検証が完了していない
+- タスクのStatus更新は完了しているが、DoDチェックリストが未検証
 
-**手頁E*:
+**手順**:
 
-1. **実際のプロジェクトで、停止したタスクの状態を確誁E*:
+1. **実際のプロジェクトで、停止したタスクの状態を確認**:
    ```powershell
-   # WritingPageプロジェクトで実衁E   cd "C:\Users\thank\Storage\Media Contents Projects\WritingPage"
+   # WritingPageプロジェクトで実行
+   cd "C:\Users\thank\Storage\Media Contents Projects\WritingPage"
    
-   # タスクファイルを確誁E   Get-Content docs/tasks/TASK_005_missing_reports.md
+   # タスクファイルを確認
+   Get-Content docs/tasks/TASK_005_missing_reports.md
    
-   # レポ�Eトファイルを確誁E   Get-ChildItem docs/inbox/REPORT_TASK_005*.md
+   # レポートファイルを確認
+   Get-ChildItem docs/inbox/REPORT_TASK_005*.md
    
-   # HANDOVER.mdを確誁E   Get-Content docs/HANDOVER.md | Select-Object -First 50
+   # HANDOVER.mdを確認
+   Get-Content docs/HANDOVER.md | Select-Object -First 50
    ```
 
-2. **変数を埋めたWORKER_COMPLETION_DRIVER.txtを生戁E*:
+2. **変数を埋めたWORKER_COMPLETION_DRIVER.txtを生成**:
    
-   以下�EチE��プレートを使用し、実際の値に置き換えます！E   
+   以下のテンプレートを使用し、実際の値に置き換えます：
+   
    ```text
-   あなた�E刁E��開発チ�Eムの Worker です、EoD / Report / チE��トを未完�Eまま残さず、以下�E残タスクを完亁E��せてください、E   
-   ## Phase 0: 状況E   - Ticket: docs/tasks/TASK_005_missing_reports.md
+   あなたは分散開発チームの Worker です。DoD / Report / テストを未完のまま残さず、以下の残タスクを完了させてください。
+   
+   ## Phase 0: 状況
+   - Ticket: docs/tasks/TASK_005_missing_reports.md
    - Branch: main
    - Focus Area: docs/tasks/, docs/inbox/, docs/reports/, docs/HANDOVER.md
-   - Forbidden Area: .shared-workflows/ の直接変更、破壊的Git操佁E   - Pending Items: 
-     - DoD吁E��E��の実際の達�E確認！Eit history調査、原因刁E��、予防策実裁E��E     - 環墁E��存�Eタスク�E�EitリポジトリではなぁE��墁E���E適刁E��処琁E     - report-validator.jsの正しい実行と結果記録
-   - Report Target: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md�E�既存レポ�Eトを更新�E�E   - HANDOVER Sections: Latest Orchestrator Report, 進捁E バックログ
+   - Forbidden Area: .shared-workflows/ の直接変更、破壊的Git操作
+   - Pending Items: 
+     - DoD各項目の実際の達成確認（git history調査、原因分析、予防策実装）
+     - 環境依存のタスク（gitリポジトリではない環境）の適切な処理
+     - report-validator.jsの正しい実行と結果記録
+   - Report Target: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md（既存レポートを更新）
+   - HANDOVER Sections: Latest Orchestrator Report, 進捗, バックログ
    
    ## Phase 1: ミッション
-   1. docs/tasks/TASK_005_missing_reports.md を最新化！Etatus / Report パス / 事実追記！E   2. DoD めE1 頁E��ずつ検証し、差刁Eor チE��ト結果の根拠を残す
-      - 特に「git history から欠損レポ�Eトを特定」につぁE��は、環墁E��存で実行不可能な場合�E代替手段を記録
-      - 各DoD頁E��に対して、実際に実施した冁E��を�E体的に記録�E�「確認済み」などの表面皁E��記述は禁止�E�E   3. docs/inbox/REPORT_TASK_005_missing_reports_20250101.md を更新し、`report-validator.js` の実行結果を記録
-   4. 忁E��テストを実行し、`<cmd>=<result>` 形式で残す
-   5. docs/HANDOVER.md の Latest Orchestrator Report, 進捁E バックログ を更新
-   6. `git status -sb` をクリーンにし、忁E��なめEcommit / push�E�Eush は GitHubAutoApprove=true の場合�Eみ自律実行！E   
-   ## Phase 2: 停止条件�E�該当時は即報告！E   - Forbidden Area に触れなぁE�� DoD を満たせなぁE   - 仕様仮定が3件以上忁E��E   - 依存追加 / 外部通信 / 破壊的操佁E/ 長時間征E��が忁E��E   - SSOT めE��ンプレぁEobtain できなぁE��Eensure-ssot.js` でも不可�E�E   
-   ## Phase 3: 忁E��アウト�EチE��
+   1. docs/tasks/TASK_005_missing_reports.md を最新化（Status / Report パス / 事実追記）
+   2. DoD を 1 項目ずつ検証し、差分 or テスト結果の根拠を残す
+      - 特に「git history から欠損レポートを特定」については、環境依存で実行不可能な場合の代替手段を記録
+      - 各DoD項目に対して、実際に実施した内容を具体的に記録（「確認済み」などの表面的な記述は禁止）
+   3. docs/inbox/REPORT_TASK_005_missing_reports_20250101.md を更新し、`report-validator.js` の実行結果を記録
+   4. 必須テストを実行し、`<cmd>=<result>` 形式で残す
+   5. docs/HANDOVER.md の Latest Orchestrator Report, 進捗, バックログ を更新
+   6. `git status -sb` をクリーンにし、必要なら commit / push（push は GitHubAutoApprove=true の場合のみ自律実行）
+   
+   ## Phase 2: 停止条件（該当時は即報告）
+   - Forbidden Area に触れないと DoD を満たせない
+   - 仕様仮定が3件以上必要
+   - 依存追加 / 外部通信 / 破壊的操作 / 長時間待機が必須
+   - SSOT やテンプレが obtain できない（`ensure-ssot.js` でも不可）
+   
+   ## Phase 3: 必須アウトプット
    - Report パス
-   - 実行テストログ�E�E<cmd>=<result>`�E�E   - DoD 吁E��E��の允E��状況E��各頁E��に対して、実際に実施した冁E��を�E体的に記録�E�E   - `git status -sb` の結果�E�差刁E��残る場合�E琁E��と次手！E   
-   ## Phase 4: チャチE��1衁E   - Done: `Done: docs/tasks/TASK_005_missing_reports.md. Report: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md. Tests: <cmd>=<result>.`
-   - Blocked: `Blocked: docs/tasks/TASK_005_missing_reports.md. Reason: <要点>. Next: <候裁E. Report: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md.`
+   - 実行テストログ（`<cmd>=<result>`）
+   - DoD 各項目の充足状況（各項目に対して、実際に実施した内容を具体的に記録）
+   - `git status -sb` の結果（差分が残る場合は理由と次手）
+   
+   ## Phase 4: チャット1行
+   - Done: `Done: docs/tasks/TASK_005_missing_reports.md. Report: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md. Tests: <cmd>=<result>.`
+   - Blocked: `Blocked: docs/tasks/TASK_005_missing_reports.md. Reason: <要点>. Next: <候補>. Report: docs/inbox/REPORT_TASK_005_missing_reports_20250101.md.`
    ```
 
-3. **WorkerスレチE��に貼り付けて実衁E*
+3. **Workerスレッドに貼り付けて実行**
 
-### 方況E: 新しいWorkerプロンプトを貼り直ぁE
+### 方法2: 新しいWorkerプロンプトを貼り直す
+
 **適用条件**:
-- 作業が�Eく進んでぁE��ぁE- レポ�Eトが作�EされてぁE��ぁE- タスクのStatus更新も完亁E��てぁE��ぁE- 最初からやり直したぁE
-**手頁E*:
+- 作業が全く進んでいない
+- レポートが作成されていない
+- タスクのStatus更新も完了していない
+- 最初からやり直したい
+
+**手順**:
 
 1. **WORKER_METAPROMPT.txtを読み込む**:
    ```powershell
-   # shared-workflows-1リポジトリで実衁E   Get-Content prompts/every_time/WORKER_METAPROMPT.txt
+   # shared-workflows-1リポジトリで実行
+   Get-Content prompts/every_time/WORKER_METAPROMPT.txt
    ```
 
-2. **Orchestratorが生成したWorkerプロンプトを確誁E*:
+2. **Orchestratorが生成したWorkerプロンプトを確認**:
    ```powershell
-   # WritingPageプロジェクトで実衁E   Get-Content docs/inbox/WORKER_PROMPT_TASK_005_missing_reports.md
+   # WritingPageプロジェクトで実行
+   Get-Content docs/inbox/WORKER_PROMPT_TASK_005_missing_reports.md
    ```
 
-3. **WorkerスレチE��に貼り付けて実衁E*:
-   - まぁE`WORKER_METAPROMPT.txt` を貼り付けめE   - 次に `docs/inbox/WORKER_PROMPT_TASK_005_missing_reports.md` の冁E��を貼り付けめE
-## 推奨判断基溁E
-| 状況E| 推奨方況E|
+3. **Workerスレッドに貼り付けて実行**:
+   - まず `WORKER_METAPROMPT.txt` を貼り付ける
+   - 次に `docs/inbox/WORKER_PROMPT_TASK_005_missing_reports.md` の内容を貼り付ける
+
+## 推奨判断基準
+
+| 状況 | 推奨方法 |
 |------|---------|
-| レポ�Eト�E作�EされてぁE��が、DoD検証が不十刁E| **方況E: WORKER_COMPLETION_DRIVER.txt** |
-| タスクのStatus更新は完亁E��てぁE��が、DoDチェチE��リストが未検証 | **方況E: WORKER_COMPLETION_DRIVER.txt** |
-| 作業が�Eく進んでぁE��ぁE| **方況E: 新しいWorkerプロンプト** |
-| レポ�Eトが作�EされてぁE��ぁE| **方況E: 新しいWorkerプロンプト** |
+| レポートは作成されているが、DoD検証が不十分 | **方法1: WORKER_COMPLETION_DRIVER.txt** |
+| タスクのStatus更新は完了しているが、DoDチェックリストが未検証 | **方法1: WORKER_COMPLETION_DRIVER.txt** |
+| 作業が全く進んでいない | **方法2: 新しいWorkerプロンプト** |
+| レポートが作成されていない | **方法2: 新しいWorkerプロンプト** |
 
-## 注意事頁E
-1. **環墁E��存�Eタスクの扱ぁE*:
-   - gitリポジトリではなぁE��墁E��、git history調査が忁E��なDoD頁E��がある場吁E   - 停止条件として扱ぁE��、代替手段を取るかを判断する
-   - 判断結果と琁E��をレポ�Eトに記録する
+## 注意事項
 
-2. **DoDの達�E確誁E*:
-   - 各DoD頁E��に対して、実際に実施した冁E��を�E体的に記録する
-   - 「確認済み」などの表面皁E��記述は禁止
-   - 環墁E��存で実行不可能な頁E��がある場合�E停止条件を�E確匁E
-3. **report-validator.jsの実衁E*:
-   - 正しい引数頁E��実行する！Enode .shared-workflows/scripts/report-validator.js <REPORT_PATH> --profile <PROFILE> <CONFIG_PATH>`�E�E   - 実行結果をレポ�Eトに記録する
+1. **環境依存のタスクの扱い**:
+   - gitリポジトリではない環境で、git history調査が必要なDoD項目がある場合
+   - 停止条件として扱うか、代替手段を取るかを判断する
+   - 判断結果と理由をレポートに記録する
+
+2. **DoDの達成確認**:
+   - 各DoD項目に対して、実際に実施した内容を具体的に記録する
+   - 「確認済み」などの表面的な記述は禁止
+   - 環境依存で実行不可能な項目がある場合の停止条件を明確化
+
+3. **report-validator.jsの実行**:
+   - 正しい引数順で実行する（`node .shared-workflows/scripts/report-validator.js <REPORT_PATH> --profile <PROFILE> <CONFIG_PATH>`）
+   - 実行結果をレポートに記録する
 
 4. **PowerShell構文エラーの回避**:
-   - コマンド実行前に、`Get-Command <cmd>` で存在確誁E   - 褁E��な条件刁E���E、スクリプトファイルに刁E��する
+   - コマンド実行前に、`Get-Command <cmd>` で存在確認
+   - 複雑な条件分岐は、スクリプトファイルに分離する
 

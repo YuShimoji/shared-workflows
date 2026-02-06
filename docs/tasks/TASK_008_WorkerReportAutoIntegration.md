@@ -1,4 +1,4 @@
-# Task: Worker完亁E��ポ�Eト�E自動統合スクリプト作�E
+# Task: Worker完了レポートの自動統合スクリプト作成
 
 Status: DONE
 Tier: 2
@@ -8,33 +8,54 @@ Created: 2025-01-03T00:00:00+09:00
 Report: docs/inbox/REPORT_TASK_008_20250103.md
 
 ## Objective
-- Worker完亁E��ポ�Eトを自動的に `docs/inbox/` から回収し、`docs/HANDOVER.md` に統合するスクリプト機�Eを実裁E- Orchestratorの作業負荷を軽減し、統合漏れのリスクを排除
-- `finalize-phase.js` にWorkerレポ�Eト統合機�Eを追加
+- Worker完了レポートを自動的に `docs/inbox/` から回収し、`docs/HANDOVER.md` に統合するスクリプト機能を実装
+- Orchestratorの作業負荷を軽減し、統合漏れのリスクを排除
+- `finalize-phase.js` にWorkerレポート統合機能を追加
 
 ## Context
-- `scripts/finalize-phase.js` は既に存在し、レポ�Eト�Eアーカイブ！Edocs/inbox/` ↁE`docs/reports/`�E��E実裁E��み
-- しかし、`docs/HANDOVER.md` への自動統合機�Eは実裁E��れてぁE��ぁE- Orchestratorは手動でWorkerレポ�Eトを読み取り、HANDOVER.mdに統合する忁E��がある
-- `scripts/report-orch-cli.js` には `updateHandoverLatest` 関数があり、Orchestratorレポ�Eト用のHANDOVER更新は実裁E��み�E�E9-107行目�E�E- Workerレポ�EトをHANDOVERに統合する機�Eは未実裁E- `docs/HANDOVER.md` の36行目に「`finalize-phase.js` の HANDOVER 自動更新機�E追加�E�現在は Task のみ�E�」とぁE��バックログ頁E��が既に存在
+- `scripts/finalize-phase.js` は既に存在し、レポートのアーカイブ（`docs/inbox/` → `docs/reports/`）は実装済み
+- しかし、`docs/HANDOVER.md` への自動統合機能は実装されていない
+- Orchestratorは手動でWorkerレポートを読み取り、HANDOVER.mdに統合する必要がある
+- `scripts/report-orch-cli.js` には `updateHandoverLatest` 関数があり、Orchestratorレポート用のHANDOVER更新は実装済み（79-107行目）
+- WorkerレポートをHANDOVERに統合する機能は未実装
+- `docs/HANDOVER.md` の36行目に「`finalize-phase.js` の HANDOVER 自動更新機能追加（現在は Task のみ）」というバックログ項目が既に存在
 
 ## Focus Area
-- `scripts/finalize-phase.js`�E�Eorkerレポ�Eト統合機�Eの追加�E�E- `docs/HANDOVER.md` の「統合レポ�Eト」セクション
-- Workerレポ�Eト�E主要情報抽出ロジチE���E�Eicket、Changes、Handover�E�E
+- `scripts/finalize-phase.js`（Workerレポート統合機能の追加）
+- `docs/HANDOVER.md` の「統合レポート」セクション
+- Workerレポートの主要情報抽出ロジック（Ticket、Changes、Handover）
+
 ## Forbidden Area
-- 既存�E `finalize-phase.js` の動作を破壊する変更�E�アーカイブ機�Eは維持E��E- `docs/HANDOVER.md` の既存セクション構造の破壊的変更
-- Orchestratorレポ�Eト統合機�E�E�Ereport-orch-cli.js`�E��E変更
+- 既存の `finalize-phase.js` の動作を破壊する変更（アーカイブ機能は維持）
+- `docs/HANDOVER.md` の既存セクション構造の破壊的変更
+- Orchestratorレポート統合機能（`report-orch-cli.js`）の変更
 
 ## Constraints
-- チE��チE 主要パスのみ�E�既存�EWorkerレポ�Eトを使用した検証�E�E- フォールバック: 新規追加禁止
-- 既存�EOrchestratorレポ�Eト統合機�E�E�Ereport-orch-cli.js` の `updateHandoverLatest`�E��Eパターンを参老E��する
-- Workerレポ�Eトから主要情報�E�Eicket、Changes、Handover�E�を抽出してHANDOVERに統吁E
+- テスト: 主要パスのみ（既存のWorkerレポートを使用した検証）
+- フォールバック: 新規追加禁止
+- 既存のOrchestratorレポート統合機能（`report-orch-cli.js` の `updateHandoverLatest`）のパターンを参考にする
+- Workerレポートから主要情報（Ticket、Changes、Handover）を抽出してHANDOVERに統合
+
 ## DoD
-- [x] `scripts/finalize-phase.js` にWorkerレポ�Eト統合機�Eを追加
-  - 根拠: `extractWorkerReportInfo()` と `integrateWorkerReports()` 関数を実裁E��、`main()` に統合�E琁E��追加
-- [x] Workerレポ�Eトから主要情報�E�Eicket、Changes、Handover�E�を抽出するロジチE��を実裁E  - 根拠: `extractWorkerReportInfo()` 関数でTicket、Changes、Handover惁E��を抽出するロジチE��を実裁E- [x] `docs/HANDOVER.md` の「統合レポ�Eト」セクションにWorkerレポ�Eト�Eサマリーを�E動追加
-  - 根拠: `integrateWorkerReports()` 関数でHANDOVER.mdの「統合レポ�Eト」セクションにWorkerレポ�Eトを自動追加する機�Eを実裁E- [x] 実裁E��、実際のWorkerレポ�Eトで動作確誁E  - 根拠: `node scripts/test-worker-integration.js` で5つのWorkerレポ�Eトを検�Eし、Eつの新しいレポ�EトをHANDOVER.mdに統合することを確誁E- [x] Orchestratorの作業負荷が軽減されることを確認（手動統合が不要になる！E  - 根拠: `finalize-phase.js` を実行すると、Workerレポ�Eトが自動的にHANDOVER.mdに統合されるため、手動統合が不要E- [x] `sw-doctor.js` でシスチE��健全性を確誁E  - 根拠: `node scripts/sw-doctor.js --profile shared-orch-doctor --format text` を実行し、E��大なエラーなしを確誁E- [x] docs/inbox/ にレポ�Eト！EEPORT_TASK_008_*.md�E�が作�EされてぁE��
-  - 根拠: `docs/inbox/REPORT_TASK_008_20250103.md` を作�E
-- [x] 本チケチE��の Report 欁E��レポ�Eトパスが追記されてぁE��
-  - 根拠: Report 欁E�� `docs/inbox/REPORT_TASK_008_20250103.md` を追訁E
+- [x] `scripts/finalize-phase.js` にWorkerレポート統合機能を追加
+  - 根拠: `extractWorkerReportInfo()` と `integrateWorkerReports()` 関数を実装し、`main()` に統合処理を追加
+- [x] Workerレポートから主要情報（Ticket、Changes、Handover）を抽出するロジックを実装
+  - 根拠: `extractWorkerReportInfo()` 関数でTicket、Changes、Handover情報を抽出するロジックを実装
+- [x] `docs/HANDOVER.md` の「統合レポート」セクションにWorkerレポートのサマリーを自動追加
+  - 根拠: `integrateWorkerReports()` 関数でHANDOVER.mdの「統合レポート」セクションにWorkerレポートを自動追加する機能を実装
+- [x] 実装後、実際のWorkerレポートで動作確認
+  - 根拠: `node scripts/test-worker-integration.js` で5つのWorkerレポートを検出し、2つの新しいレポートをHANDOVER.mdに統合することを確認
+- [x] Orchestratorの作業負荷が軽減されることを確認（手動統合が不要になる）
+  - 根拠: `finalize-phase.js` を実行すると、Workerレポートが自動的にHANDOVER.mdに統合されるため、手動統合が不要
+- [x] `sw-doctor.js` でシステム健全性を確認
+  - 根拠: `node scripts/sw-doctor.js --profile shared-orch-doctor --format text` を実行し、重大なエラーなしを確認
+- [x] docs/inbox/ にレポート（REPORT_TASK_008_*.md）が作成されている
+  - 根拠: `docs/inbox/REPORT_TASK_008_20250103.md` を作成
+- [x] 本チケットの Report 欄にレポートパスが追記されている
+  - 根拠: Report 欄に `docs/inbox/REPORT_TASK_008_20250103.md` を追記
+
 ## Notes
-- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想宁E- BLOCKED の場合�E、事宁E根拠/次手（候補）を本斁E��追記し、Report に docs/inbox/REPORT_...md を忁E��設宁E- 実裁E�E既存�Eコードパターン�E�Ereport-orch-cli.js` の `updateHandoverLatest`�E�を参老E��する
-- Workerレポ�Eト�Eフォーマット�E `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` を参照
+- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想定
+- BLOCKED の場合は、事実/根拠/次手（候補）を本文に追記し、Report に docs/inbox/REPORT_...md を必ず設定
+- 実装は既存のコードパターン（`report-orch-cli.js` の `updateHandoverLatest`）を参考にする
+- Workerレポートのフォーマットは `docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md` の `output_format` を参照

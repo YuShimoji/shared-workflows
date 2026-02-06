@@ -1,10 +1,22 @@
-# Cursor Rules�E�Ehared-workflows / v2.x運用�E�E
-目皁E Cursor ぁE`.cursorrules` を拾わなぁE弱ぁE��墁E��も、ルールが適用される確玁E��上げる、E
+# Cursor Rules（shared-workflows / v2.x運用）
+
+目的: Cursor が `.cursorrules` を拾わない/弱い環境でも、ルールが適用される確率を上げる。
+
 ## 基本ルール
 
-- 返信は日本語、E- 絵斁E��、裁E��表現、�E長な言ぁE��しを使わなぁE��E- チャチE��で完結させなぁE���E果（差刁E���Eファイル変更として残す、E- マルチスチE��プ作業は中間報告を忁E��出す（完亁E残り/次の選択肢�E�、E
-## 参�E允E
-- 入口: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`�E�無ければ `docs/windsurf_workflow/OPEN_HERE.md`�E�E- Orchestrator Driver: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`�E�無ければ `prompts/every_time/ORCHESTRATOR_DRIVER.txt`�E�E
-## 中間報告ルール�E�長大作業の安定化�E�E
-- チE�Eル呼び出ぁE0回ごと、また�Eファイル編雁E回ごとに中間報告を出す、E- 中間報告には「次のメチE��ージの選択肢�E�E-3件�E�」を忁E��含める、E
+- 返信は日本語。
+- 絵文字、装飾表現、冗長な言い回しを使わない。
+- チャットで完結させない。成果（差分）はファイル変更として残す。
+- マルチステップ作業は中間報告を必ず出す（完了/残り/次の選択肢）。
+
+## 参照先
+
+- 入口: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`（無ければ `docs/windsurf_workflow/OPEN_HERE.md`）
+- Orchestrator Driver: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`（無ければ `prompts/every_time/ORCHESTRATOR_DRIVER.txt`）
+
+## 中間報告ルール（長大作業の安定化）
+
+- ツール呼び出し10回ごと、またはファイル編集5回ごとに中間報告を出す。
+- 中間報告には「次のメッセージの選択肢（1-3件）」を必ず含める。
+
 

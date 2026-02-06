@@ -1,18 +1,21 @@
-# 他�Eプロジェクトで shared-workflows を使用する完�EガイチE
-こ�Eドキュメントでは、`shared-workflows` リポジトリを他�Eプロジェクトで使用するための**全手頁E*を詳しく解説します、E
-> **簡潔版**: より簡潔な手頁E��忁E��な場合�E [`docs/APPLY_TO_OTHER_PROJECTS.md`](./APPLY_TO_OTHER_PROJECTS.md) を参照してください、E
+# 他のプロジェクトで shared-workflows を使用する完全ガイド
+
+このドキュメントでは、`shared-workflows` リポジトリを他のプロジェクトで使用するための**全手順**を詳しく解説します。
+
+> **簡潔版**: より簡潔な手順が必要な場合は [`docs/APPLY_TO_OTHER_PROJECTS.md`](./APPLY_TO_OTHER_PROJECTS.md) を参照してください。
+
 ## 目次
 
 1. [概要と前提条件](#概要と前提条件)
-2. [導�E方法�E選択](#導�E方法�E選抁E
-3. [方法A: Git Submodule を使用する�E�推奨�E�](#方法a-git-submodule-を使用する推奨)
-4. [方法B: ファイルをコピ�Eする](#方法b-ファイルをコピ�Eする)
-5. [方法C: 参�Eのみで使用する](#方法c-参�Eのみで使用する)
-6. [初期セチE��アチE�E](#初期セチE��アチE�E)
-7. [Cursor 設定�E適用](#cursor-設定�E適用)
-8. [Doctor 機�Eによる環墁E��ェチE��](#doctor-機�Eによる環墁E��ェチE��)
-9. [日常皁E��使用方法](#日常皁E��使用方況E
-10. [トラブルシューチE��ング](#トラブルシューチE��ング)
+2. [導入方法の選択](#導入方法の選択)
+3. [方法A: Git Submodule を使用する（推奨）](#方法a-git-submodule-を使用する推奨)
+4. [方法B: ファイルをコピーする](#方法b-ファイルをコピーする)
+5. [方法C: 参照のみで使用する](#方法c-参照のみで使用する)
+6. [初期セットアップ](#初期セットアップ)
+7. [Cursor 設定の適用](#cursor-設定の適用)
+8. [Doctor 機能による環境チェック](#doctor-機能による環境チェック)
+9. [日常的な使用方法](#日常的な使用方法)
+10. [トラブルシューティング](#トラブルシューティング)
 
 ---
 
@@ -20,74 +23,88 @@
 
 ### shared-workflows とは
 
-`shared-workflows` は、AI�E�Eindsurf/Cursor�E�と協働するためのワークフロー、�EロンプトチE��プレート、スクリプトを集紁E��た中央リポジトリです、E
-**主な機�E:**
-- **SSOT�E�Eingle Source of Truth�E�E*: `Windsurf_AI_Collab_Rules_latest.md` を中忁E��した統一されたルール
-- **Orchestrator/Worker パターン**: タスクを�E割して効玁E��に進めるワークフロー
-- **Doctor 機�E**: プロジェクト環墁E�E健全性をチェチE��
-- **プロンプトチE��プレーチE*: 再利用可能なプロンプト雁E
+`shared-workflows` は、AI（Windsurf/Cursor）と協働するためのワークフロー、プロンプトテンプレート、スクリプトを集約した中央リポジトリです。
+
+**主な機能:**
+- **SSOT（Single Source of Truth）**: `Windsurf_AI_Collab_Rules_latest.md` を中心とした統一されたルール
+- **Orchestrator/Worker パターン**: タスクを分割して効率的に進めるワークフロー
+- **Doctor 機能**: プロジェクト環境の健全性をチェック
+- **プロンプトテンプレート**: 再利用可能なプロンプト集
+
 ### 前提条件
 
-- **Git**: Git がインスト�EルされてぁE��こと
-- **Node.js**: Node.js 18以上がインスト�EルされてぁE��こと�E�スクリプト実行用�E�E- **PowerShell**: Windows 環墁E�E場合、PowerShell が利用可能であること
-- **Windsurf また�E Cursor**: AI エチE��タがインスト�EルされてぁE��こと
+- **Git**: Git がインストールされていること
+- **Node.js**: Node.js 18以上がインストールされていること（スクリプト実行用）
+- **PowerShell**: Windows 環境の場合、PowerShell が利用可能であること
+- **Windsurf または Cursor**: AI エディタがインストールされていること
 
 ---
 
-## 導�E方法�E選抁E
-`shared-workflows` を他�Eプロジェクトで使用する方法�E3つあります！E
-| 方況E| メリチE�� | チE��リチE�� | 推奨度 |
+## 導入方法の選択
+
+`shared-workflows` を他のプロジェクトで使用する方法は3つあります：
+
+| 方法 | メリット | デメリット | 推奨度 |
 |------|---------|-----------|--------|
-| **方法A: Submodule** | 自動更新、バージョン管琁E��一貫性 | 初期設定がめE��褁E�� | ⭐⭐⭐⭐⭁E|
-| **方法B: コピ�E** | シンプル、依存関係なぁE| 手動更新が忁E��E| ⭐⭐⭁E|
-| **方法C: 参�Eのみ** | 軽量、設定�Eみ | スクリプトが使えなぁE| ⭐⭁E|
+| **方法A: Submodule** | 自動更新、バージョン管理、一貫性 | 初期設定がやや複雑 | ⭐⭐⭐⭐⭐ |
+| **方法B: コピー** | シンプル、依存関係なし | 手動更新が必要 | ⭐⭐⭐ |
+| **方法C: 参照のみ** | 軽量、設定のみ | スクリプトが使えない | ⭐⭐ |
 
-**推奨**: ほとんどの場合、E*方法A�E�Eubmodule�E�E* を推奨します、E
+**推奨**: ほとんどの場合、**方法A（Submodule）** を推奨します。
+
 ---
 
-## 方法A: Git Submodule を使用する�E�推奨�E�E
+## 方法A: Git Submodule を使用する（推奨）
+
 ### Step 1: Submodule の追加
 
-プロジェクト�Eルートディレクトリで以下を実行！E
+プロジェクトのルートディレクトリで以下を実行：
+
 ```bash
 # Submodule を追加
 git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows
 
-# Submodule を�E期化・更新
+# Submodule を初期化・更新
 git submodule update --init --recursive
 ```
 
-**注愁E*: ローカルパスを使用する場合（開発環墁E�Eみ�E�E
+**注意**: ローカルパスを使用する場合（開発環境のみ）:
 
 ```bash
 git -c protocol.file.allow=always submodule add <LOCAL_PATH_TO_SHARED_WORKFLOWS> .shared-workflows
 git -c protocol.file.allow=always submodule update --init --recursive
 ```
 
-### Step 2: Submodule の状態確誁E
-```bash
-# Submodule の状態を確誁Egit submodule status
+### Step 2: Submodule の状態確認
 
-# Submodule の詳細惁E��
+```bash
+# Submodule の状態を確認
+git submodule status
+
+# Submodule の詳細情報
 git -C .shared-workflows status -sb
 git -C .shared-workflows rev-parse --abbrev-ref HEAD
 ```
 
 ### Step 3: Submodule の更新
 
-定期皁E�� Submodule を最新化！E
+定期的に Submodule を最新化：
+
 ```bash
-# Submodule を最新匁Egit submodule sync --recursive
+# Submodule を最新化
+git submodule sync --recursive
 git submodule update --init --recursive --remote
 
-# 更新チェチE���E�オプション�E�Enode .shared-workflows/scripts/sw-update-check.js --no-fetch
+# 更新チェック（オプション）
+node .shared-workflows/scripts/sw-update-check.js --no-fetch
 ```
 
 ---
 
-## 方法B: ファイルをコピ�Eする
+## 方法B: ファイルをコピーする
 
-Submodule を使わなぁE��合、忁E��なファイルをコピ�Eします、E
+Submodule を使わない場合、必要なファイルをコピーします。
+
 ### Step 1: shared-workflows をクローン
 
 ```bash
@@ -95,31 +112,36 @@ Submodule を使わなぁE��合、忁E��なファイルをコピ�Eします、E
 git clone https://github.com/YuShimoji/shared-workflows.git ../shared-workflows-1
 ```
 
-### Step 2: 忁E��なファイルをコピ�E
+### Step 2: 必要なファイルをコピー
 
 ```bash
-# プロジェクトルートで実衁E# 1. ドキュメントをコピ�E
+# プロジェクトルートで実行
+# 1. ドキュメントをコピー
 cp -r ../shared-workflows-1/docs/windsurf_workflow ./docs/
 
-# 2. スクリプトをコピ�E�E�忁E��な場合！Ecp ../shared-workflows-1/scripts/sw-doctor.js ./scripts/
+# 2. スクリプトをコピー（必要な場合）
+cp ../shared-workflows-1/scripts/sw-doctor.js ./scripts/
 cp -r ../shared-workflows-1/scripts/utils ./scripts/
 ```
 
-### Step 3: 参�Eパスの調整
+### Step 3: 参照パスの調整
 
-コピ�Eしたファイル冁E�Eパス参�Eを、�Eロジェクト構造に合わせて調整してください、E
+コピーしたファイル内のパス参照を、プロジェクト構造に合わせて調整してください。
+
 ---
 
-## 方法C: 参�Eのみで使用する
+## 方法C: 参照のみで使用する
 
-スクリプトは使わず、�EロンプトめE��キュメント�Eみを参照する場合、E
-### Step 1: `.cursorrules` と `.cursor/rules.md` の作�E
+スクリプトは使わず、プロンプトやドキュメントのみを参照する場合。
 
-プロジェクトルートに以下を作�E�E�E
+### Step 1: `.cursorrules` と `.cursor/rules.md` の作成
+
+プロジェクトルートに以下を作成：
+
 **`.cursorrules`**:
 ```
-# Shared Workflows 参�E
-参�E允E <your-local-path-to-shared-workflows>
+# Shared Workflows 参照
+参照先: <your-local-path-to-shared-workflows>
 SSOT: docs/Windsurf_AI_Collab_Rules_latest.md
 ```
 
@@ -127,48 +149,58 @@ SSOT: docs/Windsurf_AI_Collab_Rules_latest.md
 ```markdown
 # Shared Workflows Rules
 
-参�E先�E shared-workflows リポジトリのルールを参照してください、E```
+参照先の shared-workflows リポジトリのルールを参照してください。
+```
 
 ### Step 2: Windsurf Memories に追加
 
-Windsurf の Settings > Memories に以下を追加�E�E
+Windsurf の Settings > Memories に以下を追加：
+
 ```
 中央リポジトリ: <your-local-path-to-shared-workflows>
-参�E方況E 中央リポジトリの docs/Windsurf_AI_Collab_Rules_latest.md を参照する
+参照方法: 中央リポジトリの docs/Windsurf_AI_Collab_Rules_latest.md を参照する
 ```
 
 ---
 
-## 初期セチE��アチE�E
+## 初期セットアップ
 
-どの方法を選んでも、以下�E初期セチE��アチE�Eが忁E��です、E
-### Step 1: プロジェクト構造の作�E
+どの方法を選んでも、以下の初期セットアップが必要です。
+
+### Step 1: プロジェクト構造の作成
 
 ```bash
-# 忁E��なチE��レクトリを作�E
+# 必要なディレクトリを作成
 mkdir -p docs/tasks
 mkdir -p docs/inbox
 mkdir -p .cursor
 
-# .gitkeep ファイルを作�E�E�空チE��レクトリめEGit で管琁E��Etouch docs/tasks/.gitkeep
+# .gitkeep ファイルを作成（空ディレクトリを Git で管理）
+touch docs/tasks/.gitkeep
 touch docs/inbox/.gitkeep
 ```
 
-### Step 2: AI_CONTEXT.md の作�E
+### Step 2: AI_CONTEXT.md の作成
 
-プロジェクトルートに `AI_CONTEXT.md` を作�E�E�E
-**チE��プレート�E使用**:
+プロジェクトルートに `AI_CONTEXT.md` を作成：
 
-- Submodule の場吁E `.shared-workflows/templates/AI_CONTEXT.md` をコピ�E
-- コピ�E方法�E場吁E `templates/AI_CONTEXT.md` をコピ�E
+**テンプレートの使用**:
 
-詳細は [`templates/AI_CONTEXT.md`](../templates/AI_CONTEXT.md) を参照してください、E
-### Step 3: ORCHESTRATION_PROMPT.md の作�E�E�任意！E
-プロジェクトルートに `ORCHESTRATION_PROMPT.md` を作�E�E�E
-詳細は [`templates/ORCHESTRATION_PROMPT.md`](../templates/ORCHESTRATION_PROMPT.md) を参照してください、E
-### Step 4: docs/HANDOVER.md の作�E
+- Submodule の場合: `.shared-workflows/templates/AI_CONTEXT.md` をコピー
+- コピー方法の場合: `templates/AI_CONTEXT.md` をコピー
 
-`docs/HANDOVER.md` を作�E�E�E
+詳細は [`templates/AI_CONTEXT.md`](../templates/AI_CONTEXT.md) を参照してください。
+
+### Step 3: ORCHESTRATION_PROMPT.md の作成（任意）
+
+プロジェクトルートに `ORCHESTRATION_PROMPT.md` を作成：
+
+詳細は [`templates/ORCHESTRATION_PROMPT.md`](../templates/ORCHESTRATION_PROMPT.md) を参照してください。
+
+### Step 4: docs/HANDOVER.md の作成
+
+`docs/HANDOVER.md` を作成：
+
 ```markdown
 # Handover
 
@@ -176,191 +208,236 @@ touch docs/inbox/.gitkeep
 
 GitHubAutoApprove: true
 
-## そ�E他�E設宁E
-プロジェクト固有�E設定を記述
+## その他の設定
+
+プロジェクト固有の設定を記述
 ```
 
-### Step 5: SSOT ファイルの確俁E
-SSOT�E�Eingle Source of Truth�E�ファイルを�Eロジェクトに配置�E�E
-**Submodule の場吁E*:
+### Step 5: SSOT ファイルの確保
+
+SSOT（Single Source of Truth）ファイルをプロジェクトに配置：
+
+**Submodule の場合**:
 ```bash
-# SSOT を�Eロジェクトにコピ�E�E�オプション�E�Enode .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail
+# SSOT をプロジェクトにコピー（オプション）
+node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail
 ```
 
-**コピ�E方法�E場吁E*:
+**コピー方法の場合**:
 ```bash
-# 手動でコピ�E
+# 手動でコピー
 cp ../shared-workflows-1/docs/Windsurf_AI_Collab_Rules_latest.md ./docs/
 ```
 
-**参�Eのみの場吁E*:
-- `AI_CONTEXT.md` に参�Eパスを記載するだぁE
+**参照のみの場合**:
+- `AI_CONTEXT.md` に参照パスを記載するだけ
+
 ---
 
-## Cursor 設定�E適用
+## Cursor 設定の適用
 
-### PowerShell を使用�E�Eindows�E�E
+### PowerShell を使用（Windows）
+
 ```powershell
-# Submodule の場吁Epwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
+# Submodule の場合
+pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
 
-# コピ�E方法�E場合！Ecripts/ にコピ�E済み�E�Epwsh -NoProfile -File scripts/apply-cursor-rules.ps1 -ProjectRoot .
+# コピー方法の場合（scripts/ にコピー済み）
+pwsh -NoProfile -File scripts/apply-cursor-rules.ps1 -ProjectRoot .
 ```
 
 ### 手動で適用
 
-1. **`.cursorrules`** をコピ�E:
-   - Submodule: `.shared-workflows/templates/.cursorrules` ↁE`.cursorrules`
-   - コピ�E方況E `templates/.cursorrules` ↁE`.cursorrules`
+1. **`.cursorrules`** をコピー:
+   - Submodule: `.shared-workflows/templates/.cursorrules` → `.cursorrules`
+   - コピー方法: `templates/.cursorrules` → `.cursorrules`
 
-2. **`.cursor/rules.md`** をコピ�E:
-   - Submodule: `.shared-workflows/templates/.cursor/rules.md` ↁE`.cursor/rules.md`
-   - コピ�E方況E `templates/.cursor/rules.md` ↁE`.cursor/rules.md`
+2. **`.cursor/rules.md`** をコピー:
+   - Submodule: `.shared-workflows/templates/.cursor/rules.md` → `.cursor/rules.md`
+   - コピー方法: `templates/.cursor/rules.md` → `.cursor/rules.md`
 
 ---
 
-## Doctor 機�Eによる環墁E��ェチE��
+## Doctor 機能による環境チェック
 
-`sw-doctor.js` を使用して、�Eロジェクト環墁E�E健全性をチェチE��できます、E
-### 基本皁E��使用方況E
+`sw-doctor.js` を使用して、プロジェクト環境の健全性をチェックできます。
+
+### 基本的な使用方法
+
 ```bash
-# Bootstrap チェチE���E��E期セチE��アチE�E用�E�Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+# Bootstrap チェック（初期セットアップ用）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
 
-# フルチェチE���E�環墁E+ 監査 + 開発チェチE���E�Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text
+# フルチェック（環境 + 監査 + 開発チェック）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text
 
-# CI Strict チェチE���E�EI/CD 用�E�Enode .shared-workflows/scripts/sw-doctor.js --profile ci-strict --format text
+# CI Strict チェック（CI/CD 用）
+node .shared-workflows/scripts/sw-doctor.js --profile ci-strict --format text
 
-# JSON 出力！EI/CD 統合用�E�Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
+# JSON 出力（CI/CD 統合用）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
 ```
 
-### Doctor プロファイルの説昁E
-| プロファイル | 用送E| チェチE��冁E�� |
-|------------|------|------------|
-| `shared-orch-bootstrap` | 初期セチE��アチE�E | SSOT、基本構造、忁E��ディレクトリ |
-| `shared-orch-doctor` | 日常皁E��チェチE�� | 環墁E+ 監査 + 開発チェチE�� |
-| `ci-strict` | CI/CD | すべてのチェチE��、WARN も失敗扱ぁE|
-| `report-validation` | レポ�Eト検証 | HANDOVER.md と AI_CONTEXT.md の整合性 |
+### Doctor プロファイルの説明
 
-詳細は [`docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`](./CLIENT_PROJECT_DOCTOR_GUIDE.md) を参照してください、E
+| プロファイル | 用途 | チェック内容 |
+|------------|------|------------|
+| `shared-orch-bootstrap` | 初期セットアップ | SSOT、基本構造、必須ディレクトリ |
+| `shared-orch-doctor` | 日常的なチェック | 環境 + 監査 + 開発チェック |
+| `ci-strict` | CI/CD | すべてのチェック、WARN も失敗扱い |
+| `report-validation` | レポート検証 | HANDOVER.md と AI_CONTEXT.md の整合性 |
+
+詳細は [`docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`](./CLIENT_PROJECT_DOCTOR_GUIDE.md) を参照してください。
+
 ---
 
-## 日常皁E��使用方況E
-### 1. セチE��ョン開始時
+## 日常的な使用方法
+
+### 1. セッション開始時
 
 1. **Orchestrator Driver を読み込む**:
    - Submodule: `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
-   - これめECursor/Windsurf のプロンプトとして使用
+   - これを Cursor/Windsurf のプロンプトとして使用
 
 2. **SSOT を参照**:
    - `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md` を参照
 
-3. **環墁E��ェチE��**:
+3. **環境チェック**:
    ```bash
    node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
    ```
 
-### 2. タスク管琁E
-- **タスクの作�E**: `docs/tasks/TASK_*.md` にタスクを記述
-- **スチE�Eタス管琁E*: `Status: OPEN/IN_PROGRESS/DONE` で管琁E- **Worker レポ�EチE*: `docs/inbox/REPORT_*.md` に配置
+### 2. タスク管理
+
+- **タスクの作成**: `docs/tasks/TASK_*.md` にタスクを記述
+- **ステータス管理**: `Status: OPEN/IN_PROGRESS/DONE` で管理
+- **Worker レポート**: `docs/inbox/REPORT_*.md` に配置
 
 ### 3. プロンプトの使用
 
-**初回セチE��アチE�E晁E*:
+**初回セットアップ時**:
 - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt`
 
-**毎回のセチE��ョン**:
+**毎回のセッション**:
 - `.shared-workflows/prompts/every_time/ORCHESTRATOR_DRIVER.txt`
 
 **Global Rules**:
-- Windsurf: Settings > Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を設宁E
-### 4. 更新の確誁E
-```bash
-# Submodule の更新確誁Enode .shared-workflows/scripts/sw-update-check.js
+- Windsurf: Settings > Global Rules に `.shared-workflows/prompts/global/WINDSURF_GLOBAL_RULES.txt` を設定
 
-# セチE��ョン終亁E��ェチE��
+### 4. 更新の確認
+
+```bash
+# Submodule の更新確認
+node .shared-workflows/scripts/sw-update-check.js
+
+# セッション終了チェック
 node .shared-workflows/scripts/session-end-check.js --project-root .
 ```
 
 ---
 
-## トラブルシューチE��ング
+## トラブルシューティング
 
-### Submodule が正しく動作しなぁE
-**問顁E*: `fatal: transport 'file' not allowed`
+### Submodule が正しく動作しない
 
-**解決筁E*:
+**問題**: `fatal: transport 'file' not allowed`
+
+**解決策**:
 ```bash
 git -c protocol.file.allow=always submodule add <LOCAL_PATH> .shared-workflows
 ```
 
-**問顁E*: Submodule が更新されなぁE
-**解決筁E*:
+**問題**: Submodule が更新されない
+
+**解決策**:
 ```bash
 git submodule sync --recursive
 git submodule update --init --recursive --remote
 ```
 
-### Doctor がエラーを報告すめE
-**問顁E*: `shared-workflows detected` が失敁E
-**解決筁E*:
-- `.shared-workflows/` チE��レクトリが存在するか確誁E- Submodule が正しく初期化されてぁE��か確誁E `git submodule status`
+### Doctor がエラーを報告する
 
-**問顁E*: `docs/` が存在しなぁE
-**解決筁E*:
+**問題**: `shared-workflows detected` が失敗
+
+**解決策**:
+- `.shared-workflows/` ディレクトリが存在するか確認
+- Submodule が正しく初期化されているか確認: `git submodule status`
+
+**問題**: `docs/` が存在しない
+
+**解決策**:
 ```bash
 mkdir -p docs/tasks docs/inbox
 touch docs/tasks/.gitkeep docs/inbox/.gitkeep
 ```
 
-### SSOT ファイルが見つからなぁE
-**問顁E*: `docs/Windsurf_AI_Collab_Rules_latest.md` が存在しなぁE
-**解決筁E*:
-```bash
-# Submodule の場吁Enode .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail
+### SSOT ファイルが見つからない
 
-# 手動でコピ�E
+**問題**: `docs/Windsurf_AI_Collab_Rules_latest.md` が存在しない
+
+**解決策**:
+```bash
+# Submodule の場合
+node .shared-workflows/scripts/ensure-ssot.js --project-root . --no-fail
+
+# 手動でコピー
 cp .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md ./docs/
 ```
 
-### PowerShell スクリプトが実行できなぁE
-**問顁E*: `ExecutionPolicy` エラー
+### PowerShell スクリプトが実行できない
 
-**解決筁E*:
+**問題**: `ExecutionPolicy` エラー
+
+**解決策**:
 ```powershell
-# 実行�Eリシーを確誁EGet-ExecutionPolicy
+# 実行ポリシーを確認
+Get-ExecutionPolicy
 
-# 実行�Eリシーを変更�E�EurrentUser スコープ！ESet-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+# 実行ポリシーを変更（CurrentUser スコープ）
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# また�E、ENoProfile フラグを使用
+# または、-NoProfile フラグを使用
 pwsh -NoProfile -File .shared-workflows/scripts/apply-cursor-rules.ps1 -ProjectRoot .
 ```
 
-### Node.js スクリプトが実行できなぁE
-**問顁E*: `node: command not found`
+### Node.js スクリプトが実行できない
 
-**解決筁E*:
-- Node.js がインスト�EルされてぁE��か確誁E `node --version`
-- Node.js 18以上が忁E��でぁE
+**問題**: `node: command not found`
+
+**解決策**:
+- Node.js がインストールされているか確認: `node --version`
+- Node.js 18以上が必要です
+
 ---
 
-## 参老E��キュメンチE
+## 参考ドキュメント
+
 - **SSOT**: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
-- **ワークフロー開姁E*: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
+- **ワークフロー開始**: `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
 - **Orchestrator プロトコル**: `.shared-workflows/docs/windsurf_workflow/ORCHESTRATOR_PROTOCOL.md`
-- **Worker プロンプトチE��プレーチE*: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
-- **Doctor ガイチE*: `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`
-- **中央リポジトリ参�E**: `docs/CENTRAL_REPO_REF.md`
+- **Worker プロンプトテンプレート**: `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
+- **Doctor ガイド**: `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md`
+- **中央リポジトリ参照**: `docs/CENTRAL_REPO_REF.md`
 
 ---
 
-## 次のスチE��チE
-1. ✁ESubmodule の追加�E�また�Eコピ�E/参�Eの設定！E2. ✁E初期セチE��アチE�E�E�ディレクトリ、ファイルの作�E�E�E3. ✁ECursor 設定�E適用
-4. ✁EDoctor による環墁E��ェチE��
-5. ✁E最初�E Orchestrator セチE��ョンの開姁E
-**最初�EセチE��ョン開姁E*:
-`.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` めECursor/Windsurf で開いて、�Eロンプトとして使用してください、E
+## 次のステップ
+
+1. ✅ Submodule の追加（またはコピー/参照の設定）
+2. ✅ 初期セットアップ（ディレクトリ、ファイルの作成）
+3. ✅ Cursor 設定の適用
+4. ✅ Doctor による環境チェック
+5. ✅ 最初の Orchestrator セッションの開始
+
+**最初のセッション開始**:
+`.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` を Cursor/Windsurf で開いて、プロンプトとして使用してください。
+
 ---
 
-## サポ�EチE
-問題が発生した場吁E
+## サポート
 
-1. `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md` を確誁E2. `docs/APPLY_TO_OTHER_PROJECTS.md` を確誁E3. GitHub Issues で報呁E
+問題が発生した場合:
+
+1. `docs/CLIENT_PROJECT_DOCTOR_GUIDE.md` を確認
+2. `docs/APPLY_TO_OTHER_PROJECTS.md` を確認
+3. GitHub Issues で報告

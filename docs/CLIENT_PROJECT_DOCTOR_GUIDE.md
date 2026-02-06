@@ -1,38 +1,49 @@
-# クライアント�Eロジェクト向ぁEDoctor 利用ガイチE
-本ガイド�E、WritingPage などのクライアント�Eロジェクトで shared-workflows の `sw-doctor.js` を利用する際�E手頁E��説明します、E
-## 概要E
-`sw-doctor.js` は、�Eロジェクト�E環墁E�Eスクリプト・ワークフロー状態を自動診断するチE�Eルです、E
-**重要E*: SSOT ファイル�E�EWindsurf_AI_Collab_Rules_latest.md`�E��E、shared-workflows サブモジュールのバ�Eジョンによって `v2.0.md` めE`v1.1.md` から自動的に `latest.md` として補完される場合があります、EI は常に `latest.md` をエントリポイントとして参�Eしてください。以下�E用途に使用できまぁE
+# クライアントプロジェクト向け Doctor 利用ガイド
 
-- **初期セチE��アチE�E検証**: SSOT ファイルと基本チE��レクトリ構造の確誁E- **定期皁E��健全性チェチE��**: 開発中の監査と異常検知
-- **CI/CD 統吁E*: GitHub Actions などから自動診断結果を取征E
-## セチE��アチE�E手頁E
-### Step 1: shared-workflows サブモジュールの導�E
+本ガイドは、WritingPage などのクライアントプロジェクトで shared-workflows の `sw-doctor.js` を利用する際の手順を説明します。
 
-プロジェクトルートで以下を実衁E
+## 概要
+
+`sw-doctor.js` は、プロジェクトの環境・スクリプト・ワークフロー状態を自動診断するツールです。
+
+**重要**: SSOT ファイル（`Windsurf_AI_Collab_Rules_latest.md`）は、shared-workflows サブモジュールのバージョンによって `v2.0.md` や `v1.1.md` から自動的に `latest.md` として補完される場合があります。AI は常に `latest.md` をエントリポイントとして参照してください。以下の用途に使用できます:
+
+- **初期セットアップ検証**: SSOT ファイルと基本ディレクトリ構造の確認
+- **定期的な健全性チェック**: 開発中の監査と異常検知
+- **CI/CD 統合**: GitHub Actions などから自動診断結果を取得
+
+## セットアップ手順
+
+### Step 1: shared-workflows サブモジュールの導入
+
+プロジェクトルートで以下を実行:
 
 ```bash
 git submodule add https://github.com/YuShimoji/shared-workflows.git .shared-workflows
 git submodule update --init --recursive
 ```
 
-### Step 2: doctor スクリプトの確誁E
-サブモジュール導�E後、以下�EぁE��れかで doctor が利用可能か確誁E
+### Step 2: doctor スクリプトの確認
+
+サブモジュール導入後、以下のいずれかで doctor が利用可能か確認:
 
 ```bash
-# 方況E: サブモジュール経由�E�推奨�E�Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+# 方法1: サブモジュール経由（推奨）
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
 
-# 方況E: ローカルコピ�E�E�サブモジュール未導�Eの場合！Ecp .shared-workflows/scripts/sw-doctor.js scripts/
+# 方法2: ローカルコピー（サブモジュール未導入の場合）
+cp .shared-workflows/scripts/sw-doctor.js scripts/
 cp -r .shared-workflows/scripts/utils scripts/
 node scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
 ```
 
-### Step 3: 初期診断の実衁E
+### Step 3: 初期診断の実行
+
 ```bash
 node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
 ```
 
-出力侁E
+出力例:
 
 ```
 Shared Workflows Doctor
@@ -43,58 +54,63 @@ Profile: shared-orch-bootstrap - Bootstrap profile: check SSOT files and basic s
 
 === Environment Check ===
 
-✁Eshared-workflows detected: /path/to/project/.shared-workflows
-✁Edocs exists
-✁EAI_CONTEXT.md exists
+✓ shared-workflows detected: /path/to/project/.shared-workflows
+✓ docs exists
+✓ AI_CONTEXT.md exists
 ...
 
-✁EDoctor check complete.
+✓ Doctor check complete.
 ```
 
-エラーが�Eた場合�E、「トラブルシューチE��ング」セクションを参照してください、E
-## プロファイル別の使ぁE�EぁE
-### `shared-orch-bootstrap` (初期セチE��アチE�E用)
+エラーが出た場合は、「トラブルシューティング」セクションを参照してください。
 
-SSOT ファイルと基本チE��レクトリ構造のみをチェチE��。�E回セチE��アチE�E後に実衁E
+## プロファイル別の使い分け
+
+### `shared-orch-bootstrap` (初期セットアップ用)
+
+SSOT ファイルと基本ディレクトリ構造のみをチェック。初回セットアップ後に実行:
 
 ```bash
 node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
 ```
 
-**チェチE��対象:**
+**チェック対象:**
 - shared-workflows サブモジュールの存在
-- `docs/`, `docs/tasks/`, `docs/inbox/` チE��レクトリ
+- `docs/`, `docs/tasks/`, `docs/inbox/` ディレクトリ
 - `AI_CONTEXT.md`, `docs/HANDOVER.md`, `REPORT_CONFIG.yml`
-- SSOT ファイル�E�Edocs/Windsurf_AI_Collab_Rules_latest.md` など�E�E
-### `shared-orch-doctor` (定期皁E��監査用)
+- SSOT ファイル（`docs/Windsurf_AI_Collab_Rules_latest.md` など）
 
-環墁E+ スクリプト + orchestrator-audit + dev-check を実行。開発中の定期チェチE��:
+### `shared-orch-doctor` (定期的な監査用)
+
+環境 + スクリプト + orchestrator-audit + dev-check を実行。開発中の定期チェック:
 
 ```bash
 node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format text
 ```
 
-**チェチE��対象:**
-- bootstrap プロファイルの全チェチE��
-- スクリプト可用性�E�Erchestrator-audit.js, report-validator.js など�E�E- orchestrator-audit.js による巡回監査
-- dev-check.js による開発環墁E��断
+**チェック対象:**
+- bootstrap プロファイルの全チェック
+- スクリプト可用性（orchestrator-audit.js, report-validator.js など）
+- orchestrator-audit.js による巡回監査
+- dev-check.js による開発環境診断
 
-### `ci-strict` (本番環墁E��)
+### `ci-strict` (本番環境用)
 
-全チェチE��を実行し、警告！EARN�E�も失敗扱ぁE��リリース前�E厳寁E��ェチE��:
+全チェックを実行し、警告（WARN）も失敗扱い。リリース前の厳密チェック:
 
 ```bash
 node .shared-workflows/scripts/sw-doctor.js --profile ci-strict --format text
 ```
 
-## JSON 出力モード！EI 連携用�E�E
-GitHub Actions などから機械可読な結果を取征E
+## JSON 出力モード（CI 連携用）
+
+GitHub Actions などから機械可読な結果を取得:
 
 ```bash
 node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
 ```
 
-出力侁E
+出力例:
 
 ```json
 {
@@ -116,7 +132,7 @@ node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --forma
 
 ## GitHub Actions での利用
 
-`.github/workflows/doctor-check.yml` を作�E:
+`.github/workflows/doctor-check.yml` を作成:
 
 ```yaml
 name: Doctor Health Check
@@ -145,27 +161,29 @@ jobs:
           node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format json > doctor-bootstrap.json
           ISSUES=$(jq '.summary.issues | length' doctor-bootstrap.json)
           if [ "$ISSUES" -gt 0 ]; then
-            echo "❁EBootstrap check failed"
+            echo "❌ Bootstrap check failed"
             cat doctor-bootstrap.json
             exit 1
           fi
-          echo "✁EBootstrap check passed"
+          echo "✅ Bootstrap check passed"
 
       - name: Run Doctor Full Check
         run: |
           node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json > doctor-full.json
           ISSUES=$(jq '.summary.issues | length' doctor-full.json)
           if [ "$ISSUES" -gt 0 ]; then
-            echo "❁EFull check failed"
+            echo "❌ Full check failed"
             cat doctor-full.json
             exit 1
           fi
-          echo "✁EFull check passed"
+          echo "✅ Full check passed"
 ```
 
-詳細は `docs/CI_INTEGRATION.md` を参照、E
-## カスタム設宁E
-プロジェクト固有�E doctor 設定を行いたい場合�E、�Eロジェクトルートに `.doctorrc.js` を�E置:
+詳細は `docs/CI_INTEGRATION.md` を参照。
+
+## カスタム設定
+
+プロジェクト固有の doctor 設定を行いたい場合は、プロジェクトルートに `.doctorrc.js` を配置:
 
 ```javascript
 module.exports = {
@@ -185,60 +203,82 @@ module.exports = {
 };
 ```
 
-チE��プレート�E `.shared-workflows/templates/.doctorrc.example.js` を参照、E
-## トラブルシューチE��ング
+テンプレートは `.shared-workflows/templates/.doctorrc.example.js` を参照。
 
-### doctor スクリプトが見つからなぁE
+## トラブルシューティング
+
+### doctor スクリプトが見つからない
+
 ```bash
-# サブモジュール状態を確誁Egit submodule status
+# サブモジュール状態を確認
+git submodule status
 
-# サブモジュールを�E初期匁Egit submodule sync --recursive
+# サブモジュールを再初期化
+git submodule sync --recursive
 git submodule update --init --recursive --remote
 ```
 
-### 環墁E��ェチE��が失敗すめE
-```bash
-# 詳細を確誁Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+### 環境チェックが失敗する
 
-# 不足してぁE��ファイル/チE��レクトリを手動作�E
+```bash
+# 詳細を確認
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-bootstrap --format text
+
+# 不足しているファイル/ディレクトリを手動作成
 mkdir -p docs/tasks docs/inbox
 touch docs/tasks/.gitkeep docs/inbox/.gitkeep
 ```
 
-### JSON パ�Eスエラー
+### JSON パースエラー
 
 ```bash
-# stderr を確誁Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json 2>&1 | head -20
+# stderr を確認
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json 2>&1 | head -20
 
-# doctor が正常に終亁E��てぁE��か確誁Enode .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
+# doctor が正常に終了しているか確認
+node .shared-workflows/scripts/sw-doctor.js --profile shared-orch-doctor --format json
 echo "Exit code: $?"
 ```
 
 ### スクリプト実行権限エラー
 
-Windows PowerShell の場吁E
+Windows PowerShell の場合:
 
 ```powershell
-# Node.js が利用可能か確誁Enode --version
+# Node.js が利用可能か確認
+node --version
 
-# スクリプト実行�Eリシーを確誁EGet-ExecutionPolicy
+# スクリプト実行ポリシーを確認
+Get-ExecutionPolicy
 
-# 忁E��に応じてポリシーを変更
+# 必要に応じてポリシーを変更
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-## よくある質啁E
-### Q: doctor を毎日実行する忁E��があるか！E
-A: 推奨です。特に以下�Eタイミングで実行してください:
-- PR 作�E晁E- main ブランチへのマ�Eジ剁E- CI/CD パイプラインの定期実行（侁E 毎日 09:00�E�E
-### Q: doctor の結果に基づぁE��自動修復できるか！E
-A: 現在は診断のみです。修復は以下�Eスクリプトを手動実行してください:
-- `node .shared-workflows/scripts/ensure-ssot.js --no-fail` (SSOT ファイル補宁E
+## よくある質問
+
+### Q: doctor を毎日実行する必要があるか？
+
+A: 推奨です。特に以下のタイミングで実行してください:
+- PR 作成時
+- main ブランチへのマージ前
+- CI/CD パイプラインの定期実行（例: 毎日 09:00）
+
+### Q: doctor の結果に基づいて自動修復できるか？
+
+A: 現在は診断のみです。修復は以下のスクリプトを手動実行してください:
+- `node .shared-workflows/scripts/ensure-ssot.js --no-fail` (SSOT ファイル補完)
 - `node .shared-workflows/scripts/orchestrator-audit.js --no-fail` (巡回監査)
 
-封E��皁E��は自動修復機�Eの追加を予定してぁE��す、E
-### Q: 他�Eロジェクトで doctor をカスタマイズできるか！E
-A: はぁE��`.doctorrc.js` でプロファイルめE��スタム Check/Fix を定義できます。詳細は「カスタム設定」セクションを参照、E
-## 参老E��E��
+将来的には自動修復機能の追加を予定しています。
 
-- `docs/CI_INTEGRATION.md` - CI/CD 統合ガイチE- `docs/ARCH_DOCTOR_DESIGN.md` - Doctor アーキチE��チャ設訁E- `.shared-workflows/templates/.doctorrc.example.js` - 設定ファイルチE��プレーチE- `docs/Windsurf_AI_Collab_Rules_latest.md` - 中央ルール�E�ESOT�E�E
+### Q: 他プロジェクトで doctor をカスタマイズできるか？
+
+A: はい。`.doctorrc.js` でプロファイルやカスタム Check/Fix を定義できます。詳細は「カスタム設定」セクションを参照。
+
+## 参考資料
+
+- `docs/CI_INTEGRATION.md` - CI/CD 統合ガイド
+- `docs/ARCH_DOCTOR_DESIGN.md` - Doctor アーキテクチャ設計
+- `.shared-workflows/templates/.doctorrc.example.js` - 設定ファイルテンプレート
+- `docs/Windsurf_AI_Collab_Rules_latest.md` - 中央ルール（SSOT）

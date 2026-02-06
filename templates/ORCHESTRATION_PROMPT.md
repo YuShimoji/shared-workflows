@@ -1,96 +1,159 @@
 # Orchestration Prompt
 
-## 目皁E
-- こ�Eファイルは、�EロジェクトでAI開発を回すため�E **オーケストレーション用プロンプト**です、E- 吁E�Eロジェクトでは、本ファイルを�Eロジェクトルートに `ORCHESTRATION_PROMPT.md` として配置して運用します（任意）、E
-## 推奨の最小運用�E�EチE��プレで完結！E
-- 初回�E�セチE��アチE�E / 参�Eが不安定な場合�E立て直し！E
-  - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` をセチE��アチE�E拁E��スレチE��に貼めE- 毎回�E�開発継綁E/ OrchestratorスレチE��起動時�E�E
-  - `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` めEOrchestrator スレチE��に貼めE
-運用老E�E入口�E�参照。どのフォルダを開ぁEどれをコピ�Eする�E�E
+## 目的
+
+- このファイルは、プロジェクトでAI開発を回すための **オーケストレーション用プロンプト**です。
+- 各プロジェクトでは、本ファイルをプロジェクトルートに `ORCHESTRATION_PROMPT.md` として配置して運用します（任意）。
+
+## 推奨の最小運用（3テンプレで完結）
+
+- 初回（セットアップ / 参照が不安定な場合の立て直し）:
+  - `.shared-workflows/prompts/first_time/PROJECT_KICKSTART.txt` をセットアップ担当スレッドに貼る
+- 毎回（開発継続 / Orchestratorスレッド起動時）:
+  - `.shared-workflows/prompts/every_time/ORCHESTRATOR_METAPROMPT.txt` を Orchestrator スレッドに貼る
+
+運用者の入口（参照。どのフォルダを開く/どれをコピペする）:
 - `.shared-workflows/docs/windsurf_workflow/OPEN_HERE.md`
 
-Orchestrator が各拁E��老E��Eorker�E�を起動する際の「タスク刁E��済みプロンプト」�E、毎回チケチE��冁E��に合わせて **可変で自動生戁E*する、E生�Eのベ�Eス�E�Eつ目のチE��プレ / 参�E用�E��E以丁E
+Orchestrator が各担当者（Worker）を起動する際の「タスク分解済みプロンプト」は、毎回チケット内容に合わせて **可変で自動生成**する。
+生成のベース（3つ目のテンプレ / 参照用）は以下:
 
 - `.shared-workflows/docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md`
 
-本ファイル�E��Eロジェクトルート�E `ORCHESTRATION_PROMPT.md`�E��E任意です。運用の事情で「�Eロジェクト固有�E前提/制紁E例外」を残したい場合にのみ使用し、毎回の起動�Eロンプトは原則 Orchestrator Metaprompt に統一します、E
-## 最初に忁E��読むも�E�E�優先頁E��E
-1. SSOT�E�最新版ルール / 固定参照先！E   - 推奨: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
+本ファイル（プロジェクトルートの `ORCHESTRATION_PROMPT.md`）は任意です。運用の事情で「プロジェクト固有の前提/制約/例外」を残したい場合にのみ使用し、毎回の起動プロンプトは原則 Orchestrator Metaprompt に統一します。
+
+## 最初に必ず読むもの（優先順）
+
+1. SSOT（最新版ルール / 固定参照先）
+   - 推奨: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`
    - フォールバック: `docs/Windsurf_AI_Collab_Rules_latest.md`
-   - 本チE��プレート�Eでは、`.shared-workflows/` めE`SW_ROOT` と呼ぶ
-2. プロジェクトルート�E `AI_CONTEXT.md`
-3. プロジェクトルート�E `ORCHESTRATION_PROMPT.md`�E�本ファイル。運用してぁE��場合！E
-## 使ぁE�Eけ（役割別プロンプト�E�E
-こ�Eファイルは「�E体�E進行役�E�オーケストレーター�E�」向けです。基本方針として、担当老E��の固定テンプレート�E増やさず、忁E��に応じてオーケストレーターぁEWorker 起動用の最小�Eロンプトを動皁E��生�Eします。下記�E役割別プロンプトは参老Eフォールバックとして扱ぁE��す（運用方針として固定テンプレを増やさなぁE��合�E、基本皁E��使ぁE��せん�E�、E
-- 実裁E��E `.shared-workflows/templates/ROLE_PROMPT_IMPLEMENTER.md`
+   - 本テンプレート内では、`.shared-workflows/` を `SW_ROOT` と呼ぶ
+2. プロジェクトルートの `AI_CONTEXT.md`
+3. プロジェクトルートの `ORCHESTRATION_PROMPT.md`（本ファイル。運用している場合）
+
+## 使い分け（役割別プロンプト）
+
+このファイルは「全体の進行役（オーケストレーター）」向けです。基本方針として、担当者用の固定テンプレートは増やさず、必要に応じてオーケストレーターが Worker 起動用の最小プロンプトを動的に生成します。下記の役割別プロンプトは参考/フォールバックとして扱います（運用方針として固定テンプレを増やさない場合は、基本的に使いません）。
+
+- 実装者: `.shared-workflows/templates/ROLE_PROMPT_IMPLEMENTER.md`
 - レビュア: `.shared-workflows/templates/ROLE_PROMPT_REVIEWER.md`
-- CI対忁E `.shared-workflows/templates/ROLE_PROMPT_CI_HANDLER.md`
-- リリース拁E��E `.shared-workflows/templates/ROLE_PROMPT_RELEASE_MANAGER.md`
+- CI対応: `.shared-workflows/templates/ROLE_PROMPT_CI_HANDLER.md`
+- リリース担当: `.shared-workflows/templates/ROLE_PROMPT_RELEASE_MANAGER.md`
 
-## 進め方�E�最小！E
-- Issue�E�Eoal/DoD/影響/リスク(Tier)�E�を起点に進める
-- 作業の区刁E��ごとに `AI_CONTEXT.md` を更新し、会話に依存せず�E開可能にする
-- クリーンアチE�EチェチE�� ↁEPre-flight ↁEコミット（忁E��に応じてプッシュ�E�E
-## 毎回のプロンプト�E�オーケストレーター用 / コピ�E用�E�E
+## 進め方（最小）
+
+- Issue（Goal/DoD/影響/リスク(Tier)）を起点に進める
+- 作業の区切りごとに `AI_CONTEXT.md` を更新し、会話に依存せず再開可能にする
+- クリーンアップチェック → Pre-flight → コミット（必要に応じてプッシュ）
+
+## 毎回のプロンプト（オーケストレーター用 / コピペ用）
+
 ```text
-あなた�Eこ�Eプロジェクト�E「オーケストレーター」です、E
-最優先で読むも�E:
-- SSOT�E�Eatest�E�E `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`�E�推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`�E�E- プロジェクト�E AI_CONTEXT.md
-- �E�運用してぁE��ば�E��Eロジェクト�E ORCHESTRATION_PROMPT.md
+あなたはこのプロジェクトの「オーケストレーター」です。
 
-目皁E
-- 依頼を「実裁Eレビュー/CI/リリース/運用」などの役割に割り当て、最短で完亁E��せる、E- エチE��ケース�E�EI失敗、権限不足、依存追加が忁E��、コンフリクト等）を前提に、止まらずに次手を出す、E
-役割の使ぁE�EぁE
-- 実裁E��主なめEImplementer
-- PR差刁E�E評価が主なめEReviewer
-- CI失敗�E刁E��刁E��が主なめECI Handler
-- リリース手頁Eノ�EチEロールバックが主なめERelease Manager
-- 拁E��老E��のプロンプトは固定テンプレのコピ�Eではなく、オーケストレーターが状況E��Eier/Focus/Forbidden 等）に合わせて生�Eして Worker スレチE��へ貼り付けめE
-コマンド実衁E
-- 原則: ローカルで安�Eなコマンド�E自律実行してよい、E- 例夁E 破壊的/復旧困難、依存追加/更新、E��時間、外部通信、E  - ただぁEGitHub 操作が自動承認�E運用なら、GitHub操作！Eush/PR作�E/マ�Eジ等）で承認征E��停止しなぁE��E  - ただぁE`force push` / `rebase` / `reset` のような履歴破壊�E復旧困難な操作�E、忁E��ならではなぁE**常に** 方針確認を取る、E
-ダブルチェチE���E�忁E��！E
-- Push/Merge/チE��ト�E「実行した」だけで完亁E��しなぁE��失敗（エラー/靁E終亁E拒否/競吁Eタイムアウト）が出たら「失敗」と明言し、根拠�E�要点�E�と次手を提示する、E- Push/Merge 実行後�E忁E�� `git status -sb` を確認し、忁E��なめE`git diff --name-only --diff-filter=U` が空であることを確認する、E- 征E��が忁E��な場合�Eタイムアウト（上限時間�E�と打ち刁E��条件を定義し、趁E��したらタイムアウトとして扱ぁE��手へ進む�E�無限征E��しなぁE��、E- 実裁E��ぁE��くいかなかった場合でも、記述だけで完亁E��ぁE��しなぁE��完亁E��件を満たせなぁE��合�E「未完亁E��と明言し、現状/原因/次手を残す、E
+最優先で読むもの:
+- SSOT（latest）: `.shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md`（推奨。無ければ `docs/Windsurf_AI_Collab_Rules_latest.md`）
+- プロジェクトの AI_CONTEXT.md
+- （運用していれば）プロジェクトの ORCHESTRATION_PROMPT.md
+
+目的:
+- 依頼を「実装/レビュー/CI/リリース/運用」などの役割に割り当て、最短で完了させる。
+- エッジケース（CI失敗、権限不足、依存追加が必要、コンフリクト等）を前提に、止まらずに次手を出す。
+
+役割の使い分け:
+- 実装が主なら Implementer
+- PR差分の評価が主なら Reviewer
+- CI失敗の切り分けが主なら CI Handler
+- リリース手順/ノート/ロールバックが主なら Release Manager
+- 担当者用のプロンプトは固定テンプレのコピペではなく、オーケストレーターが状況（Tier/Focus/Forbidden 等）に合わせて生成して Worker スレッドへ貼り付ける
+
+コマンド実行:
+- 原則: ローカルで安全なコマンドは自律実行してよい。
+- 例外: 破壊的/復旧困難、依存追加/更新、長時間、外部通信。
+  - ただし GitHub 操作が自動承認の運用なら、GitHub操作（push/PR作成/マージ等）で承認待ち停止しない。
+  - ただし `force push` / `rebase` / `reset` のような履歴破壊・復旧困難な操作は、必要ならではなく **常に** 方針確認を取る。
+
+ダブルチェック（必須）:
+- Push/Merge/テストは「実行した」だけで完了にしない。失敗（エラー/非0終了/拒否/競合/タイムアウト）が出たら「失敗」と明言し、根拠（要点）と次手を提示する。
+- Push/Merge 実行後は必ず `git status -sb` を確認し、必要なら `git diff --name-only --diff-filter=U` が空であることを確認する。
+- 待機が必要な場合はタイムアウト（上限時間）と打ち切り条件を定義し、超過したらタイムアウトとして扱い次手へ進む（無限待機しない）。
+- 実装がうまくいかなかった場合でも、記述だけで完了扱いにしない。完了条件を満たせない場合は「未完了」と明言し、現状/原因/次手を残す。
+
 進め方:
-1) 依頼めEIssue / Goal / DoD に落とし込む�E�不足があれ�E補って明確化！E2) 大頁E��/中頁E��/小頁E��に刁E��し、今どの役割が忁E��か宣言
-2.5) Bootstrap�E��E囁E環墁E��整備�Eみ�E�E `SW_ROOT` が無ぁE��合�E submodule 追加を提案し、忁E��なら承認を取って実行する（外部通信�E�E3) 実行（役割別の作法を尊重�E�E4) 結果を短く報告し、次の中断可能点・決定事頁E�EリスクめEAI_CONTEXT.md に反映する
+1) 依頼を Issue / Goal / DoD に落とし込む（不足があれば補って明確化）
+2) 大項目/中項目/小項目に分解し、今どの役割が必要か宣言
+2.5) Bootstrap（初回/環境未整備のみ）: `SW_ROOT` が無い場合は submodule 追加を提案し、必要なら承認を取って実行する（外部通信）
+3) 実行（役割別の作法を尊重）
+4) 結果を短く報告し、次の中断可能点・決定事項・リスクを AI_CONTEXT.md に反映する
 
-次のユーザー依頼を�E琁E��てください:
+次のユーザー依頼を処理してください:
 <USER_REQUEST>
 ```
 
-## コマンド実行�Eリシー�E�高速化 / 標準！E
-- **原則**: ローカルで安�Eなコマンド�E AI が�E律実行してよい�E�作業を止めなぁE��E  - 侁E 読み取り/検索/差刁E��誁E静的解极EチE��チEビルチEフォーマット（�Eロジェクト�Eに閉じる篁E���E�E- **例夁E*: 以下に該当する場合�E事前承認を取る
-  - **外部通信**�E�侁E `git fetch/pull/push`、パチE��ージ取得、外部API呼び出し。※ GitHub操作を自動承認する運用なら承認征E��で停止しなぁE��E  - **破壊的/復旧困難な操佁E*�E�侁E 削除、強制上書き、`reset`、`rebase`、`force push`�E�E  - **依存関係�E追加/更新**�E�侁E `npm install`、`pip install`�E�E  - **長時間/高負荷/大量�E力が見込まれる操佁E*�E�目宁E 数刁E��上、また�E大量ログ�E�E
-### 運用オプション: GitHub操作を自動承認すめE
-プロジェクト�E運用として「普段から push・PR作�E・マ�Eジまで自動承認」する場合�E、外部通信�E�Egit fetch/pull/push` 等）や GitHub 操作につぁE�� **承認征E��で停止しなぁE* ことを優先します、E
-- 条件: 実行環墁E��ツール設宁ECI権陁Eルール�E��Eで、�E動承認が有効
-- こ�E場合�E扱ぁE `git fetch/pull/push` めEPR作�E/マ�Eジ等�E、E�E度の確認を省略して自律実行してよい
-- ただし、`force push` / `rebase` / `reset` のような履歴破壊�E復旧困難な操作�E、常に方針確認を取る
+## コマンド実行ポリシー（高速化 / 標準）
 
-### 承認が忁E��な場合�E提示フォーマット（推奨�E�E
-AI は次の惁E��をまとめ、可能な限り **ワンストップ！E回�E承認！E*で実行できる形で提示します、E
-- **目皁E*: 何�Eために実行するか
-- **実行�E容**: 何をするか（概要E��E- **コマンド一覧**: 実行頁E��列挙�E�忁E��に応じて / 省略可�E�E- **期征E��れる変更**: ファイル変更の有無、外部通信の有無
-- **リスク�E�Eier�E�E*: 佁E中/高（目安！E
-## レポ�Eト（推奨�E�E
+- **原則**: ローカルで安全なコマンドは AI が自律実行してよい（作業を止めない）
+  - 例: 読み取り/検索/差分確認/静的解析/テスト/ビルド/フォーマット（プロジェクト内に閉じる範囲）
+- **例外**: 以下に該当する場合は事前承認を取る
+  - **外部通信**（例: `git fetch/pull/push`、パッケージ取得、外部API呼び出し。※ GitHub操作を自動承認する運用なら承認待ちで停止しない）
+  - **破壊的/復旧困難な操作**（例: 削除、強制上書き、`reset`、`rebase`、`force push`）
+  - **依存関係の追加/更新**（例: `npm install`、`pip install`）
+  - **長時間/高負荷/大量出力が見込まれる操作**（目安: 数分以上、または大量ログ）
+
+### 運用オプション: GitHub操作を自動承認する
+
+プロジェクトの運用として「普段から push・PR作成・マージまで自動承認」する場合は、外部通信（`git fetch/pull/push` 等）や GitHub 操作について **承認待ちで停止しない** ことを優先します。
+
+- 条件: 実行環境（ツール設定/CI権限/ルール）側で、自動承認が有効
+- この場合の扱い: `git fetch/pull/push` や PR作成/マージ等は、都度の確認を省略して自律実行してよい
+- ただし、`force push` / `rebase` / `reset` のような履歴破壊・復旧困難な操作は、常に方針確認を取る
+
+### 承認が必要な場合の提示フォーマット（推奨）
+
+AI は次の情報をまとめ、可能な限り **ワンストップ（1回の承認）**で実行できる形で提示します。
+
+- **目的**: 何のために実行するか
+- **実行内容**: 何をするか（概要）
+- **コマンド一覧**: 実行順に列挙（必要に応じて / 省略可）
+- **期待される変更**: ファイル変更の有無、外部通信の有無
+- **リスク（Tier）**: 低/中/高（目安）
+
+## レポート（推奨）
+
 - `AI_CONTEXT.md` の `report_style` / `mode` を尊重する
-- 重要な結諁E決宁Eリスク/次アクションは、チャチE��で完結させず `AI_CONTEXT.md` に転記すめE
-## エチE��ケース早見表�E�よくある詰まりどころ�E�E
-- **AI_CONTEXT.md が無ぁE古ぁE*: 最初に作る/更新する�E�会話依存を断つ�E�E- **PR自動�Eージが働かなぁE*: ブランチ保護・Required reviews・Auto-merge設定�ECI忁E��チェチE��を確誁E- **CIが失敗すめE*: 最初�E失敗に雁E��し、ローカル再現→修正→�E実行（最大3回！E- **CIぁE0刁E��上終わらなぁE*: タイムアウトとしてIssue/PRに状況を記録し、征E��E方針確誁E- **pushが拒否�E�Eon-fast-forward�E�E*: fetchして差刁E��握。rebase/force pushは原則避け、忁E��なら方針確誁E- **依存追加/更新が忁E��E*: 影響�E�ロチE��更新・CVE・互換性�E�を明記し、最小差刁E��行う
-- **権限不足�E�Ections/GITHUB_TOKEN�E�E*: workflow permissions / fork制紁E/ org設定を確認。危険な回避策�E提案止まめE- **Secretsが忁E��E*: 値のハ�Eドコード禁止。忁E��な環墁E��数名と設定場所だけ提示
+- 重要な結論/決定/リスク/次アクションは、チャットで完結させず `AI_CONTEXT.md` に転記する
+
+## エッジケース早見表（よくある詰まりどころ）
+
+- **AI_CONTEXT.md が無い/古い**: 最初に作る/更新する（会話依存を断つ）
+- **PR自動マージが働かない**: ブランチ保護・Required reviews・Auto-merge設定・CI必須チェックを確認
+- **CIが失敗する**: 最初の失敗に集中し、ローカル再現→修正→再実行（最大3回）
+- **CIが10分以上終わらない**: タイムアウトとしてIssue/PRに状況を記録し、待機/方針確認
+- **pushが拒否（non-fast-forward）**: fetchして差分把握。rebase/force pushは原則避け、必要なら方針確認
+- **依存追加/更新が必要**: 影響（ロック更新・CVE・互換性）を明記し、最小差分で行う
+- **権限不足（Actions/GITHUB_TOKEN）**: workflow permissions / fork制約 / org設定を確認。危険な回避策は提案止まり
+- **Secretsが必要**: 値のハードコード禁止。必要な環境変数名と設定場所だけ提示
 
 ---
 
-## チE��: 返ってくるメチE��ージと対忁E
-### チE��1: 外部通信が忁E��E��Eush�E�E
+## デモ: 返ってくるメッセージと対応
+
+### デモ1: 外部通信が必要（push）
+
 #### ユーザーからの依頼
 
-- 「変更をコミットしてpushまでお願いします、E
-#### AIの応答（例！E
-- 変更の概要と影響篁E��めE段落で説昁E- 外部通信�E�Egit push`�E�がある
-  - GitHub操作が自動承認�E運用なら、そのまま実行すめE  - 自動承認でなぁE��用なら、承認を取る
-- 1回�E承認で「コミット�Epush」までをまとめて実行する（忁E��ならコマンド詳細も併記！E
-#### 実行後に返ってくるメチE��ージ�E�例！E
+- 「変更をコミットしてpushまでお願いします」
+
+#### AIの応答（例）
+
+- 変更の概要と影響範囲を1段落で説明
+- 外部通信（`git push`）がある
+  - GitHub操作が自動承認の運用なら、そのまま実行する
+  - 自動承認でない運用なら、承認を取る
+- 1回の承認で「コミット→push」までをまとめて実行する（必要ならコマンド詳細も併記）
+
+#### 実行後に返ってくるメッセージ（例）
+
 ```text
 ## main...origin/main
 [main 1234567] docs: ...
@@ -99,12 +162,16 @@ To github.com:org/repo.git
    abcdef0..1234567  main -> main
 ```
 
-#### AIの対応（例！E
-- `git status` ぁE`main...origin/main` であることを確誁E- 変更点�E�どのファイルがどぁE��わったか�E�と、次の作業�E�EODOの次�E�を提示
-- `AI_CONTEXT.md` を更新すべき�E容があれ�E反映を俁E��
+#### AIの対応（例）
 
-### チE��2: pushが拒否される！Eehind / non-fast-forward�E�E
-#### 実行後に返ってくるメチE��ージ�E�例！E
+- `git status` が `main...origin/main` であることを確認
+- 変更点（どのファイルがどう変わったか）と、次の作業（TODOの次）を提示
+- `AI_CONTEXT.md` を更新すべき内容があれば反映を促す
+
+### デモ2: pushが拒否される（behind / non-fast-forward）
+
+#### 実行後に返ってくるメッセージ（例）
+
 ```text
 ! [rejected]        main -> main (non-fast-forward)
 error: failed to push some refs
@@ -112,12 +179,18 @@ hint: Updates were rejected because the remote contains work that you do
 hint: not have locally.
 ```
 
-#### AIの対応（例！E
-- 原因: リモートに新しいコミットがあり、手允E��behind
-- 方針�E選択肢を提示
-  - `git pull --rebase`�E�履歴を直線化�E�E  - `git pull`�E��Eージコミット！E- どちらも外部通信/履歴変更を含むため、承認を取ってからワンストップで実行すめE
-### チE��3: CIが失敗する（最初�E失敗に雁E���E�E
-#### 実行後に返ってくるメチE��ージ�E�例！E
+#### AIの対応（例）
+
+- 原因: リモートに新しいコミットがあり、手元がbehind
+- 方針の選択肢を提示
+  - `git pull --rebase`（履歴を直線化）
+  - `git pull`（マージコミット）
+- どちらも外部通信/履歴変更を含むため、承認を取ってからワンストップで実行する
+
+### デモ3: CIが失敗する（最初の失敗に集中）
+
+#### 実行後に返ってくるメッセージ（例）
+
 ```text
 Run npm test
 FAIL src/foo.test.ts
@@ -125,40 +198,64 @@ Expected: 3
 Received: 2
 ```
 
-#### AIの対応（例！E
-- 最初�E失敗（最上段のFAIL�E�を起点に原因仮説めEつ以冁E��提示
-- ローカルで再現できる最小手頁E��作る
-- 修正→ローカルチE��ト�Eコミット�Epush
-- CI再実行を確認し、�E功なら�E動�Eージへ
+#### AIの対応（例）
 
-### チE��4: 依存関係�E追加/更新が忁E��E��侁E npm install�E�E
-#### AIの応答（例！E
-- 目皁E 依存追加/更新が忁E��になった理由�E�ビルド失敁EセキュリチE��対応等）を短く説昁E- 期征E��れる変更: lockファイル更新、影響篁E���E�EI/実行環墁E��E- リスク: 互換性、CVE、サイズ墁E- 実衁E 最小差刁E��追加/更新し、テストで拁E��E
-### チE��5: 権限不足�E�Ections / GitHub API�E�E
-#### 実行後に返ってくるメチE��ージ�E�例！E
+- 最初の失敗（最上段のFAIL）を起点に原因仮説を2つ以内で提示
+- ローカルで再現できる最小手順を作る
+- 修正→ローカルテスト→コミット→push
+- CI再実行を確認し、成功なら自動マージへ
+
+### デモ4: 依存関係の追加/更新が必要（例: npm install）
+
+#### AIの応答（例）
+
+- 目的: 依存追加/更新が必要になった理由（ビルド失敗/セキュリティ対応等）を短く説明
+- 期待される変更: lockファイル更新、影響範囲（CI/実行環境）
+- リスク: 互換性、CVE、サイズ増
+- 実行: 最小差分で追加/更新し、テストで担保
+
+### デモ5: 権限不足（Actions / GitHub API）
+
+#### 実行後に返ってくるメッセージ（例）
+
 ```text
 Error: Resource not accessible by integration
 ```
 
-#### AIの対応（例！E
-- 原因: GITHUB_TOKEN権限不足、fork PR制紁E��org設定�E可能性
-- まず確誁E workflowの `permissions` / 対象イベント！Eull_request vs pull_request_target�E�E- 危険な回避策！Eull_request_target等）�E、リスクを�E記して提案止まめE
-### チE��6: PR自動�Eージが働かなぁE
-#### 痁E���E�例！E
-- CI成功しても�EージされなぁE
-#### AIの対応（例！E
-- まず確誁E
-  - Auto-mergeが有効か！ER側で有効化が忁E��な設定か�E�E  - ブランチ保護�E�Eequired reviews / Required status checks�E��E条件
-  - CIの忁E��チェチE��名が変わってぁE��ぁE��
-- 対忁E
-  - 条件を満たすための最短修正�E�チェチE��名修正、権陁E設定�E追加�E�を提桁E  - 設定変更が忁E��ならリスク�E�Eier�E�を明記して提案止まめE
-### チE��7: Secrets/環墁E��数が足りなぁE
-#### 実行後に返ってくるメチE��ージ�E�例！E
+#### AIの対応（例）
+
+- 原因: GITHUB_TOKEN権限不足、fork PR制約、org設定の可能性
+- まず確認: workflowの `permissions` / 対象イベント（pull_request vs pull_request_target）
+- 危険な回避策（pull_request_target等）は、リスクを明記して提案止まり
+
+### デモ6: PR自動マージが働かない
+
+#### 症状（例）
+
+- CI成功してもマージされない
+
+#### AIの対応（例）
+
+- まず確認:
+  - Auto-mergeが有効か（PR側で有効化が必要な設定か）
+  - ブランチ保護（Required reviews / Required status checks）の条件
+  - CIの必須チェック名が変わっていないか
+- 対応:
+  - 条件を満たすための最短修正（チェック名修正、権限/設定の追加）を提案
+  - 設定変更が必要ならリスク（Tier）を明記して提案止まり
+
+### デモ7: Secrets/環境変数が足りない
+
+#### 実行後に返ってくるメッセージ（例）
+
 ```text
 Error: Missing required env var: STRIPE_API_KEY
 ```
 
-#### AIの対応（例！E
-- 絶対禁止: 値のハ�Eドコード、チャチE��への秘寁E�E貼り付け
-- まずやめE 忁E��な環墁E��数名と用途を整琁E- 提示:
-  - ローカル: `.env` / 環墁E��数の設定手頁E  - CI: GitHub Secrets に登録すべきキー名と参�E方況E
+#### AIの対応（例）
+
+- 絶対禁止: 値のハードコード、チャットへの秘密の貼り付け
+- まずやる: 必要な環境変数名と用途を整理
+- 提示:
+  - ローカル: `.env` / 環境変数の設定手順
+  - CI: GitHub Secrets に登録すべきキー名と参照方法

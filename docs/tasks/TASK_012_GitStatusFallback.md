@@ -1,4 +1,5 @@
-# Task: Git リポジトリ状態�E確認！Eit status が失敗する場合�E代替手段�E�E
+# Task: Git リポジトリ状態の確認（git status が失敗する場合の代替手段）
+
 Status: DONE
 Tier: 2
 Branch: main
@@ -7,28 +8,46 @@ Created: 2025-01-03T00:00:00+09:00
 Report: docs/inbox/REPORT_TASK_012_20260105_0033.md 
 
 ## Objective
-- git status が失敗する場合�E代替手段�E�Egit チE��レクトリの存在確認など�E�を追加
-- Windows環墁E��のファイル名制紁E��コロン斁E��）への対応を追加
-- GitリポジトリではなぁE��墁E��も動作可能にする
+- git status が失敗する場合の代替手段（.git ディレクトリの存在確認など）を追加
+- Windows環境でのファイル名制約（コロン文字）への対応を追加
+- Gitリポジトリではない環境でも動作可能にする
 
 ## Context
-- `git status` が失敗する場合！EitリポジトリではなぁE��権限不足など�E��E代替手段がなぁE- Windows環墁E��のファイル名制紁E��コロン斁E��）への対応が忁E��E- 一部のスクリプト�E�Esession-end-check.js`, `report-validator.js`�E�で `detectGitRoot` 関数を使用してぁE��が、失敗時の処琁E��不十刁E- `scripts/report-validator.js` の `detectGitRoot` 関数は `git rev-parse --show-toplevel` を使用
-- `scripts/session-end-check.js` の `detectGitRoot` 関数も同槁E- 失敗時は `null` を返すが、`.git` チE��レクトリの存在確認などの代替手段がなぁE- Windows環墁E��のファイル名制紁E��コロン斁E��）への対応�E未実裁E
+- `git status` が失敗する場合（Gitリポジトリではない、権限不足など）の代替手段がない
+- Windows環境でのファイル名制約（コロン文字）への対応が必要
+- 一部のスクリプト（`session-end-check.js`, `report-validator.js`）で `detectGitRoot` 関数を使用しているが、失敗時の処理が不十分
+- `scripts/report-validator.js` の `detectGitRoot` 関数は `git rev-parse --show-toplevel` を使用
+- `scripts/session-end-check.js` の `detectGitRoot` 関数も同様
+- 失敗時は `null` を返すが、`.git` ディレクトリの存在確認などの代替手段がない
+- Windows環境でのファイル名制約（コロン文字）への対応は未実装
+
 ## Focus Area
-- `scripts/report-validator.js` の `detectGitRoot` 関数�E�Egit チE��レクトリの存在確認を追加�E�E- `scripts/session-end-check.js` の `detectGitRoot` 関数�E�同様�E改喁E��E- Windows環墁E��のファイル名制紁E��コロン斁E��）への対忁E
+- `scripts/report-validator.js` の `detectGitRoot` 関数（.git ディレクトリの存在確認を追加）
+- `scripts/session-end-check.js` の `detectGitRoot` 関数（同様の改善）
+- Windows環境でのファイル名制約（コロン文字）への対応
+
 ## Forbidden Area
-- 既存�EGitコマンド実行ロジチE��の破壊的変更�E�既存�E機�Eは維持E��E- ファイルシスチE��操作�E破壊的変更
+- 既存のGitコマンド実行ロジックの破壊的変更（既存の機能は維持）
+- ファイルシステム操作の破壊的変更
 
 ## Constraints
-- チE��チE 主要パスのみ�E�EitリポジトリではなぁE��墁E��の検証�E�E- フォールバック: 新規追加禁止
-- 既存�E `detectGitRoot` 関数のパターンを参老E��する
-- 後方互換性を保つため、既存�E機�Eとの整合性を確認すめE
+- テスト: 主要パスのみ（Gitリポジトリではない環境での検証）
+- フォールバック: 新規追加禁止
+- 既存の `detectGitRoot` 関数のパターンを参考にする
+- 後方互換性を保つため、既存の機能との整合性を確認する
+
 ## DoD
-- [x] `detectGitRoot` 関数に `.git` チE��レクトリの存在確認を追加
-- [x] `git rev-parse` が失敗した場合、親チE��レクトリを遡って `.git` チE��レクトリを探ぁE- [x] Windows環墁E��のファイル名制紁E��コロン斁E��）への対応を追加
-- [x] 実裁E��、GitリポジトリではなぁE��墁E��動作確誁E- [x] Windows環墁E��の動作確誁E- [x] `sw-doctor.js` でシスチE��健全性を確誁E- [x] docs/inbox/ にレポ�Eト！EEPORT_TASK_012_*.md�E�が作�EされてぁE��
-- [x] 本チケチE��の Report 欁E��レポ�Eトパスが追記されてぁE��
+- [x] `detectGitRoot` 関数に `.git` ディレクトリの存在確認を追加
+- [x] `git rev-parse` が失敗した場合、親ディレクトリを遡って `.git` ディレクトリを探す
+- [x] Windows環境でのファイル名制約（コロン文字）への対応を追加
+- [x] 実装後、Gitリポジトリではない環境で動作確認
+- [x] Windows環境での動作確認
+- [x] `sw-doctor.js` でシステム健全性を確認
+- [x] docs/inbox/ にレポート（REPORT_TASK_012_*.md）が作成されている
+- [x] 本チケットの Report 欄にレポートパスが追記されている
 
 ## Notes
-- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想宁E- BLOCKED の場合�E、事宁E根拠/次手（候補）を本斁E��追記し、Report に docs/inbox/REPORT_...md を忁E��設宁E- 実裁E�E既存�E `detectGitRoot` 関数のパターンを参老E��する
-- Windows環墁E��のファイル名制紁E��コロン斁E��）への対応�E、ファイル名�Eサニタイズなどを検討すめE
+- Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想定
+- BLOCKED の場合は、事実/根拠/次手（候補）を本文に追記し、Report に docs/inbox/REPORT_...md を必ず設定
+- 実装は既存の `detectGitRoot` 関数のパターンを参考にする
+- Windows環境でのファイル名制約（コロン文字）への対応は、ファイル名のサニタイズなどを検討する
