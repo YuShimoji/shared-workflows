@@ -25,15 +25,22 @@
 
 ### Phase 2: 実装・検証
 - Focus Area 外の変更は禁止。
+- **テスト必須**: 実装とテストはセットで納品する。テストなしの実装は DoD 未達。
+  - Unity: EditModeテスト + PlayModeテスト + ビルド確認
+  - Web: ユニットテスト + E2E（該当時） + ビルド確認
+  - テスト不要な場合は理由をレポートに明記
+- **Impact Radar**: 実装前に「この変更が影響する5領域」を確認（コード/テスト/パフォーマンス/UX/連携）。
+- **Scope Creep Check**: ツール呼び出し10回ごとに「Focus Areaを超えていないか」を自己チェック。
 - **停止条件**: Forbidden 必要 / 仮定3件以上 / 依存追加 / 破壊的操作 / SSOT 不足 / タイムアウト
 - **停止時**: チケット更新（DONE にしない）→ レポート作成 → commit → チャット報告
 
 ### Phase 3: 納品
 1. DoD チェック（主要パスのみ）。
-2. `docs/inbox/REPORT_<ISO8601>.md` を作成（Changes / Decisions / Verification / Risk / Remaining）。
-3. チケットを DONE に更新（Report パス記載）。
-4. commit / push（GitHubAutoApprove に従う）。
-5. `report-validator.js` で検証し結果をレポートに追記。
+2. **テスト実行結果の記録**（必須）: テスト名 / 結果(PASS/FAIL) / ビルド状況 をレポートに含める。
+3. `docs/inbox/REPORT_<ISO8601>.md` を作成（Changes / Decisions / **Test Results** / Verification / Risk / Remaining）。
+4. チケットを DONE に更新（Report パス記載）。**テスト未通過の場合は DONE にしない。**
+5. commit / push（GitHubAutoApprove に従う）。
+6. `report-validator.js` で検証し結果をレポートに追記。
 
 ### Phase 4: チャット報告（固定3セクション）
 

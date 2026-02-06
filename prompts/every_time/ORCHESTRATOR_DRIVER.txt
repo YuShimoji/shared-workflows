@@ -24,9 +24,9 @@
 
 ### Step B: モジュールを読む
 
-- `prompts/orchestrator/modules/00_core.md`（必須、毎回）
+- `prompts/orchestrator/modules/00_core.md`（必須、毎回――Testing Gate / Broad Thinking Protocol / Milestone Rhythm を含む）
 - 現在フェーズのモジュール（1つだけ）:
-  P0→`P0_ssot.md` / P1→`P1_sync.md` / P1.5→`P1.5_audit.md` / P1.75→`P1.75_gate.md` / P2→`P2_status.md` / P3→`P3_strategy.md` / P4→`P4_ticket.md` / P5→`P5_worker.md` / P6→`P6_report.md`
+  P0→`P0_ssot.md` / P1→`P1_sync.md` / P1.5→`P1.5_audit.md` / P1.75→`P1.75_gate.md` / P2→`P2_status.md` / **P2.5→`P2.5_diverge.md`** / P3→`P3_strategy.md` / P4→`P4_ticket.md` / P5→`P5_worker.md` / P6→`P6_report.md`
   （パス: `prompts/orchestrator/modules/`）
 
 ### Step C: 実行 → MISSION_LOG 更新 → チャット出力
