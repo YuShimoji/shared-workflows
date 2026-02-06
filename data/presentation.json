@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "policy": {
     "emoji": {
       "chat": {
@@ -113,7 +113,8 @@
         "現状": "タスク進捗（mermaid pie or gantt）",
         "ガイド": "作業フロー図（mermaid flowchart）"
       },
-      "progress_bar": true
+      "progress_bar": true,
+      "template": "## 現状\n■■■■■■□□□□ 60% — <進捗要約>\n```mermaid\npie title タスク進捗\n  \"完了\" : 6\n  \"残り\" : 4\n```\n## 次のアクション\n1. <選択肢1> ★★★\n2. <選択肢2> ★★☆\n3. <選択肢3> ★☆☆\n## ガイド\n```mermaid\nflowchart LR\n  A[現在] --> B[次手]\n```\n## メタプロンプト再投入条件\n- <条件>\n## 改善提案（New Feature Proposal）\n- <提案>"
     },
     "worker": {
       "sections": [
@@ -125,7 +126,13 @@
         "変更マップ": "変更ファイル間の依存関係（mermaid graph TD）"
       },
       "progress_bar": true,
-      "note": "Worker のチャット報告を1行から3セクションに拡張。詳細はレポートファイルに記載"
+      "template": "## 結果\n■■■■■■■■■■ 100% Done: <TICKET_PATH>. Report: <REPORT_PATH>.\n## 変更マップ\n```mermaid\ngraph TD\n  A[file1] -->|uses| B[file2]\n```\n## 次の選択肢\n1. <選択肢1> ★★★\n2. <選択肢2> ★★☆"
     }
+  },
+  "fallback_templates": {
+    "note": "Mermaid非対応IDE（Visual Studio等）向け。Markdownテーブルで代替",
+    "change_map": "| 変更ファイル | 依存先 | 関係 |\n|------------|--------|------|\n| file1 | file2 | uses |",
+    "task_progress": "| タスク | 状態 | 進捗 |\n|--------|------|------|\n| TASK_001 | DONE | ■■■■■ 100% |",
+    "workflow": "| ステップ | 内容 | 次手 |\n|---------|------|------|\n| 1 | 現在 | 次手 |"
   }
 }
