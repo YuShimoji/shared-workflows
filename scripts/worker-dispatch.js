@@ -106,11 +106,11 @@ const templateRelPath = flags.unity
   ? 'docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE_UNITY.md'
   : 'docs/windsurf_workflow/WORKER_PROMPT_TEMPLATE.md';
 
-const templatePath = resolveFromProject(templateRelPath);
+// // const templatePath = resolveFromProject(templateRelPath);
 
 // --- Derive report target ---
 const ticketBasename = path.basename(flags.ticket, '.md');
-const taskId = ticketBasename.replace(/^TASK_/, '');
+// // const taskId = ticketBasename.replace(/^TASK_/, '');
 const isoDate = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 const reportTarget = `docs/inbox/REPORT_${ticketBasename}_${isoDate}.md`;
 

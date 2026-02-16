@@ -138,7 +138,7 @@ function ensureOrchestratorSections(reportContent) {
 
     if (!hasCompletionJudgement || !hasUserReplyTemplate) {
       errors.push(
-        "次のアクション に『ユーザー返信テンプレ（完了判定 + 選択肢1-3）』がありません。EVERY_SESSION.md の終了時テンプレに合わせて追記してください。"
+        '次のアクション に『ユーザー返信テンプレ（完了判定 + 選択肢1-3）』がありません。EVERY_SESSION.md の終了時テンプレに合わせて追記してください。'
       );
     }
   }

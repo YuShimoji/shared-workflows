@@ -60,7 +60,7 @@ function monitorWorkers(aiContextPath, checkInterval = 60000) { // デフォル�
       const parts = worker.split(',');
       const [nameStatus, priority, timeoutStr] = parts.map(p => p.trim());
       const [name, status] = nameStatus.split(':').map(s => s.trim());
-      const prio = priority ? priority.split(':')[1].trim() : 'critical';
+      const _prio = priority ? priority.split(':')[1].trim() : 'critical';
       const timeout = timeoutStr ? parseInt(timeoutStr.split(':')[1].trim()) || 30 : 30;
       if (status === 'pending') {
         // 仮定: タイムアウトチェック（実際は開始時間が必要）
