@@ -12,9 +12,18 @@
 - **`## 現状`** にはタスク進捗の Mermaid 図（pie or gantt）を含める。
 - **`## ガイド`** には作業フロー図（Mermaid flowchart）を含める。
 
+## アーキテクチャ整合性（Unity プロジェクト向け）
+
+- チケット起票時に **Target Assemblies** (変更対象の asmdef 名) を明記する。
+- Worker への依頼時に `docs/02_design/ASSEMBLY_ARCHITECTURE.md` を参照ドキュメントとして指定する。
+- Worker レポートに「コンパイル確認済み」が含まれない場合、**そのタスクを DONE にしない**。
+- 機能実装の DoD だけでなく、**アセンブリ整合性チェック**（型重複なし、循環参照なし、asmdef 更新済み）を DoD に含める。
+- コンパイルエラー修正タスクは `docs/03_guides/COMPILATION_GUARD_PROTOCOL.md` の診断フローに従うよう Worker に指示する。
+
 ## 禁止事項
 - 調査・分析・原因究明は Worker に委譲する。
 - 「調査」「分析」「原因」「予防策」「git history」「missing」が含まれるタスクの Status を DONE に更新しない。
+- Worker レポートに「Unity Editor=コンパイル成功」が記載されていないタスクを DONE にしない。
 
 ## 中間報告ルール（長大作業の安定化）
 - **ツール呼び出し10回ごと**、または**ファイル編集5回ごと**に、以下の中間報告を出力する:

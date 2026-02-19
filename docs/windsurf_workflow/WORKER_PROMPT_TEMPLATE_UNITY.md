@@ -16,7 +16,9 @@
   - 参照ファイル: `docs/Windsurf_AI_Collab_Rules_latest.md`, `docs/HANDOVER.md`, チケット
   - 停止条件 / 停止時アウトプット / 完了時チャット1行
   - **MISSION_LOG.md の最新状態**: 現在のフェーズ、進捗、コンテキスト情報を含める。
-  - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runnerでのテスト実行手順
+  - **Target Assemblies**: チケットに記載された対象アセンブリ名（`docs/02_design/ASSEMBLY_ARCHITECTURE.md` 参照）
+  - **必読ドキュメント**: `docs/02_design/ASSEMBLY_ARCHITECTURE.md`, `docs/03_guides/UNITY_CODE_STANDARDS.md`, `docs/03_guides/COMPILATION_GUARD_PROTOCOL.md`
+  - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runnerでのテスト実行手順、アセンブリ整合性チェック
 - 可変にしてよい:
   - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合は停止条件へ）
   - プロジェクト固有の罠や検証観点
@@ -43,6 +45,9 @@ Phase 0: 参照と整備
 - SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md（無ければ docs/ 配下を参照し、必ず `ensure-ssot.js` で取得を試す）
 - 進捗: docs/HANDOVER.md
 - チケット: <TICKET_PATH>
+- **アセンブリ設計**: docs/02_design/ASSEMBLY_ARCHITECTURE.md（asmdef 依存グラフの SSOT）
+- **コード規約**: docs/03_guides/UNITY_CODE_STANDARDS.md
+- **エラー診断**: docs/03_guides/COMPILATION_GUARD_PROTOCOL.md
 - SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
 </ssot_reference>
 
@@ -51,6 +56,7 @@ Phase 1: 前提の固定
 - Tier: <TIER>
 - Branch: <BRANCH>
 - Report Target: <REPORT_PATH_TARGET>
+- **Target Assemblies**: <TARGET_ASSEMBLIES>（チケット記載のアセンブリ名。ASSEMBLY_ARCHITECTURE.md で依存関係を確認済みであること）
 - GitHubAutoApprove: docs/HANDOVER.md の記述を参照（未記載なら push 禁止）
 - ブランチが異なる場合:
   - `git status -sb` で未コミットが無いことを確認
@@ -63,8 +69,10 @@ Phase 2: 境界
 - Focus Area: <FOCUS_AREA>（この範囲のみ変更可能）
 - Forbidden Area: <FORBIDDEN_AREA>（触れる必要が出たら停止条件）
   - **Unity固有**: `ProjectSettings/`, `Packages/` は通常 Forbidden Area に含まれる
+- **Target Assemblies**: <TARGET_ASSEMBLIES>（これ以外のアセンブリへの変更が必要になったら停止条件）
 - DoD: <DOD>（完了時にチェックリストを埋め、根拠を残す）
   - **Unity固有**: Unity Editor手動検証、Unity Test Runnerでのテスト実行が必要な場合、具体的な検証結果を記録する
+  - **アセンブリ整合性**: using 追加時の asmdef 参照確認、同名型の重複チェック、DAG 方向の遵守
 </boundaries>
 </context>
 
@@ -75,7 +83,9 @@ Phase 2: 境界
 2. SSOT: .shared-workflows/docs/Windsurf_AI_Collab_Rules_latest.md（無ければ docs/ 配下を参照し、必ず `ensure-ssot.js` で取得を試す）
 3. 進捗: docs/HANDOVER.md
 4. チケット: <TICKET_PATH>（**存在確認: `Test-Path <TICKET_PATH>` または `ls <TICKET_PATH>`**）
-5. SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
+5. **必読**: `docs/02_design/ASSEMBLY_ARCHITECTURE.md` を読み、Target Assemblies の依存関係を把握する。
+6. **必読**: `docs/03_guides/UNITY_CODE_STANDARDS.md` の禁止事項を確認する。
+7. SSOT 未整備・ensure-ssot.js 不在で解決できない場合は停止条件
 </step>
 </phase>
 
@@ -84,12 +94,22 @@ Phase 2: 境界
 1. Tier: <TIER>
 2. Branch: <BRANCH>
 3. Report Target: <REPORT_PATH_TARGET>
-4. GitHubAutoApprove: docs/HANDOVER.md の記述を参照（未記載なら push 禁止）
-5. ブランチが異なる場合:
+4. Target Assemblies: <TARGET_ASSEMBLIES>
+5. GitHubAutoApprove: docs/HANDOVER.md の記述を参照（未記載なら push 禁止）
+6. ブランチが異なる場合:
    - `git status -sb` で未コミットが無いことを確認
    - `git switch <BRANCH>` で切替を試す
    - 破壊的操作が必要なら停止条件
-6. MISSION_LOG.md を更新（Phase 1 完了を記録）。
+7. MISSION_LOG.md を更新（Phase 1 完了を記録）。
+</step>
+</phase>
+
+<phase name="Phase 1.5: アセンブリ境界確認（実装前に必須）">
+<step>
+1. `docs/02_design/ASSEMBLY_ARCHITECTURE.md` を読み、Target Assemblies の依存先・依存元を把握する。
+2. Target Assemblies 以外のアセンブリへの変更が必要な場合 → BLOCKED として報告する。
+3. `docs/03_guides/UNITY_CODE_STANDARDS.md` の禁止事項を確認する。
+4. Target Assemblies の asmdef ファイルを読み、現在の references を把握する。
 </step>
 </phase>
 
@@ -115,22 +135,30 @@ Phase 2: 境界
      - この場合、**停止条件として扱う**か、**代替手段を取る**かを判断する
      - 判断に迷う場合は、停止条件として扱う
 
-2. チャットで完結させない。成果はファイル（docs/tasks / docs/inbox / docs/HANDOVER / git）に残す。
+2. **アセンブリ規約の遵守（Unity 必須）**:
+   - `using` を追加する前に、対象アセンブリの asmdef の `references` にその名前空間のアセンブリが含まれているか確認する。
+   - 新しい型を追加する前に `rg "class TypeName" Assets/ --glob "*.cs"` で同名型の重複がないか検索する。
+   - `#if` 条件コンパイルの外にオプショナルシンボル（`DEFORM_AVAILABLE` 等）を漏らさない。
+   - C# 9.0 制約を守る（引数なし struct コンストラクタ、global using 等は禁止）。
+   - 依存方向が ASSEMBLY_ARCHITECTURE.md の DAG に違反していないか常に確認する。
+   - **エラー発生時**: 場当たり修正禁止。`docs/03_guides/COMPILATION_GUARD_PROTOCOL.md` の診断フローに従う。
 
-3. コマンドは実行して結果で判断。失敗は「失敗」と明記し、根拠と次手を出す。
+3. チャットで完結させない。成果はファイル（docs/tasks / docs/inbox / docs/HANDOVER / git）に残す。
 
-4. 指示コマンドが無い場合: `Get-Command <cmd>` 等で確認 → 代替案提示 → それでも依存追加/外部通信が必要なら停止。
+4. コマンドは実行して結果で判断。失敗は「失敗」と明記し、根拠と次手を出す。
 
-5. 「念のため」のテスト/フォールバック/リファクタは禁止（DoD 従属のみ）。
+5. 指示コマンドが無い場合: `Get-Command <cmd>` 等で確認 → 代替案提示 → それでも依存追加/外部通信が必要なら停止。
 
-6. ダブルチェック:
+6. 「念のため」のテスト/フォールバック/リファクタは禁止（DoD 従属のみ）。
+
+7. ダブルチェック:
    - テスト/Push/長時間待機は結果を確認し、未達なら完了扱いにしない。
    - `git status -sb` で差分を常に把握（Gitリポジトリではない場合はスキップ可能）。
    - **Unity固有**: Unity Editorでのコンパイルエラーがないことを確認（`Unity Editor=コンパイル成功`）
 
-7. タイムアウトを宣言し、無限待機しない。
+8. タイムアウトを宣言し、無限待機しない。
 
-8. MISSION_LOG.md を更新（Phase 3 完了を記録、実行内容を記録）。
+9. MISSION_LOG.md を更新（Phase 3 完了を記録、実行内容を記録）。
 </step>
 </phase>
 
@@ -152,24 +180,30 @@ Phase 2: 境界
      - 実施した実装: `<実装内容>=<結果>`
    - **重要**: DoD に「git history」「調査」「分析」などのキーワードが含まれている場合、実際にその調査を実施した内容を記録する。実施していない場合は、停止条件として扱う。
 
-2. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
+2. **アセンブリ整合性チェック（Unity 必須）**:
+   - 追加した `using` ごとに asmdef の `references` にアセンブリが存在することを確認。
+   - 同名型の重複がないことを `rg "class TypeName"` で確認。
+   - asmdef を変更した場合、`docs/02_design/ASSEMBLY_ARCHITECTURE.md` を更新。
+   - Unity Editor コンパイル成功を確認（`Unity Editor=コンパイル成功` をレポートに記載）。
+
+3. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
    - DoD 各項目が実際に達成されているかを確認する
    - 環境依存で実行不可能な項目がある場合、停止条件として扱うか、代替手段を取るかを判断する
    - 判断に迷う場合は、停止条件として扱う
 
-3. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
+4. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
 
-4. docs/inbox/ にレポート（以下テンプレ）を作成/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`（無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`）を実行。結果をレポートに記載
+5. docs/inbox/ にレポート（以下テンプレ）を作成/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`（無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`）を実行。結果をレポートに記載
 
-5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
+6. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
 
-6. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
+7. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
    - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
      - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
 
-7. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
+8. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
 
-8. MISSION_LOG.md を更新（Phase 4 完了を記録、納品物のパスを記録）。
+9. MISSION_LOG.md を更新（Phase 4 完了を記録、納品物のパスを記録）。
 </step>
 </phase>
 
@@ -194,6 +228,9 @@ Phase 2: 境界
 - 数分以上の待機が必須、またはタイムアウト超過が見込まれる
 - **Unity固有の停止条件**:
   - `ProjectSettings/`, `Packages/` の変更が必要な場合（互換性維持のため）
+  - Target Assemblies 以外のアセンブリへの変更が必要な場合（BLOCKED として報告）
+  - asmdef への新規参照追加が必要だが ASSEMBLY_ARCHITECTURE.md の DAG に違反する場合
+  - 循環参照が発生する変更が必要な場合
   - Unity Editor起動が必要な長時間待機（数分以上）が必須の場合
   - Unity Test Runnerでのテスト実行が不可能な環境の場合（代替手段が取れない場合）
   - ScriptableObject、AssetDatabase等のUnity API使用時に、適切なエラーハンドリングが実装できない場合
@@ -225,7 +262,7 @@ Phase 2: 境界
 **Changes**: <変更量要約>
 
 ## Changes
-- <file>: <詳細変更内容（何をどう変更したか）>
+- <file> (`<アセンブリ名>`): <詳細変更内容（何をどう変更したか）>
 
 ## 変更マップ（Mermaid）
 変更ファイル間の依存関係を Mermaid graph TD で図示（`templates/diagrams/change-map.md` 参照）:
@@ -249,6 +286,11 @@ Mermaid非対応環境では Markdown テーブルにフォールバック。
 - **Unity固有**: Unity Editor手動検証結果、Unity Test Runnerでのテスト実行結果を記録
   - 例: `Unity Editor手動検証=プリセット保存・読み込み・削除を確認、正常動作を確認`
   - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
+- **アセンブリ整合性（必須）**:
+  - 変更ファイルとアセンブリ名の対応
+  - 追加した using と asmdef 参照の確認結果
+  - 同名型の重複チェック結果
+  - Unity Editor コンパイル確認結果: `Unity Editor=コンパイル成功`
 
 ## Risk
 - <潜在リスク>
@@ -327,6 +369,23 @@ DoD:
 - Unity Editorでコンパイルエラーがないことを確認する
 - 確認結果は `Unity Editor=コンパイル成功` の形式で記録する
 
+### アセンブリ境界ルール（最重要）
+
+- すべてのコード変更前に `docs/02_design/ASSEMBLY_ARCHITECTURE.md` を参照し、依存方向を確認する。
+- `using` を追加する前に、対象アセンブリの asmdef の `references` を確認する。参照がなければ追加が必要（DAG 違反がないか確認）。
+- 新しい型を追加する前に `rg "class TypeName" Assets/ --glob "*.cs"` で同名型の重複がないか検索する。
+- `#if` 条件コンパイルの外にオプショナルシンボル参照を漏らさない。
+- C# 9.0 制約: 引数なし struct コンストラクタ、global using、file スコープ型、required メンバーは使用禁止。
+
+### コンパイルエラー診断プロトコル
+
+- エラー発生時は場当たり修正を禁止。`docs/03_guides/COMPILATION_GUARD_PROTOCOL.md` の診断フローに従う。
+- 診断フロー: エラーコード特定 → 原因分類（asmdef 参照不足 / 型重複 / シンボル漏れ / 言語制約 / 循環参照）→ 根本原因修正。
+- 修正後は `ASSEMBLY_ARCHITECTURE.md` との整合性を再確認する。
+
 ### Unity API使用時の注意点
+
 - ScriptableObject、AssetDatabase等のUnity APIを使用する場合、適切なエラーハンドリングを実装する
 - EditorOnlyコードは `#if UNITY_EDITOR` で適切に分離する
+- `FindFirstObjectByType<T>()` に interface 型を渡さない。Unity の generic 制約 `T : UnityEngine.Object` を満たさないため。
+- 代わりに `GameObject.FindGameObjectWithTag()` + `GetComponent<T>()` パターンを使う。
