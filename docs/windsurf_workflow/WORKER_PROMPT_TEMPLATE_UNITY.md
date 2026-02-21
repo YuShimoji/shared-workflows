@@ -128,6 +128,10 @@ Phase 2: 境界
 <step>
 1. **DoD 各項目の実行可能性確認（必須）**:
    - DoD 各項目を確認し、実行可能かどうかを判断する
+   - **Test Phase 確認**: チケットの Test Phase（Slice / Stable / Hardening）を確認し、テスト要件を判定する
+     - Slice: ビルド成功 + 手動検証が必須。詳細テストは不要（推奨: スモーク1-2本）
+     - Stable: EditMode + PlayMode 契約テスト必須（public API の振る舞いのみ検証）
+     - Hardening: 全テスト + エッジケース必須
    - **Unity固有**: Unity Editor手動検証が必要な項目がある場合、実装後にUnity Editorで確認する
    - **Unity固有**: Unity Test Runnerでのテスト実行が必要な項目がある場合、Unity Test Runnerまたはコマンドラインで実行する
    - 環境依存のタスク（git history 調査など）の場合:
@@ -148,17 +152,22 @@ Phase 2: 境界
 4. コマンドは実行して結果で判断。失敗は「失敗」と明記し、根拠と次手を出す。
 
 5. 指示コマンドが無い場合: `Get-Command <cmd>` 等で確認 → 代替案提示 → それでも依存追加/外部通信が必要なら停止。
+6. **Namespace 検証（Unity 必須）**:
+      - 新規ファイル作成時、`shared-workflows/data/unity_namespace_map.md` を参照し、フォルダパスに対応する正しい namespace を使用する。
+      - `using` ディレクティブが対応表の namespace と一致することを確認する。
+      - 新規 Domain フォルダを作成する場合、**先に `unity_namespace_map.md` に行を追加**してから実装する。
+      - テストファイルは `GlitchWorker.Tests.EditMode` / `GlitchWorker.Tests.PlayMode` の namespace を使用し、`using GlitchWorker.{Domain}` で本体を参照する。
 
-6. 「念のため」のテスト/フォールバック/リファクタは禁止（DoD 従属のみ）。
+7. 「念のため」のテスト/フォールバック/リファクタは禁止（DoD 従属のみ）。
 
-7. ダブルチェック:
+8. ダブルチェック:
    - テスト/Push/長時間待機は結果を確認し、未達なら完了扱いにしない。
    - `git status -sb` で差分を常に把握（Gitリポジトリではない場合はスキップ可能）。
    - **Unity固有**: Unity Editorでのコンパイルエラーがないことを確認（`Unity Editor=コンパイル成功`）
 
-8. タイムアウトを宣言し、無限待機しない。
+9. タイムアウトを宣言し、無限待機しない。
 
-9. MISSION_LOG.md を更新（Phase 3 完了を記録、実行内容を記録）。
+10. MISSION_LOG.md を更新（Phase 3 完了を記録、実行内容を記録）。
 </step>
 </phase>
 
@@ -186,24 +195,28 @@ Phase 2: 境界
    - asmdef を変更した場合、`docs/02_design/ASSEMBLY_ARCHITECTURE.md` を更新。
    - Unity Editor コンパイル成功を確認（`Unity Editor=コンパイル成功` をレポートに記載）。
 
-3. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
+3. **Namespace 整合チェック（Unity 必須）**:
+      - 変更/追加した全 `.cs` ファイルの `namespace` 宣言が `unity_namespace_map.md` と一致することを確認。
+      - 確認結果: `Namespace Check=<ファイル数> files verified, 0 mismatches`
+
+4. チケットを DONE に更新する前に、DoD 各項目の達成根拠を確認する:
    - DoD 各項目が実際に達成されているかを確認する
    - 環境依存で実行不可能な項目がある場合、停止条件として扱うか、代替手段を取るかを判断する
    - 判断に迷う場合は、停止条件として扱う
 
-4. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
+5. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
 
-5. docs/inbox/ にレポート（以下テンプレ）を作成/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`（無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`）を実行。結果をレポートに記載
+6. docs/inbox/ にレポート（以下テンプレ）を作成/更新し、`node .shared-workflows/scripts/report-validator.js <REPORT_PATH_TARGET>`（無ければ `node scripts/report-validator.js <REPORT_PATH_TARGET> REPORT_CONFIG.yml .`）を実行。結果をレポートに記載
 
-6. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
+7. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
 
-7. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
+8. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
    - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
      - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
 
-8. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
+9. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
 
-9. MISSION_LOG.md を更新（Phase 4 完了を記録、納品物のパスを記録）。
+10. MISSION_LOG.md を更新（Phase 4 完了を記録、納品物のパスを記録）。
 </step>
 </phase>
 

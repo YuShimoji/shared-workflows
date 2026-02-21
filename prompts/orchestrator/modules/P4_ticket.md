@@ -13,10 +13,12 @@ Worker 用のタスクチケットを発行する。
 - Focus Area / Forbidden Area
 - Constraints / DoD
 - 停止条件
+- **Test Phase**（必須）: Slice / Stable / Hardening（`00_core.md` のテストフェーズ判定に準拠）
 - **Test Plan**（必須）:
-  - テスト対象（どのクラス/機能をテストするか）
-  - テスト種別（EditMode / PlayMode / ビルド / Unit / E2E）
-  - 期待結果（何をもってテスト成功とするか）
+  - Test Phase: Slice / Stable / Hardening
+  - テスト対象（どのクラス/機能の public API をテストするか）
+  - テスト種別（EditMode / PlayMode / ビルド / Unit / E2E）— Test Phase に応じた必須/推奨を明記
+  - 期待結果（何をもってテスト成功とするか — observable な振る舞いで記述）
   - テスト不要の場合はその理由を明記
 - **Milestone**（必須）: このタスクが属する短期/中期目標（SG-X / MG-X）
 

@@ -4,8 +4,9 @@ Tier: <1/2/3>
 Branch: <main または feature/...>
 Owner: <担当名>
 Created: <ISO8601>
-Report: 
+Report:
 Milestone: <SG-X / MG-X>
+Test Phase: <Slice / Stable / Hardening>
 
 ## Objective
 - 
@@ -26,9 +27,10 @@ Milestone: <SG-X / MG-X>
 - 
 
 ## Test Plan
-- **テスト対象**: （どのクラス/機能をテストするか）
-- **テスト種別**: Unit / E2E / Build
-- **期待結果**: （何をもってテスト成功とするか）
+- **Test Phase**: <Slice / Stable / Hardening>
+- **テスト対象**: （どの public API をテストするか）
+- **テスト種別**: Unit / E2E / Build — Test Phase に応じた必須/推奨を明記
+- **期待結果**: （observable な振る舞いで記述。実装詳細に依存しないこと）
 - **テスト不要の場合**: （理由を明記）
 
 ## Impact Radar
@@ -41,7 +43,7 @@ Milestone: <SG-X / MG-X>
 ## DoD
 - [ ] 目的が達成されている
 - [ ] 主要パスの検証が完了している
-- [ ] **テスト全通過**（テスト不要の場合は理由が明記）
+- [ ] **Test Phase に応じたテスト通過**（Slice: ビルド成功+スモーク / Stable: 全テスト通過 / Hardening: 全テスト+エッジケース通過。テスト不要の場合は理由が明記）
 - [ ] **ビルド成功**
 - [ ] データ外部化チェック: ハードコードされたテキスト・設定値・パラメータがないことを確認
 - [ ] docs/inbox/ にレポート（REPORT_...md）が作成されている
