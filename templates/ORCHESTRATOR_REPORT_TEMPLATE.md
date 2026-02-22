@@ -57,6 +57,10 @@
 - <実行したコマンドと結果（例: report-validator.js=OK）>
 - <git status -sb がクリーンであること（または Git リポジトリではない旨）>
 - <push 済み/未push（pending）の明記>
+- <MCP_CONNECTIVITY=AVAILABLE/UNAVAILABLE>
+- <Verification Mode=AUTO_VERIFIED/PARTIALLY_COMPLETED/MANUAL_PENDING>
+- <Manual Pending Items=なし/項目一覧>
+- <完了不適合時の差し戻し理由（証跡不足/MCP未接続/手動未実施）>
 
 ## Integration Notes
 - <docs/HANDOVER.md / docs/tasks/ / docs/reports/ への反映要約>

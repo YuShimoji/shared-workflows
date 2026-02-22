@@ -15,6 +15,7 @@
   - 参照ファイル: `docs/Windsurf_AI_Collab_Rules_latest.md`, `docs/HANDOVER.md`, チケット
   - 停止条件 / 停止時アウトプット / 完了時チャット1行
   - **MISSION_LOG.md の最新状態**: 現在のフェーズ、進捗、コンテキスト情報を含める。
+  - **MCP検証方針**: `MCP_CONNECTIVITY`（AVAILABLE/UNAVAILABLE）と、`Verification Mode`（AUTO_VERIFIED/PARTIALLY_COMPLETED/MANUAL_PENDING）
 - 可変にしてよい:
   - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合は停止条件へ）
   - プロジェクト固有の罠や検証観点
@@ -145,6 +146,7 @@ Phase 2: 境界
    - DoD 各項目が実際に達成されているかを確認する
    - 環境依存で実行不可能な項目がある場合、停止条件として扱うか、代替手段を取るかを判断する
    - 判断に迷う場合は、停止条件として扱う
+   - `Verification Mode` が `PARTIALLY_COMPLETED` または `MANUAL_PENDING` の場合は DONE 禁止
 
 3. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
 
@@ -153,6 +155,7 @@ Phase 2: 境界
 5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
 
 6. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
+   - `MCP_CONNECTIVITY` / `Verification Mode` / `Manual Pending Items` を必ず記録する
 
 7. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
 

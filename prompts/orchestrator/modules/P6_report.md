@@ -13,6 +13,8 @@
 2. 検証（必須）
    - `report-validator.js` を実行し、成功/失敗/警告をレポートへ追記
    - HANDOVER も検証対象にする（可能なら `--profile handover`）
+   - Worker レポートの `MCP_CONNECTIVITY` / `Verification Mode` / `Manual Pending Items` を確認する
+   - `Manual Pending` が残る、または `MCP_CONNECTIVITY=UNAVAILABLE` で実測不足のタスクは `DONE` を取り消し、`IN_PROGRESS` または `BLOCKED` へ差し戻す
 
 3. Inbox整理（可能なら）
    - `finalize-phase.js` が使える場合は優先
@@ -22,6 +24,7 @@
    - Phase 6 完了として記録
    - 次フェーズ/次アクション（担当込み）を必ず記録
    - 改善提案も記録（プロジェクト側とShared Workflow側を分離）
+   - 差し戻しが発生した場合は「なぜ完了不適合だったか（MCP未接続/手動pending/証跡不足）」を明記する
 
 4.5. **マイルストーン更新**（必須）
    - `docs/MILESTONE_PLAN.md` の短期/中期/長期目標の進捗を更新
@@ -56,5 +59,4 @@
 5. `## 改善提案（New Feature Proposal）`
 
 表示ルールは `data/presentation.json`（v2）に準拠。Mermaid非対応環境では Markdown テーブルにフォールバック。
-
 

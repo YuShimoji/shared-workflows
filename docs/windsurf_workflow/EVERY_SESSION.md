@@ -22,6 +22,8 @@ Submodule 運用（推奨）の場合は、上記パスの先頭に `.shared-wor
 - **変更は必ず commit し、必要なら push する**（作業終了時に「push済み/未push」を曖昧にしない）
 - **プロジェクトをクリーンに保つ**（`git status -sb` がクリーンであることを確認してから完了を名乗る）
 - **推奨対応で強力に進める**（ただし、破壊的/復旧困難操作は常に停止して合意を取る）
+- **検証は MCP/自動実行を優先**し、手動検証は「自動で代替不能な項目」に限定する
+- **MCP未接続・自動実行失敗のときは完了扱いにしない**（`IN_PROGRESS/BLOCKED` を維持し、理由と次手を明記）
 - **作業終了時は必ず**:
   - **完了/未完了**を明言する
   - **次にユーザーが返すべきテンプレ**を提示する（下記「4. 終了時テンプレ」）
@@ -102,6 +104,22 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
   - `## 次のアクション` にユーザー返信テンプレが無い（= report-validator でも ERROR になる）
   - `git status -sb` が汚いのに「完了」と言う（完了条件違反）
   - 「停止していません」という返答をしたが、固定5セクション形式が不完全（プロトコル違反）
+
+---
+
+## 2.6 MCP 検証ガード（再発防止）
+
+- **完了判定に必要な最小記録**:
+  - `MCP_CONNECTIVITY=AVAILABLE/UNAVAILABLE`
+  - `Verification Mode=AUTO_VERIFIED/PARTIALLY_COMPLETED/MANUAL_PENDING`
+  - `Manual Pending Items=<なし/項目一覧>`
+- **DONE 禁止条件**:
+  - `Verification Mode` が `PARTIALLY_COMPLETED` または `MANUAL_PENDING`
+  - レポートに `ready for manual testing` 等の保留文言がある
+  - 実測値が `TBD` のまま残っている
+- **MCP未接続時の扱い**:
+  - 独断で「手動確認済み」にしない
+  - 必ず `IN_PROGRESS` または `BLOCKED` にして、ユーザー実行ステップを `## 次のアクション` に具体化する
 
 - **終了時の推奨ユーザー返信（固定テンプレ）**:
   - 本ファイル「4. 終了時テンプレ」をそのまま使う

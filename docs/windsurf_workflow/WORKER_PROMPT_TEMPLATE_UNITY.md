@@ -19,6 +19,7 @@
   - **Target Assemblies**: チケットに記載された対象アセンブリ名（`docs/02_design/ASSEMBLY_ARCHITECTURE.md` 参照）
   - **必読ドキュメント**: `docs/02_design/ASSEMBLY_ARCHITECTURE.md`, `docs/03_guides/UNITY_CODE_STANDARDS.md`, `docs/03_guides/COMPILATION_GUARD_PROTOCOL.md`
   - **Unity固有の検証手順**: Unity Editor手動検証、Unity Test Runnerでのテスト実行手順、アセンブリ整合性チェック
+  - **MCP検証方針**: `MCP_CONNECTIVITY`（AVAILABLE/UNAVAILABLE）と、`Verification Mode`（AUTO_VERIFIED/PARTIALLY_COMPLETED/MANUAL_PENDING）
 - 可変にしてよい:
   - コマンド候補（外部通信/依存追加/破壊的操作が絡む場合は停止条件へ）
   - プロジェクト固有の罠や検証観点
@@ -203,6 +204,7 @@ Phase 2: 境界
    - DoD 各項目が実際に達成されているかを確認する
    - 環境依存で実行不可能な項目がある場合、停止条件として扱うか、代替手段を取るかを判断する
    - 判断に迷う場合は、停止条件として扱う
+   - `Verification Mode` が `PARTIALLY_COMPLETED` または `MANUAL_PENDING` の場合は DONE 禁止
 
 5. チケットを DONE に更新し、DoD 各項目に対して根拠（差分 or テスト結果 or 調査結果）を記入
 
@@ -211,8 +213,9 @@ Phase 2: 境界
 7. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新し、次回 Orchestrator が把握できるよう記録
 
 8. 実行したテストを `<cmd>=<result>` 形式でレポートとチケットに残す
-   - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
-     - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
+  - **Unity固有**: Unity Test Runnerでのテスト実行結果を記録する
+    - 例: `Unity Test Runner=HeightMapGeneratorTests=14テスト成功`, `TerrainGeneratorIntegrationTests=7テスト成功`
+  - **MCP固有**: `MCP_CONNECTIVITY` / `Verification Mode` / `Manual Pending Items` を必ず記録する
 
 9. `git status -sb` をクリーンにしてから commit（必要なら push）。push は GitHubAutoApprove=true の場合のみ
 

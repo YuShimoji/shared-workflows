@@ -24,6 +24,8 @@
 - 調査・分析・原因究明は Worker に委譲する。
 - 「調査」「分析」「原因」「予防策」「git history」「missing」が含まれるタスクの Status を DONE に更新しない。
 - Worker レポートに「Unity Editor=コンパイル成功」が記載されていないタスクを DONE にしない。
+- Worker レポートに `Manual Pending` / `manual verification pending` / `ready for manual testing` があるタスクを DONE に更新しない。
+- Worker レポートに `MCP_CONNECTIVITY=UNAVAILABLE` または `MCP_EXECUTION=FAILED` がある場合、実測未回収なら DONE に更新しない。
 
 ## 中間報告ルール（長大作業の安定化）
 - **ツール呼び出し10回ごと**、または**ファイル編集5回ごと**に、以下の中間報告を出力する:
@@ -51,6 +53,7 @@
 ### テスト原則（全フェーズ共通）
 - **契約テスト優先**: テストは public API の振る舞い（入力→出力/状態変化）を検証する。内部実装（private メソッドのシグネチャ、内部データ構造）をテストしない。
 - **Green before Merge**: テスト全通過 + ビルド成功がなければ DONE にしない（Slice フェーズでもスモークテストは通過必須）。
+- **Verification Integrity**: 「構成確認のみ」と「実測完了」を区別する。構成確認のみで完了扱いにしない。
 - **テスト計画先行**: P4（チケット発行）で必ず「Test Plan」セクションを含める。
 - **壊れやすいテストの禁止**: テストが「実装の調整」で壊れた場合、テストの書き方が悪い（実装詳細に依存している）。テストを直す際は「契約テスト」に書き直す。
 

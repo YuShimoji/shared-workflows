@@ -10,6 +10,9 @@
 - GitHubAutoApprove=true なら push まで自律可。false なら push 保留し次手に明記。
 - 破壊的操作/依存追加/長時間処理は停止条件。
 - 開始時・完了前に `REQUEST_REFLECTION_CHECKLIST.md` を確認。
+- 検証は **MCP/自動手段を最優先**。手動検証は「MCPで実行不能な項目のみ」に限定する。
+- MCP 未接続・MCP 実行失敗時は、レポートに `MCP_CONNECTIVITY=UNAVAILABLE` または `MCP_EXECUTION=FAILED` を明記する。
+- MCP 未接続または手動検証 pending が残る状態で、チケットを `DONE` にしてはならない（`IN_PROGRESS` または `BLOCKED`）。
 
 ## フェーズ
 
@@ -44,6 +47,10 @@
   - Hardening: 全テスト + エッジケース。
   - **禁止**: private メソッドのシグネチャ・内部状態に依存するテスト。
   - テスト不要な場合は理由をレポートに明記
+- **検証モード判定（必須）**:
+  - `AUTO_VERIFIED`: MCP/CLI等で実行し、結果ログと証跡パスを提示できる
+  - `PARTIALLY_COMPLETED`: 自動確認は完了したが、手動検証が残っている
+  - `MANUAL_PENDING`: 実測が未実施（この状態では DONE 禁止）
 - **Namespace（Unity必須）**: 新規/変更 .cs ファイルは `shared-workflows/data/unity_namespace_map.md` の対応表に従う。対応表にないフォルダには .cs を作らない。
 - **Impact Radar**: 実装前に「この変更が影響する5領域」を確認（コード/テスト/パフォーマンス/UX/連携）。
 - **Scope Creep Check**: ツール呼び出し10回ごとに「Focus Areaを超えていないか」を自己チェック。
@@ -59,9 +66,11 @@
    - asmdef を変更した場合 ASSEMBLY_ARCHITECTURE.md を更新。
    - Unity Editor コンパイル成功を確認（`Unity Editor=コンパイル成功` をレポートに記載）。
 3. **テスト実行結果の記録**（必須）: テスト名 / 結果(PASS/FAIL) / ビルド状況 をレポートに含める。
+   - 併記必須: `MCP_CONNECTIVITY` / `Verification Mode` / `Manual Pending Items`
+   - `Manual Pending Items` が空でない場合は `DONE` にしない。
 4. `docs/inbox/REPORT_<ISO8601>.md` を作成（Changes / Decisions / **Test Results** / Verification / Risk / Remaining）。
 5. レポートに必須記載: 変更ファイルとアセンブリ名 / 追加した using・asmdef 参照 / コンパイル確認結果。
-6. チケットを DONE に更新（Report パス記載）。**テスト未通過の場合は DONE にしない。**
+6. チケットを DONE に更新（Report パス記載）。**テスト未通過、MCP未接続、手動検証pending のいずれかがある場合は DONE にしない。**
 7. commit / push（GitHubAutoApprove に従う）。
 8. `report-validator.js` で検証し結果をレポートに追記。
 
