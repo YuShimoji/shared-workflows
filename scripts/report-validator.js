@@ -185,6 +185,16 @@ function generateSuggestions(errors, warnings) {
   return suggestions;
 }
 
+function extractReportStatus(reportContent) {
+  const emphasized = reportContent.match(/\*\*Status\*\*:\s*([A-Za-z_]+)/i);
+  if (emphasized) return emphasized[1].toUpperCase();
+
+  const plain = reportContent.match(/^Status:\s*([A-Za-z_]+)/im);
+  if (plain) return plain[1].toUpperCase();
+
+  return '';
+}
+
 function extractListSection(text, key) {
   const lines = text.split(/\r?\n/);
   const result = [];
@@ -341,6 +351,20 @@ function validateReport(reportPath, configPath, projectRoot) {
   // Virtual error detection with log check
   const hasErrorIndicators = /error|fail|exception/i.test(reportContent);
   const claimsCompletion = /完了しました|向上されました/i.test(reportContent);
+  const reportStatus = extractReportStatus(reportContent);
+  const isCompletedStatus = /^(DONE|COMPLETED)$/.test(reportStatus);
+  const hasManualPending =
+    /manual verification\s*:\s*pending|manual pending|ready for manual testing|手動.*待ち|未実施|TBD/i.test(reportContent);
+  const hasMcpUnavailable =
+    /MCP_CONNECTIVITY\s*=\s*UNAVAILABLE|MCP_EXECUTION\s*=\s*FAILED/i.test(reportContent);
+
+  if (isCompletedStatus && hasManualPending) {
+    errors.push('Status が COMPLETED/DONE ですが、manual pending を示す記述が残っています');
+  }
+
+  if (isCompletedStatus && hasMcpUnavailable) {
+    errors.push('Status が COMPLETED/DONE ですが、MCP 未接続または実行失敗が記録されています');
+  }
 
   if (claimsCompletion && hasErrorIndicators) {
     errors.push('完了を主張しているが、エラー指標が見つかりました');
