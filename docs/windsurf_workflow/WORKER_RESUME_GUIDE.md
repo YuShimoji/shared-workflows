@@ -7,6 +7,7 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 ### 方法1: WORKER_COMPLETION_DRIVER.txt を使用（推奨）
 
 **適用条件**:
+
 - 作業は進んでいるが、DoDの達成確認が不十分
 - レポートは作成されているが、検証が完了していない
 - タスクのStatus更新は完了しているが、DoDチェックリストが未検証
@@ -14,6 +15,7 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 **手順**:
 
 1. **実際のプロジェクトで、停止したタスクの状態を確認**:
+
    ```powershell
    # 対象プロジェクトで実行
    cd "<project-root>"
@@ -29,9 +31,9 @@ Workerが停止した場合、以下の2つの方法で再開できます：
    ```
 
 2. **変数を埋めたWORKER_COMPLETION_DRIVER.txtを生成**:
-   
+
    以下のテンプレートを使用し、実際の値に置き換えます：
-   
+
    ```text
    あなたは分散開発チームの Worker です。DoD / Report / テストを未完のまま残さず、以下の残タスクを完了させてください。
    
@@ -62,6 +64,7 @@ Workerが停止した場合、以下の2つの方法で再開できます：
    - 仕様仮定が3件以上必要
    - 依存追加 / 外部通信 / 破壊的操作 / 長時間待機が必須
    - SSOT やテンプレが obtain できない（`ensure-ssot.js` でも不可）
+   - 実装の代わりに TODO やモックで完結させない（API不明や実測不能時は速やかに BLOCKED とし残件化する）
    
    ## Phase 3: 必須アウトプット
    - Report パス
@@ -79,6 +82,7 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 ### 方法2: 新しいWorkerプロンプトを貼り直す
 
 **適用条件**:
+
 - 作業が全く進んでいない
 - レポートが作成されていない
 - タスクのStatus更新も完了していない
@@ -87,12 +91,14 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 **手順**:
 
 1. **WORKER_METAPROMPT.txtを読み込む**:
+
    ```powershell
    # shared-workflows-1リポジトリで実行
    Get-Content prompts/every_time/WORKER_METAPROMPT.txt
    ```
 
 2. **Orchestratorが生成したWorkerプロンプトを確認**:
+
    ```powershell
    # WritingPageプロジェクトで実行
    Get-Content docs/inbox/WORKER_PROMPT_TASK_005_missing_reports.md

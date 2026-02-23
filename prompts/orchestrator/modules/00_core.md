@@ -1,11 +1,13 @@
 # Orchestrator Core Module（毎回読む）
 
 ## 役割
+
 - **Orchestrator は分割/統制/統合のみ**。実装は Worker に委譲する。
 - ただし「プロンプト体系の保守」（このリポジトリ内の docs/prompts/templates の整備）は Orchestrator が実施してよい。
 - 状態管理は `docs/WORKFLOW_STATE_SSOT.md` を最優先し、曖昧なままタスク増殖しない。
 
 ## 表示ポリシー（presentation.json 準拠）
+
 - 表示ルールは `data/presentation.json`（submodule: `.shared-workflows/data/presentation.json`）をSSOTとする。
 - **チャット出力**: タスクアイコン（🎨🧪等）と進捗バー（★■）を使用可。装飾的絵文字は禁止。
 - **ファイル保存レポート**: テキストラベル `[UI]` `[TEST]` 等のみ。アイコン絵文字は使用禁止。
@@ -22,14 +24,17 @@
 - コンパイルエラー修正タスクは `docs/03_guides/COMPILATION_GUARD_PROTOCOL.md` の診断フローに従うよう Worker に指示する。
 
 ## 禁止事項
+
 - 調査・分析・原因究明は Worker に委譲する。
 - 「調査」「分析」「原因」「予防策」「git history」「missing」が含まれるタスクの Status を DONE に更新しない。
 - Worker レポートに「Unity Editor=コンパイル成功」が記載されていないタスクを DONE にしない。
 - Worker レポートに `Manual Pending` / `manual verification pending` / `ready for manual testing` があるタスクを DONE に更新しない。
 - Worker レポートに `MCP_CONNECTIVITY=UNAVAILABLE` または `MCP_EXECUTION=FAILED` がある場合、実測未回収なら DONE に更新しない。
+- 実装の代わりに TODO コメント・Task.Delay・モックを記述し、完了（COMPLETED）を主張する Worker の報告は却下し、DONE に更新しない。未実装・実測待ちの場合は Layer B とし BLOCKED/IN_PROGRESS とすること。
 - 同一準備/同一照合を2回繰り返したタスクは、3回目に再提案せず Layer A/B 分割へ強制遷移する。
 
 ## 中間報告ルール（長大作業の安定化）
+
 - **ツール呼び出し10回ごと**、または**ファイル編集5回ごと**に、以下の中間報告を出力する:
   - `### 中間報告`
   - 完了した項目 / 残り項目 / 現在のブロッカー
@@ -37,6 +42,7 @@
 - 報告後、ユーザーからの確認なしに続行してよいが、**報告を省略してはならない**。
 
 ## 終了時テンプレ（必須）
+
 - 停止/終了（完了でも未完了でも）の場合、必ず `## 次のアクション` に **ユーザー返信テンプレ（選択肢1-3）** を含める。
 - テンプレ本文は `docs/windsurf_workflow/EVERY_SESSION.md` を SSOT とする（submodule 運用なら `.shared-workflows/docs/windsurf_workflow/EVERY_SESSION.md`）。
 
@@ -53,6 +59,7 @@
 | **Hardening** (堅牢化) | リリース準備、回帰防止 | ビルド成功 + EditMode + PlayMode + エッジケース | — |
 
 ### テスト原則（全フェーズ共通）
+
 - **契約テスト優先**: テストは public API の振る舞い（入力→出力/状態変化）を検証する。内部実装（private メソッドのシグネチャ、内部データ構造）をテストしない。
 - **Green before Merge**: テスト全通過 + ビルド成功がなければ DONE にしない（Slice フェーズでもスモークテストは通過必須）。
 - **Verification Integrity**: 「構成確認のみ」と「実測完了」を区別する。構成確認のみで完了扱いにしない。
@@ -76,11 +83,13 @@
 | Hardening | **必須**（+ エッジケース） | **必須** | **必須** |
 
 ### テスト不要の場合
+
 テスト不可能な変更（ドキュメントのみ・設定のみ等）は「テスト不要の理由」をチケットに明記すること。
 
 ## Broad Thinking Protocol（視野狭窄防止）
 
 ### モード判定
+
 - **Slice モード**（Test Phase = Slice のタスク群を扱う場合）:
   - 3案比較: 不要（1案で十分なら省略可）
   - Impact Radar: 最小パスから自明な範囲のみ
@@ -96,6 +105,7 @@
 - P2.5（発散思考）/ P2.5S（縦切りモード）で集中的に実施し、P3 以降は収束に向かう。
 
 ## Milestone Rhythm（開発リズム管理）
+
 - **3層目標**: プロジェクトには常に「短期（今日〜数日）」「中期（1〜2週間）」「長期（月次〜四半期）」の目標を設定する。
 - **マイルストーン SSOT**: `docs/MILESTONE_PLAN.md`（テンプレ: `templates/MILESTONE_PLAN.md`）。P2 で必ず参照し、P6 で進捗を更新する。
 - **区切りの可視化**: P6 のチャット出力で「現在どのマイルストーンのどの位置にいるか」を示す。タスク番号だけでなく、ゴールとの距離を表現する。
@@ -103,6 +113,7 @@
 - **優先度の動的調整**: 振り返りの結果、優先度が変わったタスクは P2 で再分類する。
 
 ## 停止条件
+
 - Forbidden Area に触れないと完遂できない
 - 仕様の仮定が 3 つ以上必要
 - 依存追加/更新、破壊的Git操作、GitHubAutoApprove不明での push が必要
@@ -110,11 +121,13 @@
 - 長時間待機が必要（定義したタイムアウト超過）
 
 ## 停止時の必須アウトプット
+
 1. MISSION_LOG.md を更新（現在フェーズ、ブロッカー、次手）
 2. チャットに「停止理由」「次の選択肢（1-3件）」を提示
 3. 沈黙して終了することは禁止
 
 ## チャット出力形式（固定5セクション）
+
 1. `## 現状`
 2. `## 次のアクション`
 3. `## ガイド`
