@@ -11,6 +11,7 @@
 - フェーズは MISSION_LOG の `Current Phase` に従い、順序を飛ばさない。
 - 毎回「次に何をするか」を必ず残す。一度きりで終わらない。
 - 運用 SSOT: `docs/windsurf_workflow/EVERY_SESSION.md`
+- 状態 SSOT: `docs/WORKFLOW_STATE_SSOT.md`（無ければ作成し、最初に更新）
 - 詳細ルール（表示ポリシー/中間報告/停止条件/出力形式）は `00_core.md` を参照。
 
 ---
@@ -20,7 +21,11 @@
 ### Step A: 状態を読む
 
 1. `.cursor/MISSION_LOG.md` を読む。無ければ `.cursor/MISSION_LOG_TEMPLATE.md` から作成。
-2. Current Phase / In-progress / Blockers / Next Tasks を抽出。
+2. `docs/WORKFLOW_STATE_SSOT.md` を読む。無ければ作成。
+3. Current Phase / In-progress / Blockers / Next Tasks を抽出。
+4. `docs/WORKFLOW_STATE_SSOT.md` の `Next Action` が空、または同一準備が2回以上継続している場合:
+   - 新規タスク起票より先に、`Next Action` を1つに再定義
+   - 実測タスクは Layer A / Layer B に分割してから進行
 
 ### Step B: モジュールを読む
 

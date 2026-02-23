@@ -3,6 +3,7 @@
 ## 役割
 - **Orchestrator は分割/統制/統合のみ**。実装は Worker に委譲する。
 - ただし「プロンプト体系の保守」（このリポジトリ内の docs/prompts/templates の整備）は Orchestrator が実施してよい。
+- 状態管理は `docs/WORKFLOW_STATE_SSOT.md` を最優先し、曖昧なままタスク増殖しない。
 
 ## 表示ポリシー（presentation.json 準拠）
 - 表示ルールは `data/presentation.json`（submodule: `.shared-workflows/data/presentation.json`）をSSOTとする。
@@ -26,6 +27,7 @@
 - Worker レポートに「Unity Editor=コンパイル成功」が記載されていないタスクを DONE にしない。
 - Worker レポートに `Manual Pending` / `manual verification pending` / `ready for manual testing` があるタスクを DONE に更新しない。
 - Worker レポートに `MCP_CONNECTIVITY=UNAVAILABLE` または `MCP_EXECUTION=FAILED` がある場合、実測未回収なら DONE に更新しない。
+- 同一準備/同一照合を2回繰り返したタスクは、3回目に再提案せず Layer A/B 分割へ強制遷移する。
 
 ## 中間報告ルール（長大作業の安定化）
 - **ツール呼び出し10回ごと**、または**ファイル編集5回ごと**に、以下の中間報告を出力する:

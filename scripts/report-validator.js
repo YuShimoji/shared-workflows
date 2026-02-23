@@ -195,6 +195,95 @@ function extractReportStatus(reportContent) {
   return '';
 }
 
+function isTask027Report(reportPath, reportContent) {
+  const base = path.basename(reportPath).toLowerCase();
+  if (base.includes('report_task_027_fullplaythroughtest.md')) return true;
+  if (/TASK_027/i.test(reportContent) && /Full Playthrough/i.test(reportContent)) return true;
+  return false;
+}
+
+function checkTask027CompletionIntegrity(reportPath, reportContent, projectRoot) {
+  const errors = [];
+  const warnings = [];
+
+  if (!isTask027Report(reportPath, reportContent)) {
+    return { errors, warnings };
+  }
+
+  const reportStatus = extractReportStatus(reportContent);
+  const isDoneStatus = /^(DONE|COMPLETED)$/.test(reportStatus);
+  const isInProgressLike = /^(IN_PROGRESS|BLOCKED|PARTIALLY_COMPLETED)$/.test(reportStatus);
+
+  // 1) simulated 文言検知（一次証跡不足の強いシグナル）
+  const simulatedRegex =
+    /simulated|simulation|based on existing verification data|既存証跡ベース|シミュレーション|推定|疑似実行/i;
+  if (simulatedRegex.test(reportContent)) {
+    if (isDoneStatus) {
+      errors.push(
+        'TASK_027 は一次証跡必須です。simulated/既存証跡ベース等の文言があるため COMPLETED 判定不可です'
+      );
+    } else {
+      warnings.push(
+        'TASK_027 は simulated 文言を含みます。IN_PROGRESS/BLOCKED での Layer B 手動実測待ちとして扱ってください'
+      );
+    }
+  }
+
+  // 2) DoD監査（TASK_027 本体）
+  const task027Path = path.join(projectRoot, 'docs', 'tasks', 'TASK_027_FullPlaythroughTest.md');
+  if (!fs.existsSync(task027Path)) {
+    warnings.push('TASK_027 チケット本体が見つかりません（docs/tasks/TASK_027_FullPlaythroughTest.md）');
+    return { errors, warnings };
+  }
+
+  const taskContent = fs.readFileSync(task027Path, 'utf8');
+  const taskLines = taskContent.split(/\r?\n/);
+  let inDodSection = false;
+  const dodLines = [];
+  for (const line of taskLines) {
+    if (/^##\s+DoD\b/i.test(line)) {
+      inDodSection = true;
+      continue;
+    }
+    if (inDodSection && /^##\s+/.test(line)) {
+      break;
+    }
+    if (inDodSection) {
+      dodLines.push(line);
+    }
+  }
+
+  const taskDodSection = dodLines.join('\n').trim();
+  if (!taskDodSection) {
+    warnings.push('TASK_027 チケットに DoD セクションが見つかりません');
+    return { errors, warnings };
+  }
+
+  const hasLayerA = /layer\s*a|A層/i.test(taskDodSection);
+  const hasLayerB = /layer\s*b|B層/i.test(taskDodSection);
+  const hasUnchecked = /- \[\s\]/.test(taskDodSection);
+  const layerAUnchecked = /- \[\s\].*(layer\s*a|A層)/i.test(taskDodSection);
+  const layerBUnchecked = /- \[\s\].*(layer\s*b|B層)/i.test(taskDodSection);
+
+  if (!hasLayerA || !hasLayerB) {
+    warnings.push('TASK_027 チケットは Layer A/B 二層DoDへの移行が未完です');
+  }
+
+  if (isDoneStatus && hasUnchecked) {
+    errors.push('TASK_027 チケットの DoD に未チェック項目があります（DONE/COMPLETED 不可）');
+  }
+
+  if (isInProgressLike && layerAUnchecked) {
+    warnings.push('TASK_027 は Layer A が未完了です。まず AI完了可能範囲を完了させてください');
+  }
+
+  if (isInProgressLike && !layerAUnchecked && layerBUnchecked) {
+    warnings.push('TASK_027 は Layer A 完了 / Layer B 手動実測待ちです（想定どおり）');
+  }
+
+  return { errors, warnings };
+}
+
 function extractListSection(text, key) {
   const lines = text.split(/\r?\n/);
   const result = [];
@@ -383,6 +472,11 @@ function validateReport(reportPath, configPath, projectRoot) {
   const fileChecks = checkFileStates(reportContent, projectRoot);
   errors.push(...fileChecks.errors);
   warnings.push(...fileChecks.warnings);
+
+  // TASK_027 specific integrity checks
+  const task027Checks = checkTask027CompletionIntegrity(reportPath, reportContent, projectRoot);
+  errors.push(...task027Checks.errors);
+  warnings.push(...task027Checks.warnings);
 
   const suggestions = generateSuggestions(errors, warnings);
   const isValid = errors.length === 0;

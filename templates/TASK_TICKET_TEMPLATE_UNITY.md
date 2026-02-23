@@ -60,6 +60,11 @@ Test Phase: <Slice / Stable / Hardening>
 - **期待結果**: （observable な振る舞いで記述。実装詳細に依存しないこと）
 - **テスト不要の場合**: （理由を明記）
 
+## Verification Gate (A/B for measurement tasks)
+- Layer A (AI-completable): 計装コード、ProfilerMarker/ログ、測定UI、実行手順、結果テンプレ
+- Layer B (manual measurement): Unity Editor/実機での実行、測定値記録、証跡保存
+- 実測タスクは Layer A/B を分離して記載し、Layer A 完了で停止しない
+
 ## Impact Radar
 - **コード**: （直接変更するファイル/クラス）
 - **テスト**: （既存テストへの影響）
@@ -84,12 +89,20 @@ Test Phase: <Slice / Stable / Hardening>
 - [ ] **ビルド成功**（Unity Editorで確認: `Unity Editor=コンパイル成功`）
 - [ ] **Namespace 整合**: 変更/追加した全 .cs ファイルの namespace が `shared-workflows/data/unity_namespace_map.md` と一致
 - [ ] **データ分離チェック**: ハードコードされたテキスト・設定値がなく、SO/Localizationに外部化されていることを確認
+- [ ] **Layer A 完了（実測タスク）**: 計装・再現手順・引き渡し資料が整備済み
+- [ ] **Layer B 完了（実測タスク）**: 手動実測結果と証跡が `docs/evidence/` 等へ保存済み
 - [ ] docs/inbox/ にレポート（REPORT_...md）が作成されている
 - [ ] 本チケットの Report 欄にレポートパスが追記されている
 
 ## Notes
 - Status は OPEN / IN_PROGRESS / BLOCKED / DONE を想定
 - BLOCKED の場合は、事実/根拠/次手（候補）を本文に追記し、Report に docs/inbox/REPORT_...md を必ず設定
+- BLOCKED は次の正規形を必須とする:
+  - Blocker Type（Environment/Permission/Dependency/Missing Reference/Spec Undefined）
+  - AI-Completable Scope（Layer A）
+  - User Runbook（Layer B）
+  - Resume Trigger
+  - Re-proposal Suppression Rule（同一Blockerの再提案を禁止）
 - **Unity固有の注意点**:
   - Unity Editor上での手動検証が必要な場合、検証手順を具体的に記録する
   - Unity Test Runnerでのテスト実行が必要な場合、テスト実行結果を記録する

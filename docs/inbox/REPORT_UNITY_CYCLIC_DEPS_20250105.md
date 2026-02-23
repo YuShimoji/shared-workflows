@@ -41,7 +41,7 @@ Unity プロジェクトのアセンブリ定義間の循環依存を解決す�
 Unity プロジェクトへのアクセスが不可能な環境のため、タスクを実行できません。
 
 ### Evidence
-- 現在のワークスペース（`C:\Users\PLANNER007\shared-workflows`）には Unity プロジェクトが存在しません。
+- 現在のワークスペース（`<workspace>/shared-workflows`）には Unity プロジェクトが存在しません。
 - タスクファイルに記載されているパス（`Assets/Scripts/Camera/Vastcore.Camera.asmdef` など）に対応するファイルが見つかりません。
 - 親ディレクトリやユーザーのホームディレクトリを探索しましたが、Unity プロジェクトは見つかりませんでした。
 

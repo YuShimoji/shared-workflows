@@ -24,6 +24,7 @@ Submodule 運用（推奨）の場合は、上記パスの先頭に `.shared-wor
 - **推奨対応で強力に進める**（ただし、破壊的/復旧困難操作は常に停止して合意を取る）
 - **検証は MCP/自動実行を優先**し、手動検証は「自動で代替不能な項目」に限定する
 - **MCP未接続・自動実行失敗のときは完了扱いにしない**（`IN_PROGRESS/BLOCKED` を維持し、理由と次手を明記）
+- **SSOT更新を先に行う**（状態が曖昧なときは新規タスク起票より先に `docs/WORKFLOW_STATE_SSOT.md` を更新）
 - **作業終了時は必ず**:
   - **完了/未完了**を明言する
   - **次にユーザーが返すべきテンプレ**を提示する（下記「4. 終了時テンプレ」）
@@ -120,9 +121,51 @@ Submodule を使っている場合（`.shared-workflows/` がある場合）:
 - **MCP未接続時の扱い**:
   - 独断で「手動確認済み」にしない
   - 必ず `IN_PROGRESS` または `BLOCKED` にして、ユーザー実行ステップを `## 次のアクション` に具体化する
+  - タスク全体を停止させず、**実行可能部分を分割して `PARTIALLY_COMPLETED` で前進**させる
+  - 進め方は「`完了済み` / `保留` / `次の最短手順`」の3点を固定で記録する
+  - 保留項目は 1 回の往復で消化できる粒度（例: 「スクショ3枚不足」）まで分解して提示する
+
+- **滞留回避の原則（MCP不可/不安定時）**:
+  - 「検証不能」だけで作業全体を止めない
+  - DoD を `自動で回収済み` と `手動入力が必要` に分離し、前者を先にクローズする
+  - 手動項目はテンプレート化し、実施後は即時に成果物へ反映して再判定する
+  - `BLOCKED` は「代替手順が存在しない場合」に限定する
+
+- **検証深度の制御（開発優先）**:
+  - 原則: **ゲーム本体開発を優先**し、検証は「品質ゲートに直結する最小セット」に限定する
+  - 高重要（継続必須）:
+    - クラッシュ/データ破損/進行不能/リリース可否に直結する検証
+  - 低〜中重要（切り上げ可）:
+    - 最終判定に影響しない追加観測、重複確認、過剰な再実測
+  - 運用:
+    - 低〜中重要の未実施項目は `Deferred Verification` として記録し、開発タスクを先に進める
+    - `Deferred` を理由にタスク全体を `BLOCKED` にしない
 
 - **終了時の推奨ユーザー返信（固定テンプレ）**:
   - 本ファイル「4. 終了時テンプレ」をそのまま使う
+
+## 2.7 BLOCKED 正規形（停止を情報に変換）
+
+- BLOCKED は次のテンプレで必ず記録する（不足項目がある BLOCKED は無効）:
+
+```text
+Blocker Type: <Environment|Permission|Dependency|Missing Reference|Spec Undefined|Other>
+Blocked Scope: <Task ID + Layer A/B>
+AI-Completable Scope (Layer A): <AIだけで完了可能な範囲>
+User Runbook (Layer B): <ユーザーが実行する具体手順>
+Resume Trigger: <再開条件（ファイル更新/証跡追加/権限解除など）>
+Re-proposal Suppression:
+- If blocker type + resume trigger are unchanged, do not propose a new ticket.
+- Instead, output only the user run steps and expected evidence path.
+```
+
+## 2.8 ループブレーカー（強制遷移）
+
+- 同一準備（同一チェック、同一照合、同一「実測待ち」案内）を **2回連続**で行った場合:
+  - 3回目は同じ準備を繰り返さない
+  - 「準備タスク」と「実行タスク」を分離し、準備側は Layer A として完了させる
+  - 残件は Layer B のユーザー手順として固定テンプレで引き渡す
+- `docs/WORKFLOW_STATE_SSOT.md` の `Next Action` は常に1件に保つ（分岐提案より先に一本化）
 
 ---
 

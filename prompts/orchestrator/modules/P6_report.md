@@ -15,6 +15,8 @@
    - HANDOVER も検証対象にする（可能なら `--profile handover`）
    - Worker レポートの `MCP_CONNECTIVITY` / `Verification Mode` / `Manual Pending Items` を確認する
    - `Manual Pending` が残る、または `MCP_CONNECTIVITY=UNAVAILABLE` で実測不足のタスクは `DONE` を取り消し、`IN_PROGRESS` または `BLOCKED` へ差し戻す
+   - 実測タスクが Layer A/B に分割されていない場合は差し戻し、Layer A/B を追記して再評価する
+   - 同一 Blocker が継続している場合は新規タスク再提案を禁止し、ユーザー手順提示へ切り替える
 
 3. Inbox整理（可能なら）
    - `finalize-phase.js` が使える場合は優先
@@ -42,6 +44,7 @@
    - 推奨度をランク付け（⭐⭐⭐ 推奨 / ⭐⭐ 検討 / ⭐ 低優先度）
    - タスクの性質に応じたアイコンを付与（🎨 UI, 🧪 テスト, 🚫 ブロッカー, 🐛 バグ修正, ✨ 機能実装, 📝 ドキュメント, 🔧 リファクタリング, ⚙️ CI/CD, 📋 その他）
    - 現在積み上がっているタスクとの連携を明記
+   - 同一準備を2回実施済みのタスクは、3回目に準備再提案せず Layer A完了/Layer B引き渡しを提示する
 
 7. 進捗バーの生成（推奨）
    - `scripts/progress-meter.js` を実行し、進捗情報を取得
@@ -59,4 +62,3 @@
 5. `## 改善提案（New Feature Proposal）`
 
 表示ルールは `data/presentation.json`（v2）に準拠。Mermaid非対応環境では Markdown テーブルにフォールバック。
-

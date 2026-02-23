@@ -15,8 +15,8 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 
 1. **実際のプロジェクトで、停止したタスクの状態を確認**:
    ```powershell
-   # WritingPageプロジェクトで実行
-   cd "C:\Users\thank\Storage\Media Contents Projects\WritingPage"
+   # 対象プロジェクトで実行
+   cd "<project-root>"
    
    # タスクファイルを確認
    Get-Content docs/tasks/TASK_005_missing_reports.md
@@ -130,4 +130,3 @@ Workerが停止した場合、以下の2つの方法で再開できます：
 4. **PowerShell構文エラーの回避**:
    - コマンド実行前に、`Get-Command <cmd>` で存在確認
    - 複雑な条件分岐は、スクリプトファイルに分離する
-
