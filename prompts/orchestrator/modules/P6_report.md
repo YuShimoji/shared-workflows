@@ -1,5 +1,9 @@
 # Phase 6: Orchestrator Report（保存/検証/提案）
 
+> **Override Notice**
+> このモジュールは旧フェーズ体系用です。現在は `ORCHESTRATOR_DRIVER.txt` が最上位ルールです。
+> `docs/WORKFLOW_STATE_SSOT.md` の禁止事項にレポート整備が含まれる場合: report-validator 実行は不要、出力は 3 セクション形式（状態/次/判断理由）を使用。
+
 ## 目的
 
 - 状態を確定させ、次の行動が迷わない形で残す（“一度きりで終わる”を防ぐ）

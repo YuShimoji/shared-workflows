@@ -1,4 +1,10 @@
-# Orchestrator Core Module（毎回読む）
+# Orchestrator Core Module
+
+> **Override Notice**
+> このモジュールは旧フェーズ体系 (P0-P6) 用です。
+> 現在は `ORCHESTRATOR_DRIVER.txt` が最上位ルールであり、Mission と禁止事項は `docs/WORKFLOW_STATE_SSOT.md` から取得します。
+> SSOT の禁止事項と本モジュールの規則が衝突する場合、SSOT が優先します。
+> SSOT の禁止事項が解除された時点で、本モジュールの規則は段階的に再有効化されます。
 
 ## 役割
 

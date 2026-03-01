@@ -1,65 +1,38 @@
-# Worker Completion Driver（毎回コピペ）
+# Worker Completion Driver（未完作業の再駆動用）
 
 ```text
-あなたは分散開発チームの Worker です。DoD / Report / テストを未完のまま残さず、以下の残タスクを完了させてください。
+あなたは分散開発チームの Worker です。以下の未完作業を完了させてください。
 
-## Phase 0: 状況
-- Ticket: <TICKET_PATH>
-- Branch: <BRANCH>
+## 前提
+最初に `docs/WORKFLOW_STATE_SSOT.md` を読み、Mission / 禁止事項 を確認すること。
+禁止事項に該当する作業が含まれる場合は、その項目を飛ばして報告する。
+
+## 状況
+- 作業内容: <TASK_DESCRIPTION>
 - Focus Area: <FOCUS_AREA>
-- Forbidden Area: <FORBIDDEN_AREA>
-- Pending Items: <PENDING_ITEMS>
-- Report Target: <REPORT_PATH_TARGET>
-- HANDOVER Sections: <HANDOVER_SECTIONS>
+- 未完項目: <PENDING_ITEMS>
+- A/B/C 分類: <CLASSIFICATION>
 
-## Phase 1: ミッション
-1. docs/tasks/TASK を最新化（Status / Report パス / 事実追記）
-2. **改善提案の検討（必須）**: 作業完了後、プロジェクト側の機能改善提案も検討すること。Shared Workflow側の改善提案だけでなく、プロジェクト固有の機能改善や要件についても提案すること。
-3. DoD を 1 項目ずつ検証し、差分 or テスト結果の根拠を残す
-   - **重要**: 各DoD項目に対して、実際に実施した内容を具体的に記録すること。「確認済み」「実施済み」などの表面的な記述は禁止。
-   - 環境依存で実行不可能な項目（例: gitリポジトリではない環境でのgit history調査）がある場合:
-     - 停止条件として扱うか、代替手段を取るかを判断する
-     - 判断結果と理由をレポートに記録する
-     - 代替手段を取る場合は、その内容と根拠を具体的に記録する
-3. docs/inbox/REPORT を更新し、`report-validator.js` の実行結果を記録
-   - **必須ヘッダー**: レポートには「概要」「次のアクション」セクションを必ず含めること（REPORT_CONFIG.yml の standard スタイルに準拠）
-   - 正しい引数順で実行: `node .shared-workflows/scripts/report-validator.js <REPORT_PATH> --profile <PROFILE> <CONFIG_PATH>`
-   - 実行結果（成功/失敗、警告内容）をレポートに記録する
-4. 必須テストを実行し、`<cmd>=<result>` 形式で残す
-5. docs/HANDOVER.md の <HANDOVER_SECTIONS> を更新
-6. `git status -sb` をクリーンにし、必要なら commit / push（push は GitHubAutoApprove=true の場合のみ自律実行）
+## 指示
+1. 未完項目を完了させる。
+2. コンパイル/ビルドが通ることを確認する。
+3. commit して、チャットに結果を報告する。
 
-## Phase 2: 停止条件（該当時は即報告）
-- Forbidden Area に触れないと DoD を満たせない
-- 仕様仮定が3件以上必要
-- 依存追加 / 外部通信 / 破壊的操作 / 長時間待機が必須
-- SSOT やテンプレが obtain できない（`ensure-ssot.js` でも不可）
-- **環境依存で実行不可能なDoD項目がある場合**:
-  - 代替手段が取れない、または代替手段を取ることで仕様仮定が3件以上必要になる
-  - 停止時は、環境依存の理由と代替手段の検討結果をレポートに記録する
+## 報告形式
+## 結果
+- 何をしたか
+- 変更ファイル一覧
 
-## Phase 3: 必須アウトプット
-- Report パス
-- 実行テストログ（`<cmd>=<result>`）
-- DoD 各項目の充足状況（各項目に対して、実際に実施した内容を具体的に記録。環境依存で実行不可能な項目がある場合は、停止条件として扱うか、代替手段を取るかの判断結果と理由を記録）
-- `git status -sb` の結果（差分が残る場合は理由と次手）
+## 動作確認
+- 確認すべきこと
 
-## Phase 4: チャット報告（固定3セクション）
-チャット出力は以下の固定3セクションで報告する（詳細はレポートファイルに記載）:
-### `## 結果`
-- Done: `Done: <TICKET_PATH>. Report: <REPORT_PATH_TARGET>. Tests: <cmd>=<result>.`
-- Blocked: `Blocked: <TICKET_PATH>. Reason: <要点>. Next: <候補>. Report: <REPORT_PATH_TARGET>.`
-- 進捗バー（presentation.json 準拠: ■□ 形式）
-### `## 変更マップ`
-- 変更ファイル間の依存関係を Mermaid graph TD で図示（非対応環境ではMarkdownテーブル）
-### `## 次の選択肢`
-- Orchestrator/ユーザーが取るべき次アクション（1-3件、推奨度★付き）
+## 次の選択肢
+- 次に何をすべきか
 ```
 
 ---
 
-## Orchestratorメモ（送信しない）
-- 用途: DoD / Report / テストが未完の Worker を短時間で再駆動させるプロンプト
-- 事前に埋める変数: `<TICKET_PATH>`, `<BRANCH>`, `<FOCUS_AREA>`, `<FORBIDDEN_AREA>`, `<PENDING_ITEMS>`, `<REPORT_PATH_TARGET>`, `<HANDOVER_SECTIONS>`
-- 誘導: Blocked 解除後も同プロンプトで再開させ、納品物の整合（docs/tasks / docs/inbox / docs/HANDOVER / git）を確認させる
-- 受領後チェック: Report Validator の実行ログ、HANDOVER 更新、git 差分、docs/tasks の Status / Report 記入を必ず確認
+## Orchestrator メモ（送信しない）
+- 用途: 未完の Worker を短時間で再駆動させるテンプレート
+- 埋める変数: `<TASK_DESCRIPTION>`, `<FOCUS_AREA>`, `<PENDING_ITEMS>`, `<CLASSIFICATION>`
+- Worker は SSOT を読んで禁止事項を自律判定する。Orchestrator 側での注入は不要。
